@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Luyện Giọng MC</title>
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-512.png">
+<meta name="apple-mobile-web-app-title" content="Giọng MC">
+<meta name="theme-color" content="#b4532a">
 <style>
 :root{
   --bg:#faf7f2;--surface:#ffffff;--surface2:#f3eee6;--text:#2a2420;--muted:#7a6e64;
@@ -764,7 +768,12 @@ function renderHome(){
   if(ST.code){$("codeNote").hidden=false;$("codeNote").innerHTML=`Mã học viên của bạn: <b>${esc(ST.code)}</b> · dùng mã này để vào học trên máy khác.`;} else $("codeNote").hidden=true;
   // thẻ cấp bậc
   const xp=S.xp||0,{r,nx}=rankOf(xp), st=streak(), pct=nx?Math.round((xp-r[0])/(nx[0]-r[0])*100):100;
-  $("hHero").innerHTML=`<div class="row" style="justify-content:space-between"><div><div style="font-size:13px;opacity:.9">Cấp bậc</div><b style="font-size:20px">${r[2]} ${r[1]}</b></div>
+  const QUIPS=["Hôm nay mình “vui vẻ” chứ không “dui dẻ” nhé 😄","12 phút mỗi ngày, giọng hay cả đời 🎙️","Micro đang chờ bạn đó, đừng để nó buồn 🥺",
+    "Nói rõ một chữ, chốt thêm một khách 💼","Giọng ấm như cà phê sáng ☕","Sân khấu không chờ ai, nhưng micro thì luôn chờ bạn ✨","Tròn vành rõ chữ, khách nghe là nhớ 🌟"];
+  const qi=new Date().getDate()%QUIPS.length, fn=firstName();
+  $("hHero").innerHTML=`<div style="font-size:15px;font-weight:600;margin-bottom:2px">Chào ${esc(fn)}! Luyện giọng hằng ngày cùng Uyên nhé 🎙️</div>
+    <div class="small muted" style="margin-bottom:10px">${QUIPS[qi]}</div>
+    <div class="row" style="justify-content:space-between"><div><div style="font-size:13px;opacity:.9">Cấp bậc</div><b style="font-size:20px">${r[2]} ${r[1]}</b></div>
     <div style="text-align:right"><b style="font-size:24px">🔥 ${st}</b><div style="font-size:12px;opacity:.9">ngày liên tục</div></div></div>
     <div class="xpbar"><i style="width:${pct}%"></i></div><div class="small muted">${xp} XP${nx?` · còn ${nx[0]-xp} XP để lên ${nx[2]} ${nx[1]}`:" · cấp cao nhất!"}</div>`;
   // nhắc khi bị đứt quãng
@@ -958,10 +967,11 @@ function say(t,rate){if(!VOICE)return;try{speechSynthesis.cancel();const u=new S
 /* --- ghi âm + (nếu có) máy nghe giọng --- */
 const SRC=window.SpeechRecognition||window.webkitSpeechRecognition;
 let REC=null;
-async function recStart(){
+function askMic(){return navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});}
+async function recStart(pre){ // pre: micro đã xin quyền sẵn (để hộp xin quyền hiện trước khi đếm ngược)
   const R={chunks:[],heard:"",t0:Date.now(),blob:null,url:null,err:""};
   try{
-    R.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});
+    R.stream=pre||await askMic();
     const mime=["audio/mp4","audio/webm;codecs=opus","audio/webm"].find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(m))||"";
     R.mr=new MediaRecorder(R.stream,mime?{mimeType:mime}:undefined);
     R.mr.ondataavailable=e=>e.data.size&&R.chunks.push(e.data); R.mr.start(250);
@@ -1088,12 +1098,12 @@ function practice(b,L,onDone){
     IDB.get(L.id).then(b=>{if(b&&$("pPrev"))$("pPrev").innerHTML=`<p class="small muted" style="margin:10px 0 0">Nghe lại lần đọc trước của bạn để so sánh sau khi đọc lần này:</p><audio controls src="${URL.createObjectURL(b)}"></audio>`;});
   };
   const go=async()=>{
-    $("pRec").disabled=true;
+    $("pRec").disabled=true; $("pRec").textContent="Đang mở micro…";
+    let mic=null; try{mic=await askMic();}catch(e){} // xin quyền micro trước, rồi mới đếm ngược
     for(let c=3;c>0;c--){$("pRec").textContent="Chuẩn bị… "+c;await new Promise(r=>{const t=setTimeout(r,1000);TIMERS.push(t);});}
-    R=await recStart();
-    if(R.err==="mic"){box.insertAdjacentHTML("afterbegin",`<p class="small" style="color:var(--red)">Không mở được micro. Hãy cho phép micro, hoặc mở link bằng Safari/Chrome thay vì trong Zalo/Messenger. Bạn vẫn có thể đọc to rồi tự chấm.</p>`);}
-    $("pHead").textContent="Đang ghi âm… đọc to, rõ";$("pPaceL").hidden=true;
-    box.innerHTML=`<div class="stick"><div class="row" style="justify-content:center;margin-bottom:6px"><span class="pill" id="pClock">0:00</span></div><button class="btn okb big" id="pStop">■ Đọc xong</button></div>`;
+    R=await recStart(mic);
+    $("pHead").textContent=R.err==="mic"?"Không mở được micro – vẫn đọc to rồi tự chấm":"Đang ghi âm… đọc to, rõ";$("pPaceL").hidden=true;
+    box.innerHTML=`${R.err==="mic"?`<p class="small" style="color:var(--red)">Hãy cho phép micro (Cài đặt › Safari › Micrô), hoặc mở link bằng Safari/Chrome thay vì trong Zalo/Messenger.</p>`:""}<div class="stick"><div class="row" style="justify-content:center;margin-bottom:6px"><span class="pill" id="pClock">0:00</span></div><button class="btn okb big" id="pStop">■ Đọc xong</button></div>`;
     const t0=Date.now();TIMERS.push(setInterval(()=>{const c=$("pClock");if(c)c.textContent=fmt((Date.now()-t0)/1000);},500));
     if($("pPace").checked) pace();
     $("pStop").onclick=async()=>{$("pStop").disabled=true;TIMERS.forEach(t=>{clearInterval(t);clearTimeout(t);});TIMERS=[];const r=await recStop();R=r||R;review(true);};
