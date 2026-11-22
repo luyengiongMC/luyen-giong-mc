@@ -280,7 +280,8 @@ const MODULES = [
  {id:"dc", n:"Đọc diễn cảm", d:"Ngắt nghỉ, lên xuống giọng, giọng ấm, truyền cảm xúc."},
  {id:"tt", n:"Đọc tin tức, bản tin", d:"Giọng rõ, dứt khoát, đọc con số, chuyển tin."},
  {id:"th", n:"Thuyết trình", d:"Mở đầu cuốn hút, trình bày 3 ý, số liệu, kể chuyện, kêu gọi hành động."},
- {id:"mc", n:"Dẫn chương trình (MC)", d:"Khai mạc, giới thiệu tiết mục, vinh danh, hội nghị khách hàng."}
+ {id:"mc", n:"Dẫn chương trình (MC)", d:"Khai mạc, giới thiệu tiết mục, vinh danh, hội nghị khách hàng."},
+ {id:"kb", n:"Kịch bản MC thực tế", d:"Trích từ kịch bản sự kiện thật của Bảo Việt Nhân Thọ Gia Định (tên người đã được thay)."}
 ];
 const LEVELS = {1:"Cơ bản", 2:"Trung cấp", 3:"Nâng cao"};
 const LESSONS = [
@@ -432,7 +433,88 @@ const LESSONS = [
 {id:"mc6", m:"mc", lv:3, sp:[150,180], t:"Xử lý sự cố trên sân khấu",
  goal:"Giữ bình tĩnh, giọng vững, biến sự cố thành khoảnh khắc thân thiện.",
  tips:["Không nói nhanh khi có sự cố, hạ tốc độ, mỉm cười.","Câu đùa nhẹ nhàng, không đổ lỗi."],
- tx:"Thưa quý vị, có vẻ như chiếc micro của chúng ta cũng đang hồi hộp không kém ca sĩ. Trong lúc đội kỹ thuật chuẩn bị lại, mời quý vị cùng nhìn lên màn hình, nơi lưu lại những khoảnh khắc đẹp nhất của cả năm vừa qua. Và chỉ một phút nữa thôi, tiết mục đặc biệt sẽ trở lại, hứa hẹn còn bùng nổ hơn. Xin cảm ơn sự kiên nhẫn và tình cảm của quý vị."}
+ tx:"Thưa quý vị, có vẻ như chiếc micro của chúng ta cũng đang hồi hộp không kém ca sĩ. Trong lúc đội kỹ thuật chuẩn bị lại, mời quý vị cùng nhìn lên màn hình, nơi lưu lại những khoảnh khắc đẹp nhất của cả năm vừa qua. Và chỉ một phút nữa thôi, tiết mục đặc biệt sẽ trở lại, hứa hẹn còn bùng nổ hơn. Xin cảm ơn sự kiên nhẫn và tình cảm của quý vị."},
+
+/* ---------- KỊCH BẢN MC THỰC TẾ (từ kịch bản của Uyên, 22/11/2026; tên người đã thay bằng tên giả) ---------- */
+/* Nguồn 1: Lễ tốt nghiệp Tư vấn viên mới "Chúng ta cùng tỏa sáng" */
+{id:"kb1", m:"kb", lv:1, sp:[130,160], src:"Lễ tốt nghiệp TVV mới", t:"Voice off trước giờ khai mạc",
+ goal:"Giọng ấm, chậm, rõ, thân thiện; nói như mời chứ không như ra lệnh.",
+ tips:["Nhạc nền không lời, tươi sáng. Đọc chậm hơn bình thường một chút.","Nhấn nhẹ: ổn định chỗ ngồi, im lặng. Mỉm cười khi nói “Xin cảm ơn”."],
+ tx:"Kính thưa Quý vị, thưa các Tư vấn viên thân mến! Lễ Tốt nghiệp Tư vấn viên mới sẽ bắt đầu trong ít phút nữa. Kính mời Quý vị ổn định chỗ ngồi và chuyển điện thoại sang chế độ im lặng. Xin cảm ơn!"},
+{id:"kb2", m:"kb", lv:2, sp:[140,170], src:"Lễ tốt nghiệp TVV mới", t:"Mở đầu: Chúng ta cùng tỏa sáng",
+ goal:"Mở màn có câu hỏi, khoảng lặng và cao trào; câu khóa phải rõ, dứt khoát.",
+ tips:["Bước ra, mỉm cười, nhìn về phía học viên 2 giây rồi mới nói.","Ngừng 1 giây sau chữ “chứng chỉ được công nhận”. Câu khóa: Mình có làm được không? → Được! → Vạch xuất phát → Chúng ta cùng tỏa sáng.","Nâng giọng ở câu chào mừng cuối, rồi mời hội trường vỗ tay."],
+ tx:"Kính thưa Quý vị! Thưa các Tư vấn viên thân mến! Ngày đầu vào lớp, ai cũng có một câu hỏi: Mình có làm được không? Hôm nay, các Anh Chị đã có câu trả lời: Được! Bằng một tấm chứng chỉ được công nhận. Nhưng tốt nghiệp không phải vạch đích. Đây là vạch xuất phát. Và đúng với thông điệp hôm nay: mỗi người một ánh sáng riêng, cùng nhau, chúng ta cùng tỏa sáng! {ten} xin nồng nhiệt chào mừng Quý vị đến với Lễ Tốt nghiệp Tư vấn viên mới của Bảo Việt Nhân Thọ Gia Định, trong năm Bảo Việt Nhân Thọ tròn 30 năm!"},
+{id:"kb3", m:"kb", lv:1, sp:[130,160], src:"Lễ tốt nghiệp TVV mới", t:"Giới thiệu đại biểu ngắn gọn",
+ goal:"Đọc tên và chức danh chậm, rõ từng tiếng; nâng giọng ở “nhân vật chính”.",
+ tips:["Tên người đọc chậm hơn phần còn lại, ngừng nửa nhịp sau mỗi tên.","Câu cuối mời vỗ tay: nâng giọng, mở tay về phía hội trường."],
+ tx:"Trân trọng giới thiệu: Ông Trần Minh Quân, Giám đốc Bảo Việt Nhân Thọ Gia Định. Cùng Đội ngũ Giảng viên, Ban Đào tạo và các Anh Chị Quản lý đã đồng hành cùng lớp. Và nhân vật chính hôm nay: ba mươi Tư vấn viên mới! Xin một tràng pháo tay thật lớn!"},
+{id:"kb4", m:"kb", lv:2, sp:[140,170], src:"Lễ tốt nghiệp TVV mới", t:"Trao chứng chỉ: khoảnh khắc tỏa sáng",
+ goal:"Dẫn vào trang trọng, mời lãnh đạo rõ ràng, đọc tên học viên có nhịp cho hội trường vỗ tay.",
+ tips:["Chờ Giám đốc vào giữa sân khấu rồi mới gọi tên học viên.","Mỗi tên ngừng một nhịp cho hội trường vỗ tay. Lúc chụp ảnh hô to: Một, hai, ba, tỏa sáng!","Câu hoa hướng dương ở cuối đọc chậm, ấm."],
+ tx:"Thưa Quý vị, để có tấm chứng chỉ hôm nay, các Anh Chị đã vượt qua kỳ thi chứng chỉ đại lý bảo hiểm. Một tấm chứng chỉ là một lời cam kết: chuyên nghiệp trong từng chi tiết. Và bây giờ, là khoảnh khắc tỏa sáng! Trân trọng kính mời Ông Trần Minh Quân, Giám đốc Bảo Việt Nhân Thọ Gia Định, lên sân khấu trao chứng chỉ, quà chúc mừng và chụp ảnh lưu niệm cùng các Tư vấn viên! Xin mời các Tư vấn viên có tên sau đây: Tư vấn viên Nguyễn Thanh Tâm. Tư vấn viên Lê Hoàng Phúc. Tư vấn viên Phạm Ngọc Hân. Một, hai, ba, tỏa sáng! Xin chúc mừng các Tư vấn viên! Thưa các Tư vấn viên, hãy nhớ: hoa hướng dương luôn hướng về ánh sáng. Chúc các Anh Chị cũng vậy, luôn hướng về phía trước!"},
+{id:"kb5", m:"kb", lv:2, sp:[140,170], src:"Lễ tốt nghiệp TVV mới", t:"Chuyển giao cho giảng viên",
+ goal:"Chuyển từ không khí lễ sang không khí lớp học: giọng vững, ấm, nhịp chậm lại.",
+ tips:["Nhạc về trung tính, giọng hạ xuống nửa tông so với phần trao chứng chỉ.","Nhấn: không ngừng học, không ngừng tiến. Tên chuyên đề đọc chậm, rõ."],
+ tx:"Thưa các Tư vấn viên, nghề của chúng ta không có ngày tốt nghiệp cuối cùng. Không ngừng học, không ngừng tiến. Mỗi ngày tốt hơn hôm qua. Và bài học đầu tiên của chặng đường mới bắt đầu ngay bây giờ, với chuyên đề: Ba câu hỏi mở đầu buổi tư vấn. Người đồng hành cùng các Anh Chị là Bà Lê Thu Hà, Trưởng ban Đào tạo. Xin một tràng pháo tay chào đón Giảng viên!"},
+{id:"kb6", m:"kb", lv:1, sp:[140,170], src:"Lễ tốt nghiệp TVV mới", t:"Dự phòng: Hành trình Sao Việt",
+ goal:"Đoạn chèn ngắn để giữ nhịp khi chờ: truyền cảm hứng, có câu hỏi và lời hẹn.",
+ tips:["Chỉ tay về bức tường Sao Việt trong phòng khi nói câu đầu.","Hạ giọng ở câu hỏi “Mình có làm được không?”, nâng giọng ở “Ngày mai là Sao Việt!”"],
+ tx:"Thưa các Anh Chị, hãy nhìn về bức tường phía kia. Những gương mặt trên đó là các Sao Việt của Bảo Việt Nhân Thọ Gia Định. Họ cũng từng ngồi đúng chỗ các Anh Chị đang ngồi. Cũng từng hỏi: Mình có làm được không? Hôm nay là Tư vấn viên mới. Ngày mai là Sao Việt! Hẹn gặp các Anh Chị trên bức tường ấy!"},
+{id:"kb7", m:"kb", lv:2, sp:[140,170], src:"Lễ tốt nghiệp TVV mới", t:"Dự phòng: Cộng đồng TVV và hội nghị khách hàng",
+ goal:"Nói thông tin thực tế mà vẫn có câu nối vào, nối ra gọn, dễ nhớ.",
+ tips:["Câu nối vào và nối ra đọc chậm, có điểm nhấn; phần thông tin đọc rõ, đều.","Giữ slide mã QR 30–45 giây, nói chậm cho học viên kịp quét."],
+ tx:"Thưa các Anh Chị, đi một mình thì nhanh, đi cùng nhau thì xa. Trên màn hình là ba ngôi nhà chung của chúng ta: cộng đồng Zalo Tư vấn viên, nơi cập nhật tin tức và chính sách; nhóm Zalo riêng cho tân binh để hỏi đáp và chia sẻ kinh nghiệm; và trang Facebook với hình ảnh, câu chuyện của công ty. Mời các Anh Chị mở điện thoại, quét ngay cả ba mã! Có câu hỏi, có cộng đồng. Có khó khăn, có đồng đội. Tư vấn viên mới thường lo nhất điều gì? Gặp khách hàng, bắt đầu từ đâu? Câu trả lời: hội nghị khách hàng, nơi công ty cùng các Anh Chị tiếp đón khách hàng. Mỗi khách hàng các Anh Chị mời đến là một cánh cửa mở ra."},
+{id:"kb8", m:"kb", lv:1, sp:[120,150], src:"Lễ tốt nghiệp TVV mới", t:"Lời cam kết nghề (hô – đáp)",
+ goal:"Giọng khỏe, dứt khoát, có nhịp để cả lớp hô theo.",
+ tips:["Mời học viên đứng dậy, đặt tay lên ngực trái. MC đọc vế đầu, cả lớp hô vế sau.","Mỗi vế ngắn, dừng hẳn một nhịp chờ lớp đáp rồi mới đọc vế tiếp."],
+ tx:"Khách hàng là trọng tâm! Kỷ luật tạo nên đẳng cấp! Chuyên nghiệp trong từng chi tiết! Đồng hành trọn đời! Chúng ta cùng tỏa sáng! Xin một tràng pháo tay cho lời cam kết của các Tư vấn viên!"},
+
+/* Nguồn 2: Hội nghị khách hàng "Đặc quyền 30 năm Bảo Việt Nhân Thọ" */
+{id:"kb9", m:"kb", lv:1, sp:[130,160], src:"Hội nghị Đặc quyền 30 năm", t:"Đón khách – voice off hội nghị",
+ goal:"Chào đón ấm áp, đọc chậm, rõ, thân thiện, hướng dẫn khách rõ ràng.",
+ tips:["Nhạc nền không lời ấm áp, âm lượng vừa phải.","Câu dài đọc một hơi, chỉ nghỉ ở dấu phẩy."],
+ tx:"Kính chào Quý vị đại biểu cùng toàn thể Quý khách hàng thân mến! Ban Tổ chức hân hoan chào đón Quý vị đến với Hội nghị Khách hàng Đặc quyền 30 năm Bảo Việt Nhân Thọ. Sự hiện diện của Quý vị ngày hôm nay là niềm vinh dự và là món quà ý nghĩa đối với Bảo Việt Nhân Thọ Gia Định. Trước khi chương trình bắt đầu, kính mời Quý vị lưu lại những khoảnh khắc đẹp tại khu vực chụp ảnh kỷ niệm. Kính chúc Quý vị có một buổi gặp gỡ thật ấm áp, nhiều niềm vui và những trải nghiệm đáng nhớ!"},
+{id:"kb10", m:"kb", lv:3, sp:[130,160], src:"Hội nghị Đặc quyền 30 năm", t:"Tuyên bố lý do: bốn mùa của đời người",
+ goal:"Dẫn dắt bằng hình ảnh đời người, giọng trầm ấm, có khoảng lặng trước thông điệp chính.",
+ tips:["Mỉm cười, quan sát hội trường trước khi bắt đầu.","Ngừng nhẹ 1–2 giây sau câu “bên gia đình”. Câu “Ba mươi năm” nâng giọng, trang trọng.","Câu chào mừng cuối nâng giọng, mời vỗ tay."],
+ tx:"Kính thưa Quý vị đại biểu! Kính thưa toàn thể Quý khách hàng thân mến! Một năm có bốn mùa. Và một đời người cũng đi qua biết bao mùa yêu thương, hy vọng và trưởng thành. Khi còn nhỏ, chúng ta mơ ước được lớn lên. Khi trưởng thành, chúng ta nỗ lực dựng xây sự nghiệp, chăm lo cho cha mẹ, vun đắp mái ấm và chuẩn bị tương lai cho con trẻ. Đến một chặng đường nào đó, điều ta mong mỏi nhất đôi khi lại rất giản dị: sức khỏe, sự bình an và những ngày tháng đủ đầy bên gia đình. Dù ở chặng đường nào, có một điều không thay đổi: ai trong chúng ta cũng mong những người mình yêu thương được bảo vệ và có một tương lai tốt đẹp hơn. Ba mươi năm không chỉ là một dấu mốc thời gian. Đó còn là hành trình được viết nên từ sự tin tưởng của khách hàng, từ trách nhiệm của những người làm bảo hiểm và từ những cam kết được thực hiện qua năm tháng. {ten} xin nồng nhiệt chào đón toàn thể Quý vị đã có mặt tại sự kiện Đặc quyền 30 năm Bảo Việt Nhân Thọ!"},
+{id:"kb11", m:"kb", lv:2, sp:[130,160], src:"Hội nghị Đặc quyền 30 năm", t:"Giới thiệu đại biểu hai phía",
+ goal:"Đọc tên, chức danh chuẩn xác, tách rõ hai nhóm đại biểu, kết bằng lời chào khách hàng.",
+ tips:["Mỗi đại biểu một hơi: tên chậm và rõ, chức danh đều giọng.","Đổi giọng nhẹ khi sang nhóm “địa phương và đơn vị khách mời”. Câu “gần 80 Quý khách hàng” nhấn ấm."],
+ tx:"Đến tham dự chương trình hôm nay, Ban Tổ chức trân trọng giới thiệu. Về phía Bảo Việt Nhân Thọ: Ông Trần Minh Quân, Giám đốc Bảo Việt Nhân Thọ Gia Định. Bà Lê Thu Hà, Trưởng phòng Hành chính Quản trị. Ông Phạm Quốc Bảo, Giám đốc Phát triển Kinh doanh. Về phía địa phương và đơn vị khách mời: Bà Nguyễn Thanh Mai, Phụ trách Phòng Văn hóa Xã hội. Bà Võ Ngọc Lan, Phó Hiệu trưởng Trường Trung học cơ sở. Và đặc biệt, xin được gửi lời chào mừng nồng nhiệt nhất đến gần 80 Quý khách hàng thân thiết, những người đã và đang dành sự tin tưởng cho Bảo Việt Nhân Thọ. Xin Quý vị dành một tràng pháo tay thật nồng nhiệt!"},
+{id:"kb12", m:"kb", lv:2, sp:[130,160], src:"Hội nghị Đặc quyền 30 năm", t:"Mời lãnh đạo phát biểu khai mạc",
+ goal:"Câu dẫn có chiều sâu, lời mời trang trọng, lời cảm ơn sau phát biểu chân thành.",
+ tips:["Ba vế “sự thấu hiểu, tinh thần trách nhiệm, hành động cụ thể” đọc tăng dần.","“Xin trân trọng kính mời Ông!” dứt khoát, đưa tay về phía lãnh đạo."],
+ tx:"Kính thưa Quý vị, niềm tin không được tạo nên chỉ bằng những lời hứa. Niềm tin được xây dựng từ sự thấu hiểu, được gìn giữ bằng tinh thần trách nhiệm và được khẳng định qua những hành động cụ thể. Để gửi lời tri ân đến Quý khách hàng, Ban Tổ chức trân trọng kính mời Ông Trần Minh Quân, Giám đốc Bảo Việt Nhân Thọ Gia Định, tiến lên sân khấu phát biểu khai mạc. Xin trân trọng kính mời Ông! Xin trân trọng cảm ơn Ông Trần Minh Quân về những chia sẻ chân thành vừa rồi. Mong rằng tinh thần trân trọng khách hàng và cam kết đồng hành sẽ tiếp tục được thể hiện trong từng trải nghiệm và từng bước đi của Bảo Việt Nhân Thọ cùng Quý vị."},
+{id:"kb13", m:"kb", lv:2, sp:[130,160], src:"Hội nghị Đặc quyền 30 năm", t:"Trao quà khuyến học cho học sinh",
+ goal:"Giọng sáng, ấm, trìu mến khi nói về ước mơ của các em; lời chúc cuối rõ ràng.",
+ tips:["Nhạc sáng, ấm áp. Liệt kê ước mơ (bác sĩ, thầy cô…) đọc nhẹ, vui.","Lời chúc cuối dành cho các em: nhìn về phía các em, đọc chậm."],
+ tx:"Kính thưa Quý vị, nếu hỏi một em nhỏ về ước mơ của mình, có em sẽ nói muốn trở thành bác sĩ, có em muốn làm thầy cô giáo, kỹ sư, nhà khoa học. Và cũng có em chỉ mong mỗi ngày được đến trường, học thêm một điều mới và khiến cha mẹ tự hào. Với mong muốn đồng hành và khích lệ tinh thần học tập, Bảo Việt Nhân Thọ Gia Định dành tặng 15 chiếc ba lô cho các em học sinh. Mỗi chiếc ba lô không chỉ là một món quà, mà còn mang theo lời chúc: hãy tự tin học tập, nuôi dưỡng ước mơ và vững bước trên hành trình trưởng thành. Các em thân mến, chúc các em học tốt, sống đẹp và từng ngày trở thành phiên bản tốt hơn của chính mình!"},
+{id:"kb14", m:"kb", lv:1, sp:[130,160], src:"Hội nghị Đặc quyền 30 năm", t:"Tặng quà tri ân khách hàng",
+ goal:"Lời cảm ơn giản dị, chân thành, không phô trương.",
+ tips:["Nói xong thì để nhạc nhẹ, MC không nói liên tục trong lúc phát quà.","Nhấn: lời chào mừng, lời tri ân, kỷ niệm đẹp."],
+ tx:"Kính thưa Quý vị, có những lời cảm ơn được nói bằng ngôn từ. Và cũng có những lời cảm ơn được gửi trao qua những điều giản dị nhưng chân thành. Nhân dấu mốc kỷ niệm 30 năm, Bảo Việt Nhân Thọ đã chuẩn bị những phần quà lưu niệm gửi đến toàn thể Quý khách hàng hiện diện hôm nay, như một lời chào mừng, một lời tri ân và một kỷ niệm đẹp của cuộc gặp gỡ. Cảm ơn Quý vị vì đã dành thời gian, sự tin tưởng và tình cảm cho chương trình!"},
+{id:"kb15", m:"kb", lv:2, sp:[140,170], src:"Hội nghị Đặc quyền 30 năm", t:"Chúc mừng sinh nhật khách hàng",
+ goal:"Không khí vui, ấm; lời chúc có nhịp ba vế; mời hội trường cùng hát.",
+ tips:["Ba vế “thêm một tuổi mới… thêm một hành trình… thêm những tháng năm” đọc đều nhịp, tăng dần.","Câu mời hát Happy Birthday nâng giọng, vui."],
+ tx:"Kính thưa Quý vị, giữa những bộn bề của cuộc sống, có một ngày đặc biệt luôn nhắc chúng ta nhớ rằng sự hiện diện của mỗi người trên cuộc đời này là một món quà. Đó là ngày sinh nhật. Với Bảo Việt Nhân Thọ, mỗi khách hàng đều là một mối quan hệ đáng trân trọng. Xin trân trọng kính mời các Quý khách hàng có tên trên màn hình cùng tiến lên sân khấu! Kính chúc Quý vị thêm một tuổi mới với thật nhiều sức khỏe; thêm một hành trình với thật nhiều niềm vui; và thêm những tháng năm bình an bên những người mình thương yêu. Và bây giờ, xin kính mời cả hội trường cùng hòa theo giai điệu Happy Birthday!"},
+{id:"kb16", m:"kb", lv:3, sp:[130,160], src:"Hội nghị Đặc quyền 30 năm", t:"Nghi thức trao hợp đồng bảo hiểm",
+ goal:"Trang trọng, nói về ý nghĩa quyết định mà không thành lời chào bán; đọc tên rõ.",
+ tips:["Giọng vững, ấm; tránh phấn khích như quảng cáo.","Tên khách hàng và tư vấn viên đọc chậm, ngừng nửa nhịp trước và sau tên."],
+ tx:"Kính thưa Quý vị, có những món quà mang lại niềm vui trong một khoảnh khắc. Nhưng cũng có những quyết định được đưa ra hôm nay để chuẩn bị sự an tâm cho nhiều năm về sau. Một hợp đồng bảo hiểm nhân thọ bắt đầu từ một sự lựa chọn. Điều đáng quý không chỉ nằm ở tờ hợp đồng được trao, mà còn ở tình yêu thương và trách nhiệm đã thôi thúc khách hàng bắt đầu một kế hoạch dài hạn. Ngay sau đây, Ban Tổ chức trân trọng kính mời Quý khách hàng Hoàng Thu Trang, do Tư vấn viên Nguyễn Mỹ Linh đồng hành tư vấn, tiến lên sân khấu thực hiện nghi thức nhận hợp đồng bảo hiểm. Xin chúc mừng Quý khách hàng Hoàng Thu Trang!"},
+{id:"kb17", m:"kb", lv:3, sp:[130,160], src:"Hội nghị Đặc quyền 30 năm", t:"Tri ân khách hàng hoàn thành đóng phí",
+ goal:"Ghi nhận sự bền bỉ, lời chúc chân thành; dùng từ chính xác về hợp đồng.",
+ tips:["Nhấn: sự bền bỉ, kiên trì gìn giữ, cột mốc.","Lưu ý nghề: “hoàn thành thời hạn đóng phí” không có nghĩa hợp đồng đã đáo hạn; không nói khách đã chắc chắn nhận đủ quyền lợi."],
+ tx:"Kính thưa Quý vị, có những thành quả đến từ một quyết định quan trọng. Nhưng cũng có những thành quả được tạo nên từ sự bền bỉ trong rất nhiều năm tháng. Một kế hoạch bảo hiểm có ý nghĩa không chỉ bởi thời điểm bắt đầu, mà còn bởi sự kiên trì gìn giữ. Bởi phía sau mỗi kỳ phí được thu xếp là một lần khách hàng tiếp tục ưu tiên trách nhiệm với bản thân và gia đình. Hôm nay, Bảo Việt Nhân Thọ trân trọng chúc mừng những Quý khách hàng đã hoàn thành thời hạn đóng phí theo kế hoạch của hợp đồng bảo hiểm. Xin chúc mừng Quý khách hàng về cột mốc ý nghĩa này!"},
+{id:"kb18", m:"kb", lv:3, sp:[100,130], src:"Hội nghị Đặc quyền 30 năm", t:"Câu chuyện chi trả: Người hùng không thể trở về",
+ goal:"Phần cảm xúc sâu nhất: chậm, tiết chế, giữ phẩm giá gia đình, khoảng lặng dài có chủ ý.",
+ tips:["Tắt nhạc vui, piano rất nhẹ. Hạ giọng, chậm và tiết chế, không kịch tính.","Dừng 3 giây trước “Nhưng cuộc sống không phải lúc nào…”, im lặng 5 giây sau “đã không thể trở về”.","Nghề: chỉ dùng tên và chi tiết khi gia đình đồng ý; bài luyện này đã thay tên."],
+ tx:"Kính thưa Quý vị… Có lẽ, sau tất cả những nỗ lực và bộn bề của một ngày, điều hạnh phúc nhất vẫn là được bình an trở về nhà, nơi có những người thân yêu đang chờ đợi. Chúng ta vẫn thường tin rằng ngày mai sẽ còn rất dài. Rằng những lời yêu thương chưa kịp nói, rồi sẽ có lúc để nói. Nhưng cuộc sống không phải lúc nào cũng cho chúng ta cơ hội ấy. Có một chàng trai trẻ, phía trước là những ước mơ đầu đời. Thế rồi, trong một khoảnh khắc bất ngờ, khi nhìn thấy người bạn gặp nguy hiểm dưới dòng sông, em đã tìm cách cứu bạn. Người bạn ấy được cứu sống. Nhưng đau lòng thay, chàng trai trẻ ấy đã không thể trở về. Không lời an ủi nào là đủ. Không một khoản tiền nào có thể đưa một người thân trở về. Nhưng cuộc sống của những người ở lại vẫn cần tiếp tục. Bởi bảo hiểm nhân thọ không thể giữ người thương ở lại, nhưng có thể góp phần tạo nên một điểm tựa cho những người ở lại bước tiếp."},
+{id:"kb19", m:"kb", lv:3, sp:[130,160], src:"Hội nghị Đặc quyền 30 năm", t:"Giới thiệu phần chia sẻ giải pháp tài chính",
+ goal:"Chuyển cảm xúc về trung tính, tổng kết ba câu chuyện, đặt hai câu hỏi rồi mời diễn giả.",
+ tips:["Giọng vững, ấm, không phấn khích đột ngột sau phần câu chuyện cảm xúc.","Hai câu hỏi cuối: lên giọng nhẹ cuối câu, ngừng một nhịp sau mỗi câu."],
+ tx:"Kính thưa Quý vị, những câu chuyện trong chương trình hôm nay đưa chúng ta qua nhiều thời điểm khác nhau của cuộc sống. Có người vừa bắt đầu một kế hoạch bảo vệ. Có người đã bền bỉ hoàn thành chặng đường đóng phí. Và có gia đình, trong hoàn cảnh không ai mong muốn, đã nhận được sự hỗ trợ tài chính từ quyền lợi bảo hiểm. Tương lai không thể được dự đoán hoàn toàn; song chúng ta có thể chủ động chuẩn bị cho tương lai ấy. Một kế hoạch tài chính thật sự phù hợp cần trả lời hai câu hỏi: Nếu cuộc sống thuận lợi, kế hoạch ấy giúp gia đình tiến gần hơn đến mục tiêu như thế nào? Và nếu có biến cố, gia đình sẽ có nguồn lực gì để thích ứng? Ban Tổ chức xin trân trọng kính mời Ông Phạm Quốc Bảo, Giám đốc Phát triển Kinh doanh, lên sân khấu chia sẻ nội dung tiếp theo."}
 ];
 
 </script>
@@ -491,7 +573,7 @@ const Q={
  level:{new:"Cơ bản – mới bắt đầu",some:"Trung cấp – đã nói vài lần",pro:"Nâng cao – thường xuyên dẫn, nói"}
 };
 const SPEED={mc:[140,170],video:[160,190],train:[150,180],sale:[140,170],talk:[150,180]};
-const MOD_ORDER={mc:["pa","dc","tt","mc","mc"],video:["pa","dc","th","mc","th"],train:["pa","dc","tt","th","th"],sale:["pa","dc","th","th","mc"],talk:["pa","dc","tt","th","th"]};
+const MOD_ORDER={mc:["pa","dc","tt","mc","kb"],video:["pa","dc","th","mc","th"],train:["pa","dc","tt","th","kb"],sale:["pa","dc","th","kb","mc"],talk:["pa","dc","tt","th","kb"]};
 const WEEKS=[["Tuần 1","Phát âm tròn vành, rõ chữ"],["Tuần 2","Đọc diễn cảm, giọng ấm"],["Tuần 3","Nhịp, ngắt nghỉ, tốc độ"],["Tuần 4","Thực hành theo mục tiêu"],["Tuần 5","Thực chiến"]];
 const ISSUE_PRON={swallow:[[0,7],[0,6],[2,10]],flat:[[1,0],[1,1],[1,9]],hoinga:[[0,8],[1,5],[1,6]],ln:[[2,7],[2,9]],cons:[[0,0],[0,1],[0,2],[0,3]],final:[[0,4],[0,5]]};
 const TARGET_PRON={nam:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9]],bac:[[0,2],[0,3],[0,8],[2,13],[2,14],[0,1],[0,7],[1,5],[1,6],[2,7],[2,9],[0,9]],keep:[[0,7],[0,4],[0,5],[1,0],[1,1],[0,9]]};
