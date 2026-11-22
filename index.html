@@ -99,6 +99,11 @@ body.notab #tabbar{display:none}
 .tk.red{background:var(--red);color:#fff}
 .tk.ok{background:var(--ok-soft)}
 .reader.mark .tk{cursor:pointer;border-bottom:1px dashed var(--line)}
+.reader.easy{line-height:2.3;letter-spacing:.2px}
+.pmark{color:var(--accent);font-weight:700;margin-right:4px}
+.chk{border:1px solid var(--line);background:var(--surface2);border-radius:999px;padding:7px 12px;font:inherit;font-size:14px;color:var(--text);cursor:pointer}
+.chk.y{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chk.n{background:var(--red-soft);border-color:var(--red);color:var(--red)}
 .stick{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom));z-index:5;background:var(--bg);padding:8px 0}
 .scores{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;margin:8px 0}
 .scores div{background:var(--surface2);border-radius:10px;padding:8px 4px}
@@ -134,17 +139,17 @@ td,th{border-bottom:1px solid var(--line);padding:7px 4px;text-align:left}
 
 <!-- CỔNG VÀO -->
 <section class="view" id="v-gate">
+  <div class="card" id="gLogin" style="border:2px solid var(--accent)">
+    <h2>Đã có mã học viên? Vào học</h2>
+    <div class="row"><input type="text" id="gCode" maxlength="8" autocomplete="off" inputmode="text" placeholder="HV2601" style="flex:1;text-transform:uppercase;font-size:18px;letter-spacing:1px"><button class="btn pri" id="gLoginBtn">Vào học</button></div>
+    <p class="small" id="gLoginMsg" style="margin:8px 0 0"></p>
+  </div>
   <div class="card" id="gReg">
-    <h2>Đăng ký học</h2>
-    <p class="muted small">Nhập họ và tên. Bạn nhận mã học viên ngay, vào học sau khi được duyệt.</p>
+    <h2>Lần đầu? Đăng ký học</h2>
+    <p class="muted small">Nhập họ và tên → nhận mã học viên ngay → người phụ trách duyệt (thường trong ngày) → mở lại link để vào học.</p>
     <input type="text" id="gName" maxlength="60" autocomplete="name" placeholder="Họ và tên, ví dụ: Nguyễn Ngọc Anh">
     <p class="small" id="gRegMsg" style="color:var(--red)"></p>
     <button class="btn pri big" id="gRegBtn">Gửi đăng ký</button>
-  </div>
-  <div class="card" id="gLogin">
-    <h2>Đã có mã học viên?</h2>
-    <div class="row"><input type="text" id="gCode" maxlength="8" autocomplete="off" placeholder="Ví dụ: HV2601" style="flex:1;text-transform:uppercase"><button class="btn pri" id="gLoginBtn">Vào học</button></div>
-    <p class="small" id="gLoginMsg"></p>
   </div>
   <div class="card" id="gWait" hidden>
     <h2 id="gWaitT">Đang chờ duyệt</h2>
@@ -221,6 +226,8 @@ td,th{border-bottom:1px solid var(--line);padding:7px 4px;text-align:left}
     <h2>Tiến độ của bạn</h2>
     <div class="stat" id="pStat"></div>
   </div>
+  <div class="card"><h3 style="margin-top:0">📈 Bạn đang lên tay</h3><div id="pGrow" class="small"></div></div>
+  <div class="card"><h3 style="margin-top:0">🎯 Chữ bạn hay đọc sai</h3><div id="pErrs" class="small"></div></div>
   <div class="card"><h3 style="margin-top:0">Huy hiệu</h3><div class="badges" id="pBadges"></div></div>
   <div class="card"><h3 style="margin-top:0">Lộ trình 35 ngày</h3><div class="days" id="pDays"></div></div>
   <div class="card"><h3 style="margin-top:0">Các buổi gần đây</h3><div id="pHist"></div></div>
@@ -468,6 +475,24 @@ const LESSONS = [
  goal:"Giữ bình tĩnh, giọng vững, biến sự cố thành khoảnh khắc thân thiện.",
  tips:["Không nói nhanh khi có sự cố, hạ tốc độ, mỉm cười.","Câu đùa nhẹ nhàng, không đổ lỗi."],
  tx:"Thưa quý vị, có vẻ như chiếc micro của chúng ta cũng đang hồi hộp không kém ca sĩ. Trong lúc đội kỹ thuật chuẩn bị lại, mời quý vị cùng nhìn lên màn hình, nơi lưu lại những khoảnh khắc đẹp nhất của cả năm vừa qua. Và chỉ một phút nữa thôi, tiết mục đặc biệt sẽ trở lại, hứa hẹn còn bùng nổ hơn. Xin cảm ơn sự kiên nhẫn và tình cảm của quý vị."},
+
+/* bối cảnh MC bổ sung: hoạt náo, phỏng vấn/talkshow, livestream, bế mạc */
+{id:"mc7", m:"mc", lv:2, sp:[160,190], t:"Hoạt náo: khuấy động hội trường",
+ goal:"Năng lượng cao, giọng sáng, nhịp nhanh mà vẫn rõ chữ; kéo khán giả tham gia.",
+ tips:["Nâng tông, cười trong giọng; câu hỏi tương tác lên giọng cuối câu rồi ngừng chờ khán giả đáp.","Đếm ngược “ba, hai, một” to và dứt khoát, mỗi số một nhịp."],
+ tx:"Cả hội trường ơi, mọi người còn năng lượng không nào? Tôi nghe chưa rõ lắm! Nếu mọi người đã sẵn sàng, cho tôi một tràng pháo tay thật lớn! Bây giờ chúng ta sẽ cùng chơi một trò chơi nhỏ. Bên trái hội trường là đội Mặt Trời, bên phải là đội Mặt Trăng. Đội nào hô to và đều hơn sẽ nhận phần quà bí mật từ ban tổ chức. Chuẩn bị nhé: ba, hai, một, hô lên!"},
+{id:"mc8", m:"mc", lv:3, sp:[140,170], t:"Phỏng vấn – talkshow trên sân khấu",
+ goal:"Giới thiệu khách mời có điểm nhấn, đặt câu hỏi mở rõ ràng, chuyển ý tự nhiên.",
+ tips:["Câu hỏi đọc chậm hơn phần giới thiệu, lên giọng nhẹ cuối câu và ngừng 2 nhịp.","Câu chuyển ý “Một câu hỏi cuối…” hạ tốc độ, nhìn về khán giả rồi mới nhìn khách mời."],
+ tx:"Thưa quý vị, khách mời của chúng ta hôm nay là người đã đi từ một nhân viên tư vấn mới trở thành trưởng nhóm của hơn ba mươi tư vấn viên chỉ sau năm năm. Xin chào chị Thảo! Chị có thể chia sẻ, điều gì đã giữ chị ở lại với nghề trong những tháng đầu khó khăn nhất? Cảm ơn chị. Vậy theo chị, một tư vấn viên mới nên làm gì trong chín mươi ngày đầu tiên? Và một câu hỏi cuối dành cho chị: nếu được gửi một lời nhắn đến chính mình của năm năm trước, chị sẽ nói gì?"},
+{id:"mc9", m:"mc", lv:3, sp:[160,190], t:"Livestream giới thiệu chương trình",
+ goal:"Nói chuyện thân thiện với người xem qua màn hình, gọi tên người bình luận, giữ nhịp liên tục.",
+ tips:["Nhìn thẳng ống kính, nói như với một người bạn; không đọc đều đều như bản tin.","Nghề: chỉ giới thiệu chương trình và mời đăng ký tư vấn; không hứa lãi suất, không so sánh hơn thua sản phẩm trên livestream."],
+ tx:"Xin chào cả nhà đang xem livestream! Mình thấy chị Hoa, anh Tuấn và rất nhiều bạn vừa vào rồi, chào mọi người nha. Tối nay mình sẽ cùng nhau nói về một chủ đề mà gia đình nào cũng quan tâm: làm sao để chuẩn bị quỹ học vấn cho con ngay từ bây giờ. Trong ba mươi phút tới, mình sẽ chia sẻ ba cách lập kế hoạch đơn giản. Ai có câu hỏi cứ để lại bình luận, mình sẽ trả lời ngay trên sóng. Và cuối buổi, bạn nào muốn được tư vấn riêng thì để lại số điện thoại theo hướng dẫn trên màn hình nhé!"},
+{id:"mc10", m:"mc", lv:1, sp:[130,160], t:"Bế mạc và cảm ơn",
+ goal:"Tổng kết gọn, cảm ơn đủ các bên theo thứ tự, lời chúc cuối ấm và dứt khoát.",
+ tips:["Thứ tự cảm ơn: lãnh đạo, khách mời, khán giả, ban tổ chức.","Câu chúc cuối chậm lại, câu “Xin trân trọng kính chào” dứt khoát, mỉm cười."],
+ tx:"Kính thưa quý vị, chương trình của chúng ta đến đây đã khép lại. Thay mặt ban tổ chức, xin chân thành cảm ơn quý lãnh đạo, quý khách mời và toàn thể quý vị đã dành thời gian quý báu đồng hành cùng chương trình hôm nay. Xin cảm ơn các anh chị trong ban tổ chức đã chuẩn bị chu đáo cho buổi gặp gỡ này. Kính chúc quý vị sức khỏe, hạnh phúc và thành công. Xin trân trọng kính chào và hẹn gặp lại!"},
 
 /* ---------- KỊCH BẢN MC THỰC TẾ (từ kịch bản của Uyên, 22/11/2026; tên người đã thay bằng tên giả) ---------- */
 /* Nguồn 1: Lễ tốt nghiệp Tư vấn viên mới "Chúng ta cùng tỏa sáng" */
@@ -723,22 +748,27 @@ function showGate(){
   if(ST.loading){$("gWaitT").textContent="Đang tải…";$("gWaitMsg").textContent="Đang kiểm tra mã học viên.";return;}
   const no=ST.status==="Từ chối";
   $("gWaitT").textContent=ST.netErr?"Chưa kết nối được":no?"Đăng ký chưa được chấp nhận":"Đang chờ duyệt";
-  $("gWaitMsg").textContent=ST.netErr?"Kiểm tra mạng rồi bấm Kiểm tra lại.":no?"Vui lòng liên hệ người tạo trang.":`Chào ${ST.name||"bạn"}! Ghi lại mã này. Khi được duyệt, mở lại link và bấm Kiểm tra lại.`;
+  $("gWaitMsg").textContent=ST.netErr?"Kiểm tra mạng rồi bấm Kiểm tra lại.":no?"Vui lòng liên hệ người tạo trang.":`Chào ${ST.name||"bạn"}! Bạn đang ở bước 2/3: chờ người phụ trách duyệt, thường trong ngày. Hãy chụp màn hình hoặc ghi lại mã này. Khi được duyệt, mở lại link và bấm Kiểm tra lại là vào học (bước 3).`;
 }
 $("gRegBtn").onclick=async()=>{
   const name=$("gName").value.trim().replace(/\s+/g," ");
   if(name.split(" ").length<2){$("gRegMsg").textContent="Vui lòng nhập đầy đủ họ và tên.";return;}
-  $("gRegBtn").disabled=true;$("gRegMsg").textContent="";
+  $("gRegBtn").disabled=true;$("gRegBtn").textContent="Đang gửi…";$("gRegMsg").textContent="";setTimeout(()=>{$("gRegBtn").textContent="Gửi đăng ký";},2500);
   try{const r=await gas("api_register",name);S=BLANK();setCode(r.code);ST.status=r.status;ST.name=r.name;save();showGate();}
   catch(e){$("gRegMsg").textContent=(e&&e.message)||"Không gửi được, thử lại sau.";}
   $("gRegBtn").disabled=false;
 };
 $("gLoginBtn").onclick=async()=>{
-  const c=$("gCode").value.toUpperCase().replace(/\s/g,"");$("gLoginMsg").textContent="Đang kiểm tra…";
-  try{if(await gasLogin(c)){$("gLoginMsg").textContent="";ST.netErr=false;route();}else $("gLoginMsg").textContent="Không tìm thấy mã. Mã có dạng HV2601.";}
-  catch(e){$("gLoginMsg").textContent="Không kết nối được, thử lại sau.";}
+  const c=$("gCode").value.toUpperCase().replace(/\s/g,""), msg=$("gLoginMsg"), btn=$("gLoginBtn");
+  if(!/^HV\d{4,6}$/.test(c)){msg.style.color="var(--red)";msg.textContent="Mã chưa đúng dạng: chữ HV + số, ví dụ HV2601.";return;}
+  btn.disabled=true;btn.textContent="Đang kiểm tra…";msg.style.color="";msg.textContent="";
+  try{const r=await gasLogin(c);
+    if(r){ST.netErr=false;route();}
+    else{msg.style.color="var(--red)";msg.textContent="Không tìm thấy mã "+c+". Kiểm tra lại, hoặc đăng ký mới ở dưới.";}}
+  catch(e){msg.style.color="var(--red)";msg.textContent="Không kết nối được. Kiểm tra mạng rồi thử lại.";}
+  btn.disabled=false;btn.textContent="Vào học";
 };
-$("gCheck").onclick=async()=>{$("gCheck").disabled=true;try{ST.netErr=false;if(!(await gasLogin(ST.code))){setCode("");ST.status="";}}catch(e){ST.netErr=true;}$("gCheck").disabled=false;route();};
+$("gCheck").onclick=async()=>{$("gCheck").disabled=true;$("gCheck").textContent="Đang kiểm tra…";setTimeout(()=>{$("gCheck").textContent="Kiểm tra lại";},1500);try{ST.netErr=false;if(!(await gasLogin(ST.code))){setCode("");ST.status="";}}catch(e){ST.netErr=true;}$("gCheck").disabled=false;route();};
 $("gOther").onclick=()=>{setCode("");ST.status="";S=BLANK();try{localStorage.removeItem(KEY);}catch(e){}showGate();};
 
 /* ---------- khảo sát ---------- */
@@ -889,7 +919,7 @@ function stepWarm(b,next,quick){
 }
 /* Bộ “chữ bạn hay đọc sai” lấy từ các buổi trước (lộ trình Thực chiến) */
 function errItem(){
-  const list=(S.errs||[]).slice(0,15), groups={};list.forEach(e=>{groups[e.n]=(groups[e.n]||0)+1;});
+  const list=[...(S.errs||[])].sort((a,b)=>(b.cnt||1)-(a.cnt||1)).slice(0,15), groups={};list.forEach(e=>{groups[e.n]=(groups[e.n]||0)+1;});
   const top=Object.entries(groups).sort((a,b)=>b[1]-a[1])[0];
   const tip=top?(Object.values(ISSUE).find(x=>x.n===top[0])||{}).tip:"";
   return {g:"Lỗi của riêng bạn",t:"Chữ bạn hay đọc sai",tip:(top?`Lỗi hay gặp nhất: ${top[0]}. `:"")+(tip||""),w:list.map(e=>e.w).join(", ")};
@@ -1002,11 +1032,13 @@ IDB.open();
 /* --- màn hình đọc bài (dùng cho buổi tập và bài lẻ) --- */
 function lessonText(L){return L.tx.replace(/\{ten\}/g,firstName());}
 function renderToks(el,toks,mode,onTap,onWord){
-  el.innerHTML="";el.className="reader"+(mode==="mark"?" mark":"");
+  const easy=!!S.easy&&el.id==="pText";
+  el.innerHTML="";el.className="reader"+(mode==="mark"?" mark":"")+(easy?" easy":"");
   toks.forEach((t,i)=>{if(t.sp!==undefined){el.appendChild(document.createTextNode(t.sp));return;}
     const s=document.createElement("span");s.className="tk"+(t.red?" red":"");s.textContent=t.d;s.dataset.i=i;
     if(mode==="mark"&&t.w&&t.w.length)s.onclick=()=>{if(onWord){onWord(t);return;}t.red=!t.red;s.classList.toggle("red",t.red);onTap&&onTap();};
-    el.appendChild(s);});
+    el.appendChild(s);
+    if(easy&&t.pause){const m=document.createElement("span");m.className="pmark";m.textContent=t.pause>=700?" //":" /";el.appendChild(m);}});
 }
 function closeSheet(){const w=$("sheetWrap");if(w){recStopSilent();w.remove();}}
 /* --- phân loại lỗi theo giáo trình: điều chỉnh phương ngữ (Diamond Mic) + chuẩn hóa giọng Nam (Coach Lan Anh) --- */
@@ -1048,7 +1080,13 @@ function classify(t){
   return ISSUE.clear;
 }
 let AUTO_LAST=false;
-function feedback(toks,s,sp){
+/* 4 ý máy chưa chấm được → người học tự soi sau khi nghe lại; ý "chưa" có gợi ý sửa */
+const SELF_CHK=[
+ ["Rõ âm cuối","Đọc trọn âm cuối n/ng, t/c, đặc biệt chữ cuối câu; đừng để giọng tắt trước khi hết chữ."],
+ ["Đủ hơi đến cuối câu","Lấy hơi bụng ở dấu chấm, câu dài chia hơi ở dấu phẩy; tập lại bài giữ hơi “sss” ở phần khởi động."],
+ ["Có nhấn nhá, không đều đều","Chọn 1–2 từ khóa mỗi câu để nhấn mạnh hơn; lên giọng nhẹ ở câu hỏi, hạ giọng cuối câu kể."],
+ ["Tốc độ vừa, có ngắt nghỉ","Bật “Dễ nhìn khi nói” để thấy chỗ ngắt: nghỉ nửa nhịp ở /, một nhịp ở //."]];
+function feedback(toks,s,sp,self){
   const reds=toks.map((t,i)=>[t,i]).filter(([t])=>t.red);
   const groups=new Map(); reds.forEach(([t,i])=>{const c=classify(t);if(!groups.has(c.n))groups.set(c.n,{c,items:[]});groups.get(c.n).items.push([t,i]);});
   let h=`<h3>Nhận xét chi tiết</h3>`;
@@ -1066,6 +1104,8 @@ function feedback(toks,s,sp){
     :s.spd>sp[1]?`${s.spd} tiếng/phút, nhanh hơn khung ${sp[0]}–${sp[1]}. Nghỉ nửa nhịp ở dấu phẩy, một nhịp ở dấu chấm, lấy hơi ở dấu chấm.`
     :`${s.spd} tiếng/phút, nằm trong khung ${sp[0]}–${sp[1]}. Tốc độ tốt, giữ nhịp này.`;
   h+=`<p class="small" style="border-top:1px solid var(--line);padding-top:8px"><b>Tốc độ và ngắt nghỉ:</b> ${sp2}</p>`;
+  const bad=(self||[]).map((v,i)=>v==="n"?SELF_CHK[i]:null).filter(Boolean);
+  if(bad.length) h+=`<div class="small" style="border-top:1px solid var(--line);padding-top:8px"><b>Từ phần tự soi:</b>${bad.map(c=>`<div style="margin-top:4px">✗ <b>${c[0]}</b>: ${c[1]}</div>`).join("")}</div>`;
   const top=[...groups.values()].sort((a,b)=>b.items.length-a.items.length)[0];
   h+=`<p class="small"><b>Việc nên làm tiếp:</b> ${reds.length?`luyện hết chữ đỏ, rồi luyện bộ từ “${esc(top.c.n)}” 3 lượt, sau đó bấm Đọc lại cả bài để so điểm.`:s.total>=80?"bài này đã đạt, chuyển sang bài khó hơn trong tab Bài tập.":"đọc lại cả bài, tập trung vào tốc độ."}</p>`;
   return h;
@@ -1085,11 +1125,19 @@ function practice(b,L,onDone){
      <h2 style="margin-top:6px">${esc(L.t)}</h2><p class="small" style="margin:0"><b>Mục tiêu:</b> ${esc(L.goal)}</p>
      <details class="small" style="margin-top:6px"><summary><b>Mẹo đọc bài này</b></summary><ul class="muted" style="margin:4px 0 0;padding-left:18px">${L.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></details></div>
    <div class="card"><div class="row" style="justify-content:space-between"><b id="pHead">Đọc to bài này</b><span class="small muted">${toks.filter(t=>t.w&&t.w.length).length} chữ · ${sp[0]}–${sp[1]} tiếng/phút</span></div>
+     <div class="row" style="margin:6px 0 0;gap:6px"><button class="btn sm" id="fsDown">A−</button><button class="btn sm" id="fsUp">A+</button>
+       <label class="toggle" style="margin-left:4px"><input type="checkbox" id="pEasy" ${S.easy?"checked":""}> Dễ nhìn khi nói (hiện chỗ ngắt / //)</label></div>
      <div id="pText"></div>
      <label class="toggle" id="pPaceL"><input type="checkbox" id="pPace" ${S.pace?"checked":""}> Chữ chạy dẫn nhịp (chạy chậm, theo tốc độ ${sp[0]-20} tiếng/phút)</label>
      <div id="pBox"></div></div>
    <div id="pAfter"></div>`;
   const el=$("pText"), box=$("pBox"), after=$("pAfter");
+  const applyView=()=>{el.style.fontSize=(S.fs||19)+"px";};
+  const rerender=()=>{applyView();renderToks(el,toks,el.classList.contains("mark")?"mark":"view",null,el.classList.contains("mark")?(t=>openWord(t)):null);};
+  $("fsUp").onclick=()=>{S.fs=Math.min(30,(S.fs||19)+2);save();applyView();};
+  $("fsDown").onclick=()=>{S.fs=Math.max(15,(S.fs||19)-2);save();applyView();};
+  $("pEasy").onchange=()=>{S.easy=$("pEasy").checked;save();rerender();};
+  applyView();
   const ready=()=>{
     renderToks(el,toks,"view");$("pHead").textContent="Đọc to bài này";$("pPaceL").hidden=false;after.innerHTML="";
     box.innerHTML=`<div class="stick"><button class="btn rec big" id="pRec">● Ghi âm và đọc</button>
@@ -1122,28 +1170,32 @@ function practice(b,L,onDone){
     $("pHead").textContent="Kết quả – chạm vào chữ đỏ để luyện lại";$("pPaceL").hidden=true;
     renderToks(el,toks,"mark",null,t=>openWord(t));
     box.innerHTML=`${R&&R.url?`<audio controls src="${R.url}"></audio>`:""}
-      <p class="note">${AUTO?"Máy đã nghe bản đọc và <b>tô đỏ những chữ đọc chưa chuẩn</b>. Chạm vào chữ đỏ để luyện lại ngay chữ đó cho đến khi chuẩn. Thấy máy tô nhầm thì chạm vào chữ và chọn “Mình đọc đúng”.":"Máy chưa nghe được giọng trên trình duyệt này, nên <b>bạn tự chấm</b>: nghe lại bản ghi, chạm vào chữ đọc chưa rõ để tô đỏ, rồi luyện lại. (Mở bằng Chrome trên máy tính hoặc Android để máy tự chấm.)"}</p>
+      <p class="note">${AUTO?"Máy đã nghe bản đọc và <b>tô đỏ những chữ đọc chưa chuẩn</b>. Chạm vào chữ đỏ để luyện lại ngay chữ đó cho đến khi chuẩn. Thấy máy tô nhầm thì chạm vào chữ và chọn “Máy nghe nhầm? Bỏ đỏ”.":"Máy chưa nghe được giọng trên trình duyệt này, nên <b>bạn tự chấm</b>: nghe lại bản ghi, chạm vào chữ đọc chưa rõ để tô đỏ, rồi luyện lại. (Mở bằng Chrome trên máy tính hoặc Android để máy tự chấm.)"}</p>
       <div class="scores" id="pSc"></div>
+      <p class="small" style="margin:10px 0 6px"><b>Tự soi thêm khi nghe lại</b> <span class="muted">(máy chưa chấm được mấy ý này – chạm: ✓ đạt / ✗ chưa)</span></p>
+      <div class="chips" id="pChk">${SELF_CHK.map((c,i)=>`<button class="chk ${SELF[i]==="y"?"y":SELF[i]==="n"?"n":""}" data-c="${i}">${SELF[i]==="y"?"✓ ":SELF[i]==="n"?"✗ ":""}${c[0]}</button>`).join("")}</div>
       <div id="pFb"></div>
       <details class="small muted" style="margin-top:8px"><summary>Cách tính điểm</summary>
         <p>• <b>Rõ chữ – 70%</b>: tỉ lệ chữ không bị tô đỏ. Chữ đỏ là chữ đọc sai phụ âm, sai vần, sai dấu, nuốt chữ hoặc bỏ sót.<br>
         • <b>Tốc độ – 30%</b>: số tiếng mỗi phút tính từ độ dài bản ghi, so với khung mục tiêu ${sp[0]}–${sp[1]}. Lệch 1 tiếng/phút trừ 1,5 điểm phần này.<br>
         • Xếp loại: từ 90 Xuất sắc · từ 80 Đạt · từ 65 Khá · dưới 65 Cần luyện lại.<br>
         • Nhóm lỗi lấy theo giáo trình: điều chỉnh phương ngữ (Diamond Mic) và chuẩn hóa giọng miền Nam (Coach Lan Anh).</p></details>`;
-    after.innerHTML=`<button class="btn pri big" id="pFix"></button>
-      <div class="row" style="margin-top:8px"><button class="btn" id="pAgain" style="flex:1">↻ Đọc lại cả bài</button><button class="btn okb" id="pDone" style="flex:1">✓ Hoàn thành</button></div>`;
+    after.innerHTML=`<div class="stick"><button class="btn pri big" id="pFix"></button>
+      <div class="row" style="margin-top:8px"><button class="btn" id="pAgain" style="flex:1">↻ Đọc lại cả bài</button><button class="btn okb" id="pDone" style="flex:1">✓ Hoàn thành</button></div></div>`;
+    $("pChk").querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{const i=+b.dataset.c;SELF[i]=SELF[i]==="y"?"n":SELF[i]==="n"?"":"y";
+      b.className="chk "+(SELF[i]||"");b.textContent=(SELF[i]==="y"?"✓ ":SELF[i]==="n"?"✗ ":"")+SELF_CHK[i][0];upd();});
     upd();
     $("pFix").onclick=()=>{const t=toks.find(x=>x.red);if(t)openWord(t,true);};
     $("pAgain").onclick=()=>{toks=tokenize(text);AUTO=false;ready();window.scrollTo(0,0);};
     $("pDone").onclick=()=>{const s=upd(); saveResult(L,s,R,toks,!SESS||SESS.lib); onDone&&onDone(s);};
   };
-  let AUTO=false;
+  let AUTO=false; const SELF=["","","",""];
   const upd=()=>{
     const s=calcScore(toks,R?R.secs:null,sp);
     if(!$("pSc"))return s;
     const grade=s.total>=90?"Xuất sắc":s.total>=80?"Đạt":s.total>=65?"Khá":"Cần luyện lại";
     $("pSc").innerHTML=`<div><b>${s.total}</b><span>điểm · ${grade}</span></div><div><b>${s.clear}%</b><span>rõ chữ (${s.red} chữ đỏ)</span></div><div><b>${s.spd??"–"}</b><span>tiếng/phút</span></div>`;
-    $("pFb").innerHTML=feedback(toks,s,sp);
+    $("pFb").innerHTML=feedback(toks,s,sp,SELF);
     $("pFb").querySelectorAll("[data-word]").forEach(b=>b.onclick=()=>openWord(toks[+b.dataset.word]));
     $("pFb").querySelectorAll("[data-pron]").forEach(b=>b.onclick=()=>openWordList(b.dataset.pron.split("-").map(Number)));
     $("pFix").textContent=s.red?`Luyện lần lượt ${s.red} chữ đỏ`:"✓ Không còn chữ đỏ";$("pFix").disabled=!s.red;
@@ -1202,7 +1254,9 @@ function practice(b,L,onDone){
 function saveResult(L,s,R,toks,extra){
   // chữ còn đỏ → đưa vào bộ “chữ bạn hay đọc sai” để luyện ở các buổi sau
   if(toks){S.errs=S.errs||[];toks.filter(t=>t.red&&t.w&&t.w.length).forEach(t=>{const w=t.d.replace(/[^\p{L}\p{N}]/gu,"").toLowerCase();
-    if(w&&!S.errs.some(e=>e.w===w))S.errs.unshift({w,n:classify(t).n,at:todayStr()});});S.errs=S.errs.slice(0,40);}
+    if(!w)return; const ex=S.errs.find(e=>e.w===w);
+    if(ex){ex.cnt=(ex.cnt||1)+1;ex.at=todayStr();} else S.errs.unshift({w,n:classify(t).n,at:todayStr(),cnt:1});});
+    S.errs=S.errs.sort((a,b)=>(b.cnt||1)-(a.cnt||1)).slice(0,40);}
   if(extra){addXP(5+Math.round(s.total/10));checkBadges();}
   const o=S.lessons[L.id]||{best:0,n:0}; S.lessons[L.id]={best:Math.max(o.best,s.total),last:s.total,n:o.n+1,at:todayStr()};
   S.hist.unshift({at:todayStr(),id:L.id,t:L.t,score:s.total,clear:s.clear,spd:s.spd}); S.hist=S.hist.slice(0,60);
@@ -1244,6 +1298,17 @@ function renderProg(){
   checkBadges();
   const rk=rankOf(S.xp||0).r;
   $("pStat").insertAdjacentHTML("afterbegin",`<div style="grid-column:1/-1;background:var(--accent-soft)"><b>${rk[2]} ${rk[1]}</b><span class="small muted">${S.xp||0} XP · đã sửa ${S.fixed||0} chữ đỏ</span></div>`);
+  // tiến bộ: bài đã đọc từ 2 lần trở lên, so lần đầu với lần tốt nhất
+  const first={},best={};[...S.hist].reverse().forEach(x=>{if(first[x.id]==null)first[x.id]=x.score;best[x.id]=Math.max(best[x.id]||0,x.score);});
+  const ups=Object.keys(first).filter(k=>S.hist.filter(x=>x.id===k).length>=2&&best[k]>first[k]).map(k=>[S.hist.find(x=>x.id===k).t,first[k],best[k]]).sort((a,b)=>(b[2]-b[1])-(a[2]-a[1])).slice(0,4);
+  const todayN=S.hist.filter(x=>x.at===todayStr()).length;
+  $("pGrow").innerHTML=`<p style="margin:0 0 6px">Hôm nay: <b>${todayN}</b> lần đọc bài · tổng <b>${S.fixed||0}</b> chữ đỏ đã sửa đạt.</p>`+
+    (ups.length?ups.map(u=>`<div>• ${esc(u[0])}: <b>${u[1]} → ${u[2]}</b> điểm (+${u[2]-u[1]})</div>`).join(""):`<p class="muted" style="margin:0">Đọc lại một bài lần thứ 2 để thấy điểm tăng ở đây.</p>`);
+  const er=(S.errs||[]).slice(0,12);
+  $("pErrs").innerHTML=er.length?`<div class="chips">${er.map(e=>`<span class="chip" style="background:var(--red-soft);border-color:var(--red)">${esc(e.w)}${(e.cnt||1)>1?` ×${e.cnt}`:""}</span>`).join("")}</div>
+    <p class="muted" style="margin:6px 0">Nhóm lỗi nhiều nhất: <b>${esc(errItem().tip.split(".")[0].replace("Lỗi hay gặp nhất: ",""))}</b></p><button class="btn pri" id="pErrGo">Luyện riêng các chữ này</button>`
+    :`<p class="muted" style="margin:0">Chưa có. Chữ bị tô đỏ khi đọc bài sẽ được gom về đây để luyện riêng.</p>`;
+  if($("pErrGo"))$("pErrGo").onclick=()=>openSingle(b=>stepWords(b,[0,0],()=>show("prog"),errItem()),"Chữ hay sai");
   $("pBadges").innerHTML=BADGES.map(([k,ic,n])=>`<div class="badge ${S.badges&&S.badges[k]?"":"off"}"><b>${ic}</b>${n}</div>`).join("");
   $("pDays").innerHTML=Array.from({length:35},(_,i)=>`<div class="day ${S.done[i+1]?"done":""} ${i+1===S.cur?"cur":""}">${i+1}</div>`).join("");
   $("pHist").innerHTML=h.length?`<table><thead><tr><th>Ngày</th><th>Bài</th><th>Điểm</th><th>Tốc độ</th><th></th></tr></thead><tbody>${h.slice(0,15).map((x,i)=>`<tr><td>${x.at.slice(5).split("-").reverse().join("/")}</td><td>${esc(x.t)}</td><td><b>${x.score}</b></td><td>${x.spd??"–"}</td><td>${i===h.findIndex(y=>y.id===x.id)?`<button class="btn sm" data-play="${x.id}">▶</button>`:""}</td></tr>`).join("")}</tbody></table><div id="pPlay"></div>`:'<p class="muted small">Chưa có buổi nào. Bắt đầu ở tab Hôm nay nhé!</p>';
