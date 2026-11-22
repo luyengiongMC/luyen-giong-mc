@@ -168,7 +168,7 @@ td,th{border-bottom:1px solid var(--line);padding:7px 4px;text-align:left}
 
 <!-- BUỔI TẬP / BÀI LẺ -->
 <section class="view" id="v-sess">
-  <div class="sbar"><button class="btn sm" id="sExit">✕ Thoát</button><div class="prog"><i id="sProg"></i></div><span class="small muted" id="sStep"></span></div>
+  <div class="sbar"><button class="btn sm" id="sExit">✕ Thoát</button><button class="btn sm" id="sBack" hidden>‹ Bước trước</button><div class="prog"><i id="sProg"></i></div><span class="small muted" id="sStep"></span></div>
   <div id="sBody"></div>
 </section>
 
@@ -318,15 +318,15 @@ const LESSONS = [
  goal:"Tròn môi trước rồi mới mở: “hoa” không đọc thành “ha”, “quy” không thành “wi”.",
  tips:["Đọc chậm phần âm đệm o/u, rồi nối liền.","Kiểm tra bằng gương: môi phải tròn ở đầu tiếng."],
  tx:"Hoàng khoác áo, hoà vào dòng người đi xem hội hoa xuân. Hoa huệ, hoa quỳnh khoe sắc, khách thập phương tuyên dương ban tổ chức chu đáo. Hoàng khuyên em gái luyện tập kiên trì, vì chuyến đi này là phần thưởng quý cho người quyết tâm hoàn thành mục tiêu."},
-{id:"pa9", m:"pa", lv:3, sp:[160,190], t:"Đuôi N – NG và T – C",
+{id:"pa9", m:"pa", lv:3, sp:[150,180], t:"Đuôi N – NG và T – C",
  goal:"Kết thúc âm tiết đúng vị trí lưỡi: n, t đầu lưỡi; ng, c cuống lưỡi.",
  tips:["Cặp luyện: lan – lang, bản – bảng, mát – mác, việt – việc.","Đuôi in, ên, inh, ênh của giọng Nam: giữ khóe miệng kéo ngang."],
  tx:"Anh Thanh làm việc tại ngân hàng, mỗi tháng đều lập bảng kế hoạch cẩn thận. Bản kế hoạch năm nay tập trung vào khách hàng thân thiết, mở rộng mạng lưới, nâng cao chất lượng phục vụ. Cuối buổi họp, anh nhắc mọi người: việc nhỏ cũng phải làm tận tâm, vì uy tín của chi nhánh được xây từng ngày."},
-{id:"pa10", m:"pa", lv:3, sp:[160,190], t:"Vần khó UÔI, ƯƠI, ƯƠM, IÊU",
+{id:"pa10", m:"pa", lv:3, sp:[150,180], t:"Vần khó UÔI, ƯƠI, ƯƠM, IÊU",
  goal:"Đọc trọn nguyên âm đôi, không rút gọn thành âm đơn.",
  tips:["Miền Nam hay đọc “người” gần “ngừi”, “muối” gần “múi”: kéo dài phần đầu của vần.","Đọc chậm từng tiếng trước khi đọc liền câu."],
  tx:"Buổi chiều cuối tuần, mười người bạn cũ hẹn nhau bên bờ suối. Ai cũng tươi cười, kể chuyện tuổi thơ, chuyện nuôi con, chuyện chuyển việc. Gió chiều hiu hiu, mùi cơm nướng thơm lừng, tiếng cười ấm áp. Người nhiều tuổi nhất nói: niềm vui đơn giản nhất là được ngồi bên nhau thế này."},
-{id:"pa11", m:"pa", lv:3, sp:[160,190], t:"Tổng hợp chuẩn giọng miền Nam",
+{id:"pa11", m:"pa", lv:3, sp:[150,180], t:"Tổng hợp chuẩn giọng miền Nam",
  goal:"Giữ chất giọng Nam ấm áp nhưng tròn vành, rõ chữ, không nuốt chữ.",
  tips:["Chú ý: v, r, tr, s, đuôi n/ng, t/c, vần oa/uy, inh/ênh.","Chuẩn miền Nam: dấu ngã đọc như dấu hỏi, không cần cố phân biệt."],
  tx:"Kính thưa quý vị, chương trình tri ân khách hàng năm nay được tổ chức với chủ đề Vững vàng tương lai. Trong suốt một năm qua, quý khách đã tin tưởng đồng hành, cùng chúng tôi xây dựng những kế hoạch tài chính an toàn, bền vững. Sự tin yêu ấy là động lực để toàn thể đội ngũ tiếp tục rèn luyện, phục vụ tận tình và chuyên nghiệp hơn mỗi ngày."},
@@ -378,7 +378,7 @@ const LESSONS = [
  goal:"Đổi sắc thái giữa các tin, dùng câu chuyển gọn, không ngập ngừng.",
  tips:["Bản tin mẫu để luyện đọc, nội dung minh họa.","Giữa hai tin nghỉ 1 nhịp, đổi tông nhẹ."],
  tx:"Kính chào quý vị, mời quý vị theo dõi bản tin sáng. Tin đầu tiên, tuyến xe buýt điện mới chính thức đi vào hoạt động, kết nối khu vực trung tâm với các khu dân cư phía đông thành phố. Tiếp theo là tin giáo dục, nhiều trường học tổ chức ngày hội đọc sách, khuyến khích học sinh dành ít nhất ba mươi phút mỗi ngày để đọc. Và cuối cùng, dự báo thời tiết cuối tuần trời nắng ráo, thuận lợi cho các hoạt động ngoài trời. Cảm ơn quý vị đã theo dõi."},
-{id:"tt6", m:"tt", lv:3, sp:[160,190], t:"Lời dẫn phóng sự: người giữ đò",
+{id:"tt6", m:"tt", lv:3, sp:[150,180], t:"Lời dẫn phóng sự: người giữ đò",
  goal:"Kết hợp giọng tin tức và giọng kể, có hình ảnh, có cảm xúc.",
  tips:["Nội dung minh họa để luyện đọc.","Đoạn mô tả đọc chậm hơn đoạn thông tin."],
  tx:"Hơn hai mươi năm nay, bến đò nhỏ cuối làng vẫn có một người đàn ông lặng lẽ chở khách qua sông. Mỗi ngày, ông dậy từ bốn giờ sáng, lau chiếc đò gỗ, kiểm tra từng chiếc phao. Học trò, người đi chợ, cả những cụ già đi khám bệnh, ai cũng quen tiếng gọi đò của ông. Ông nói, chừng nào cây cầu còn chưa xây xong, chừng đó ông vẫn còn giữ bến."},
@@ -573,7 +573,7 @@ const Q={
  level:{new:"Cơ bản – mới bắt đầu",some:"Trung cấp – đã nói vài lần",pro:"Nâng cao – thường xuyên dẫn, nói"}
 };
 const SPEED={mc:[140,170],video:[160,190],train:[150,180],sale:[140,170],talk:[150,180]};
-const MOD_ORDER={mc:["pa","dc","tt","mc","kb"],video:["pa","dc","th","mc","th"],train:["pa","dc","tt","th","kb"],sale:["pa","dc","th","kb","mc"],talk:["pa","dc","tt","th","kb"]};
+const MOD_ORDER={mc:["pa","dc","tt","mc","kb"],video:["pa","dc","th","mc","tt"],train:["pa","dc","tt","th","kb"],sale:["pa","dc","th","kb","mc"],talk:["pa","dc","tt","th","kb"]};
 const WEEKS=[["Tuần 1","Phát âm tròn vành, rõ chữ"],["Tuần 2","Đọc diễn cảm, giọng ấm"],["Tuần 3","Nhịp, ngắt nghỉ, tốc độ"],["Tuần 4","Thực hành theo mục tiêu"],["Tuần 5","Thực chiến"]];
 const ISSUE_PRON={swallow:[[0,7],[0,6],[2,10]],flat:[[1,0],[1,1],[1,9]],hoinga:[[0,8],[1,5],[1,6]],ln:[[2,7],[2,9]],cons:[[0,0],[0,1],[0,2],[0,3]],final:[[0,4],[0,5]]};
 const TARGET_PRON={nam:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9]],bac:[[0,2],[0,3],[0,8],[2,13],[2,14],[0,1],[0,7],[1,5],[1,6],[2,7],[2,9],[0,9]],keep:[[0,7],[0,4],[0,5],[1,0],[1,1],[0,9]]};
@@ -583,14 +583,24 @@ function pronQueue(p){const seen=new Set(),q=[],add=a=>{const k=a.join("-");if(!
   (p.issues||[]).forEach(i=>(ISSUE_PRON[i]||[]).forEach(add));(TARGET_PRON[p.target]||TARGET_PRON.keep).forEach(add);
   PRON.forEach((G,gi)=>G.items.forEach((_,ii)=>add([gi,ii])));return q;}
 function speedRange(p){const r=SPEED[p.goal]||SPEED.mc;return p.level==="new"?[r[0]-10,r[1]-10]:r;}
+/* Chọn bài cho cả 35 ngày một lần: cấp độ tăng dần (từ tuần 3 lên 1 cấp), ưu tiên bài chưa học, hết bài đúng cấp thì lấy cấp gần nhất */
+let PLAN_CACHE={k:"",days:null};
+function planLessons(p){
+  const k=JSON.stringify([p.goal,p.level]); if(PLAN_CACHE.k===k) return PLAN_CACHE.days;
+  const used=new Set(), days=[];
+  for(let d=1;d<=35;d++){
+    const w=Math.min(4,Math.floor((d-1)/7)), wd=(d-1)%7;
+    const mod=(MOD_ORDER[p.goal]||MOD_ORDER.mc)[w], base=Math.min(3,({new:1,some:2,pro:3}[p.level]||1)+(w>=2?1:0));
+    const all=LESSONS.filter(l=>l.m===mod&&!l.self);
+    const pref=[...all.filter(l=>l.lv>=base).sort((a,b)=>a.lv-b.lv),...all.filter(l=>l.lv<base).sort((a,b)=>b.lv-a.lv)];
+    if(wd===6){days[d]=pref[0];continue;}
+    const L=pref.find(l=>!used.has(l.id))||pref[wd%pref.length]; used.add(L.id); days[d]=L;
+  }
+  PLAN_CACHE={k,days}; return days;
+}
 function dayPlan(d){ // buổi tập ngày d (1..35): 3 bước + kết quả
   const p=prof(), w=Math.min(4,Math.floor((d-1)/7)), wd=(d-1)%7;
-  // cấp độ tăng dần theo tuần: bắt đầu ở cấp đã chọn, từ tuần 3 lên thêm 1 cấp
-  const mod=(MOD_ORDER[p.goal]||MOD_ORDER.mc)[w], base=Math.min(3,({new:1,some:2,pro:3}[p.level]||1)+(w>=2?1:0));
-  let list=LESSONS.filter(l=>l.m===mod&&!l.self&&l.lv>=base).sort((a,b)=>a.lv-b.lv);
-  if(!list.length) list=LESSONS.filter(l=>l.m===mod&&!l.self).sort((a,b)=>b.lv-a.lv);
-  if(!list.length) list=LESSONS.filter(l=>l.m===mod&&!l.self);
-  let lesson=list[wd%list.length];
+  let lesson=planLessons(p)[d];
   if(wd===6){ // ngày ôn: bài điểm thấp nhất trong tuần
     const wk=[];for(let k=d-6;k<d;k++){const L=dayPlan(k).lesson;wk.push(L);}
     lesson=wk.sort((a,b)=>((S.lessons[a.id]||{}).best||0)-((S.lessons[b.id]||{}).best||0))[0];
@@ -672,7 +682,7 @@ function renderHome(){
   $("hTitle").textContent=S.cur>35?"Hoàn thành 35 ngày 🎉":"Ngày "+d+(P.review?" · ôn tập":"");
   $("hWeek").textContent=WEEKS[P.w][0]; $("hTheme").textContent=WEEKS[P.w][1]+" · tốc độ mục tiêu "+speedRange(prof()).join("–")+" tiếng/phút";
   const sess=S.sess&&S.sess.d===d?S.sess.step:0; const G=PRON[P.pron[0]].items[P.pron[1]];
-  const steps=[["Khởi động hơi","Thở bụng và giữ hơi · 3 phút"],["Luyện âm: "+G.t,"Đọc to 3 lượt · 3 phút"],["Đọc bài: "+P.lesson.t,"Ghi âm, nghe lại, sửa chỗ chưa rõ · 6 phút"]];
+  const steps=[["Khởi động","Thở bụng, giữ hơi, ngân “mmm” · 3 phút"],["Luyện âm: "+G.t,"Đọc to danh sách từ 3 lượt: chậm, vừa, nhanh · 3 phút"],["Đọc bài: "+P.lesson.t,"Ghi âm, nghe lại, sửa chỗ chưa rõ · 6 phút"]];
   $("hSteps").innerHTML=steps.map((s,i)=>`<li class="${i<sess?"done":i===sess?"cur":""}"><span class="dot">${i<sess?"✓":i+1}</span><div><b>${esc(s[0])}</b><br><span class="small muted">${s[1]}</span></div></li>`).join("");
   if(doneToday){$("hGo").textContent="Tập tiếp ngày "+d;$("hGo").className="btn big";$("hAfter").textContent="✓ Hôm nay bạn đã tập xong. Mai quay lại để giữ chuỗi ngày!";}
   else{$("hGo").textContent=sess?"Tiếp tục bước "+(sess+1):"Bắt đầu buổi tập · 12 phút";$("hGo").className="btn pri big";$("hAfter").textContent="";}
@@ -687,11 +697,15 @@ function startSession(){
   const step=S.sess&&S.sess.d===d?S.sess.step:0;
   SESS={d,P,step,total:3,score:null}; show("sess"); runStep();
 }
-function setStep(i){SESS.step=i;S.sess={d:SESS.d,step:i};save();runStep();}
+let STEP_AT=0;
+function setStep(i){ // chặn bấm đúp (nút bước sau nằm đúng chỗ nút bước trước)
+  if(Date.now()-STEP_AT<800) return; STEP_AT=Date.now();
+  SESS.step=i;S.sess={d:SESS.d,step:i};save();runStep();window.scrollTo(0,0);}
+$("sBack").onclick=()=>{if(SESS&&!SESS.lib&&SESS.step>0&&SESS.step<3){STEP_AT=0;setStep(SESS.step-1);}};
 function bar(i,n,label){$("sProg").style.width=Math.round(i/n*100)+"%";$("sStep").textContent=label;}
 $("sExit").onclick=()=>{stopAll();show(SESS&&SESS.lib?"lib":"home");};
 function runStep(){
-  stopAll(); const b=$("sBody"), P=SESS.P;
+  stopAll(); const b=$("sBody"), P=SESS.P; $("sBack").hidden=!(SESS.step>0&&SESS.step<3);
   if(SESS.step===0){bar(0,3,"Bước 1/3");stepWarm(b,()=>setStep(1));}
   else if(SESS.step===1){bar(1,3,"Bước 2/3");stepWords(b,P.pron,()=>setStep(2));}
   else if(SESS.step===2){bar(2,3,"Bước 3/3");practice(b,P.lesson,sc=>{SESS.score=sc;setStep(3);});}
@@ -712,38 +726,68 @@ function finishDay(b){
 let TIMERS=[];
 function stopAll(){TIMERS.forEach(t=>{clearInterval(t);clearTimeout(t);});TIMERS=[];closeSheet();recStopSilent();try{speechSynthesis.cancel();}catch(e){}}
 function stepWarm(b,next){
-  b.innerHTML=`<div class="card"><h2>Khởi động hơi</h2><p class="small muted">Đặt tay lên bụng. Hít bằng mũi cho bụng phình, vai không nhô. Làm theo vòng tròn: 3 vòng.</p>
+  b.innerHTML=`<div class="card"><h2>1. Thở bụng (1 phút)</h2>
+    <p class="small">Ngồi hoặc đứng thẳng, vai thả lỏng, đặt một tay lên bụng.</p>
+    <ol class="small" style="margin:0 0 6px;padding-left:20px">
+      <li><b>Hít vào bằng MŨI</b> 4 giây: bụng phình ra dưới tay, vai và ngực không nhô lên.</li>
+      <li><b>Giữ hơi</b> 2 giây, cổ họng thả lỏng.</li>
+      <li><b>Thở ra bằng MIỆNG</b> thật chậm 6 giây, môi chúm tròn như thổi nhẹ ngọn nến: bụng xẹp dần.</li></ol>
+    <p class="small muted">Làm theo vòng tròn: to ra là hít, giữ nguyên là giữ, nhỏ lại là thở ra. 4 vòng.</p>
     <div class="ball" id="wBall">Sẵn sàng</div><button class="btn pri big" id="wStart">Bắt đầu thở</button></div>
-    <div class="card" id="wHold" hidden><h2>Giữ hơi dài</h2><p class="small muted">Hít sâu, rồi thở ra thật chậm qua kẽ răng thành âm “sss” đều, không đứt. Bấm khi bắt đầu, bấm lại khi hết hơi. Mục tiêu trên 25 giây.</p>
+   <div class="card"><h2>2. Giữ hơi dài với âm “sss” (1 phút)</h2>
+    <ol class="small" style="margin:0 0 6px;padding-left:20px">
+      <li><b>Hít sâu bằng MŨI</b> cho bụng phình.</li>
+      <li>Hai hàm răng khép hờ, <b>thở ra bằng MIỆNG qua kẽ răng</b> thành âm “sssss” nhỏ, đều, không đứt, không to nhỏ thất thường.</li>
+      <li>Bấm nút khi bắt đầu, bấm lại khi hết hơi. Làm 2–3 lần.</li></ol>
+    <p class="small muted">Mục tiêu: trên 20 giây. MC tốt thường trên 30 giây. Không cố đến mức gồng cổ.</p>
     <div class="bignum" id="wSec">0,0 giây</div><p class="small" style="text-align:center">Kỷ lục: <b id="wBest">${S.hissBest?S.hissBest.toFixed(1).replace(".",",")+" giây":"–"}</b></p>
     <button class="btn pri big" id="wHoldBtn">Bắt đầu giữ hơi</button></div>
-    <button class="btn big" id="wNext">Tiếp: luyện âm ›</button>`;
+   <div class="card"><h2>3. Làm ấm giọng: ngân “mmm” (30 giây)</h2>
+    <p class="small">Ngậm nhẹ môi, răng không cắn, ngân “mmm” ở giọng nói bình thường như đang “ừm” đồng ý. Cảm thấy môi và mũi hơi rung là đúng. Ngân 3 lần, mỗi lần một hơi. Nếu làm được, thêm rung môi “brrr” như tiếng xe máy, 3 lần.</p>
+    <p class="small muted">Đây là bài khởi động giọng đài NPR hướng dẫn cho phát thanh viên: làm ấm giọng nhẹ nhàng, không mỏi.</p>
+    <div class="bignum" id="mSec">30</div><button class="btn big" id="mStart">Bắt đầu đếm 30 giây</button></div>
+   <button class="btn pri big" id="wNext">Xong khởi động · Tiếp bước 2 ›</button>`;
   $("wNext").onclick=next;
   $("wStart").onclick=()=>{
-    $("wStart").disabled=true; const ball=$("wBall"), ph=[["Hít vào",4,1.35],["Giữ",4,1.35],["Thở ra",8,1]]; let r=1,i=0,left=4;
-    const paint=()=>{ball.innerHTML=`${ph[i][0]}<br>${left}<br><small>vòng ${r}/3</small>`;ball.style.transitionDuration=ph[i][1]+"s";ball.style.transform=`scale(${ph[i][2]})`;};
-    paint(); const t=setInterval(()=>{left--;if(left<=0){i++;if(i>2){i=0;r++;if(r>3){clearInterval(t);ball.textContent="Tốt lắm!";ball.style.transform="scale(1)";$("wHold").hidden=false;$("wHold").scrollIntoView({behavior:"smooth"});return;}}left=ph[i][1];}paint();},1000); TIMERS.push(t);
+    $("wStart").disabled=true; const ball=$("wBall"), ph=[["Hít vào<br>bằng MŨI",4,1.35],["Giữ hơi",2,1.35],["Thở ra<br>bằng MIỆNG",6,1]]; let r=1,i=0,left=4;
+    const paint=()=>{ball.innerHTML=`${ph[i][0]}<br><span style="font-size:28px">${left}</span><br><small>vòng ${r}/4</small>`;ball.style.transitionDuration=ph[i][1]+"s";ball.style.transform=`scale(${ph[i][2]})`;};
+    paint(); const t=setInterval(()=>{left--;if(left<=0){i++;if(i>2){i=0;r++;if(r>4){clearInterval(t);ball.textContent="Tốt lắm!";ball.style.transform="scale(1)";$("wStart").disabled=false;$("wStart").textContent="Thở lại";return;}}left=ph[i][1];}paint();},1000); TIMERS.push(t);
   };
-  let t0=0,raf;
+  let t0=0,iv;
   $("wHoldBtn").onclick=()=>{
     if(!t0){t0=performance.now();$("wHoldBtn").textContent="Hết hơi – bấm dừng";$("wHoldBtn").className="btn rec big";
-      raf=setInterval(()=>$("wSec").textContent=((performance.now()-t0)/1000).toFixed(1).replace(".",",")+" giây",100);TIMERS.push(raf);}
-    else{clearInterval(raf);const s=(performance.now()-t0)/1000;t0=0;$("wHoldBtn").textContent="Thử lại";$("wHoldBtn").className="btn big";
+      iv=setInterval(()=>$("wSec").textContent=((performance.now()-t0)/1000).toFixed(1).replace(".",",")+" giây",100);TIMERS.push(iv);}
+    else{clearInterval(iv);const s=(performance.now()-t0)/1000;t0=0;$("wHoldBtn").textContent="Làm lần nữa";$("wHoldBtn").className="btn pri big";
       if(s>S.hissBest){S.hissBest=s;save();$("wBest").textContent=s.toFixed(1).replace(".",",")+" giây 🎉";}}
   };
+  $("mStart").onclick=()=>{$("mStart").disabled=true;let s=30;$("mSec").textContent=s;const t=setInterval(()=>{s--;$("mSec").textContent=s;if(s<=0){clearInterval(t);$("mSec").textContent="✓";$("mStart").disabled=false;$("mStart").textContent="Làm lại";}},1000);TIMERS.push(t);};
 }
 /* ---------- bước 2: luyện âm ---------- */
 function stepWords(b,pr,next){
   const G=PRON[pr[0]], it=G.items[pr[1]], words=it.w.split(/,\s*/);
-  b.innerHTML=`<div class="card"><span class="pill">${esc(G.g)}</span><h2 style="margin-top:6px">${esc(it.t)}</h2>
-    ${it.tip?`<p class="note">${esc(it.tip)}</p>`:""}
+  const LAPS=[["Lượt 1 – Chậm","Đọc từng từ thật chậm, mở khẩu hình to, dừng khoảng 1 giây giữa các từ."],
+              ["Lượt 2 – Vừa","Đọc với tốc độ nói chuyện bình thường, vẫn tròn vành từng chữ."],
+              ["Lượt 3 – Nhanh","Đọc nhanh hơn một chút nhưng không nuốt chữ. Nên ghi âm lượt này để nghe lại."]];
+  b.innerHTML=`<div class="card"><span class="pill">${esc(G.g)}</span><h2 style="margin-top:6px">Luyện âm: ${esc(it.t)}</h2>
+    <p class="small"><b>Bài này để làm gì?</b> Sửa riêng một âm hay sai trước khi đọc cả bài. Bạn đọc to danh sách từ bên dưới 3 lượt, mỗi lượt một tốc độ.</p>
+    ${it.tip?`<p class="note"><b>Cách đặt miệng:</b> ${esc(it.tip)}</p>`:""}
     <div class="words" id="wWords">${words.map(w=>`<button>${esc(w)}</button>`).join("")}</div>
-    <p class="small muted">Đọc to cả danh sách 3 lượt, mỗi lượt xong thì bấm. Từ nào đọc khó thì chạm để đánh dấu đỏ, rồi đọc riêng các từ đỏ thêm vài lần.</p>
-    <div class="laps" id="wLaps"><button class="btn">Lượt 1: chậm</button><button class="btn">Lượt 2: vừa</button><button class="btn">Lượt 3: nhanh</button></div></div>
-    <button class="btn pri big" id="wNext2" disabled>Tiếp: đọc bài ›</button>`;
+    <p class="small muted">Từ nào đọc khó thì chạm để đánh dấu đỏ, đọc riêng từ đó thêm vài lần.</p></div>
+   <div class="card"><h3 style="margin-top:0" id="lapT"></h3><p class="small" id="lapD"></p>
+    <button class="btn pri big" id="lapBtn"></button>
+    <div class="row" style="margin-top:8px"><button class="btn" id="lapRec" style="flex:1">● Ghi âm để nghe lại</button></div><div id="lapOut"></div></div>
+   <button class="btn pri big" id="wNext2" disabled>Tiếp bước 3: đọc bài ›</button>`;
   $("wWords").querySelectorAll("button").forEach(x=>x.onclick=()=>{x.classList.toggle("hard");x.style.background=x.classList.contains("hard")?"var(--red-soft)":"";x.style.borderColor=x.classList.contains("hard")?"var(--red)":"";});
-  const laps=[...$("wLaps").children]; laps.forEach((x,i)=>x.onclick=()=>{x.classList.add("done");x.textContent="✓ "+x.textContent.replace(/^✓ /,"");if(laps.every(l=>l.classList.contains("done")))$("wNext2").disabled=false;});
-  $("wNext2").onclick=next;
+  let lap=0;
+  const paint=()=>{if(lap>=3){$("lapT").textContent="✓ Xong 3 lượt";$("lapD").textContent="Tốt lắm! Sang bước 3 để đọc cả bài.";$("lapBtn").hidden=true;$("wNext2").disabled=false;return;}
+    $("lapT").textContent=LAPS[lap][0]+` (${lap+1}/3)`;$("lapD").textContent=LAPS[lap][1];$("lapBtn").textContent=`Tôi đã đọc xong ${LAPS[lap][0].toLowerCase()}`;};
+  $("lapBtn").onclick=()=>{lap++;paint();};
+  let REC2=null;
+  $("lapRec").onclick=async()=>{
+    if(!REC2){REC2=await recStart();$("lapRec").textContent="■ Dừng ghi âm";$("lapRec").className="btn okb";$("lapRec").style.flex="1";}
+    else{const r=await recStop();REC2=null;$("lapRec").textContent="● Ghi âm lại";$("lapRec").className="btn";$("lapOut").innerHTML=r&&r.url?`<audio controls src="${r.url}"></audio>`:"";}
+  };
+  paint(); $("wNext2").onclick=next;
 }
 
 /* ===================== ĐỌC BÀI: GHI ÂM → NGHE LẠI → TÔ ĐỎ → LUYỆN LẠI ===================== */
@@ -1053,7 +1097,7 @@ function renderLib(){
   box.querySelectorAll("[data-lv]").forEach(c=>c.onclick=()=>{LIBLV=+c.dataset.lv;renderLib();});
   box.querySelectorAll("[data-id]").forEach(r=>r.onclick=()=>{const L=LESSONS.find(x=>x.id===r.dataset.id);openSingle(b=>practice(b,L,()=>show("lib")),"Bài tập");});
 }
-function openSingle(render,label){SESS={lib:true};show("sess");bar(0,1,label);$("sProg").style.width="0";stopAll();render($("sBody"));}
+function openSingle(render,label){SESS={lib:true};$("sBack").hidden=true;show("sess");bar(0,1,label);$("sProg").style.width="0";stopAll();render($("sBody"));}
 
 /* ===================== TIẾN ĐỘ ===================== */
 function renderProg(){
