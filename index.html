@@ -137,7 +137,7 @@ td,th{border-bottom:1px solid var(--line);padding:7px 4px;text-align:left}
     <h3>1. Bạn luyện giọng chủ yếu để làm gì?</h3><div class="chips" data-q="goal" data-one></div>
     <h3>2. Bạn muốn hướng tới giọng nào?</h3><div class="chips" data-q="target" data-one></div>
     <h3>3. Bạn hay gặp vấn đề nào? (chọn nhiều)</h3><div class="chips" data-q="issues"></div>
-    <h3>4. Kinh nghiệm nói trước đông người</h3><div class="chips" data-q="level" data-one></div>
+    <h3>4. Chọn cấp độ bắt đầu</h3><div class="chips" data-q="level" data-one></div>
     <p class="small" id="qErr" style="color:var(--red)"></p>
     <button class="btn pri big" id="qSave">Tạo lộ trình của tôi</button>
     <button class="btn big" id="qCancel" style="margin-top:8px" hidden>Hủy</button>
@@ -482,7 +482,7 @@ const Q={
  goal:{mc:"Dẫn sự kiện, hội nghị khách hàng",video:"Quay video mạng xã hội",train:"Đào tạo, họp nhóm",sale:"Tư vấn khách hàng 1-1",talk:"Thuyết trình công việc"},
  target:{nam:"Chuẩn miền Nam",bac:"Chuẩn miền Bắc",keep:"Giữ giọng gốc, chỉ cần rõ và hay"},
  issues:{fast:"Nói nhanh, vội",swallow:"Nuốt chữ, dính chữ",breath:"Hụt hơi",thin:"Giọng mỏng, chưa ấm",flat:"Giọng đều đều",hoinga:"Lẫn dấu hỏi và ngã",ln:"Ngọng L và N",cons:"Lẫn v/d, r/g, tr/ch, s/x",final:"Lẫn đuôi n/ng, t/c",nerve:"Run khi nói trước đông người"},
- level:{new:"Mới bắt đầu",some:"Đã nói vài lần",pro:"Thường xuyên dẫn, nói"}
+ level:{new:"Cơ bản – mới bắt đầu",some:"Trung cấp – đã nói vài lần",pro:"Nâng cao – thường xuyên dẫn, nói"}
 };
 const SPEED={mc:[140,170],video:[160,190],train:[150,180],sale:[140,170],talk:[150,180]};
 const MOD_ORDER={mc:["pa","dc","tt","mc","mc"],video:["pa","dc","th","mc","th"],train:["pa","dc","tt","th","th"],sale:["pa","dc","th","th","mc"],talk:["pa","dc","tt","th","th"]};
@@ -497,8 +497,10 @@ function pronQueue(p){const seen=new Set(),q=[],add=a=>{const k=a.join("-");if(!
 function speedRange(p){const r=SPEED[p.goal]||SPEED.mc;return p.level==="new"?[r[0]-10,r[1]-10]:r;}
 function dayPlan(d){ // buổi tập ngày d (1..35): 3 bước + kết quả
   const p=prof(), w=Math.min(4,Math.floor((d-1)/7)), wd=(d-1)%7;
-  const mod=(MOD_ORDER[p.goal]||MOD_ORDER.mc)[w], base=p.level==="pro"?2:1;
+  // cấp độ tăng dần theo tuần: bắt đầu ở cấp đã chọn, từ tuần 3 lên thêm 1 cấp
+  const mod=(MOD_ORDER[p.goal]||MOD_ORDER.mc)[w], base=Math.min(3,({new:1,some:2,pro:3}[p.level]||1)+(w>=2?1:0));
   let list=LESSONS.filter(l=>l.m===mod&&!l.self&&l.lv>=base).sort((a,b)=>a.lv-b.lv);
+  if(!list.length) list=LESSONS.filter(l=>l.m===mod&&!l.self).sort((a,b)=>b.lv-a.lv);
   if(!list.length) list=LESSONS.filter(l=>l.m===mod&&!l.self);
   let lesson=list[wd%list.length];
   if(wd===6){ // ngày ôn: bài điểm thấp nhất trong tuần
@@ -648,10 +650,10 @@ function stepWords(b,pr,next){
   b.innerHTML=`<div class="card"><span class="pill">${esc(G.g)}</span><h2 style="margin-top:6px">${esc(it.t)}</h2>
     ${it.tip?`<p class="note">${esc(it.tip)}</p>`:""}
     <div class="words" id="wWords">${words.map(w=>`<button>${esc(w)}</button>`).join("")}</div>
-    <p class="small muted">${VOICE?"Chạm vào từ để nghe máy đọc mẫu (giọng máy, chỉ để tham khảo). ":""}Đọc to cả danh sách 3 lượt, mỗi lượt xong thì bấm.</p>
+    <p class="small muted">Đọc to cả danh sách 3 lượt, mỗi lượt xong thì bấm. Từ nào đọc khó thì chạm để đánh dấu đỏ, rồi đọc riêng các từ đỏ thêm vài lần.</p>
     <div class="laps" id="wLaps"><button class="btn">Lượt 1: chậm</button><button class="btn">Lượt 2: vừa</button><button class="btn">Lượt 3: nhanh</button></div></div>
     <button class="btn pri big" id="wNext2" disabled>Tiếp: đọc bài ›</button>`;
-  $("wWords").querySelectorAll("button").forEach(x=>x.onclick=()=>say(x.textContent));
+  $("wWords").querySelectorAll("button").forEach(x=>x.onclick=()=>{x.classList.toggle("hard");x.style.background=x.classList.contains("hard")?"var(--red-soft)":"";x.style.borderColor=x.classList.contains("hard")?"var(--red)":"";});
   const laps=[...$("wLaps").children]; laps.forEach((x,i)=>x.onclick=()=>{x.classList.add("done");x.textContent="✓ "+x.textContent.replace(/^✓ /,"");if(laps.every(l=>l.classList.contains("done")))$("wNext2").disabled=false;});
   $("wNext2").onclick=next;
 }
@@ -757,18 +759,21 @@ function practice(b,L,onDone){
      <ul class="small muted" style="margin:4px 0 0;padding-left:18px">${L.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
    <div class="card"><div class="row" style="justify-content:space-between"><b id="pHead">Đọc to bài này</b><span class="small muted">${toks.filter(t=>t.w&&t.w.length).length} chữ · ${sp[0]}–${sp[1]} tiếng/phút</span></div>
      <div id="pText"></div>
-     <label class="toggle" id="pPaceL"><input type="checkbox" id="pPace" checked> Tô sáng chữ theo tốc độ mục tiêu khi đọc</label>
+     <label class="toggle" id="pPaceL"><input type="checkbox" id="pPace" ${S.pace?"checked":""}> Chữ chạy dẫn nhịp (chạy chậm, theo tốc độ ${sp[0]-20} tiếng/phút)</label>
      <div id="pBox"></div></div>
    <div id="pAfter"></div>`;
   const el=$("pText"), box=$("pBox"), after=$("pAfter");
   const ready=()=>{
     renderToks(el,toks,"view");$("pHead").textContent="Đọc to bài này";$("pPaceL").hidden=false;after.innerHTML="";
     box.innerHTML=`<div class="stick"><button class="btn rec big" id="pRec">● Ghi âm và đọc</button>
-      ${VOICE?`<button class="btn big" id="pHear" style="margin-top:8px">🔈 Nghe máy đọc mẫu</button>`:""}</div>`;
-    $("pRec").onclick=go; if(VOICE)$("pHear").onclick=()=>say(text);
+      <div id="pPrev"></div></div>`;
+    $("pRec").onclick=go; $("pPace").onchange=()=>{S.pace=$("pPace").checked;save();};
+    IDB.get(L.id).then(b=>{if(b&&$("pPrev"))$("pPrev").innerHTML=`<p class="small muted" style="margin:10px 0 0">Nghe lại lần đọc trước của bạn để so sánh sau khi đọc lần này:</p><audio controls src="${URL.createObjectURL(b)}"></audio>`;});
   };
   const go=async()=>{
-    $("pRec").disabled=true; R=await recStart();
+    $("pRec").disabled=true;
+    for(let c=3;c>0;c--){$("pRec").textContent="Chuẩn bị… "+c;await new Promise(r=>{const t=setTimeout(r,1000);TIMERS.push(t);});}
+    R=await recStart();
     if(R.err==="mic"){box.insertAdjacentHTML("afterbegin",`<p class="small" style="color:var(--red)">Không mở được micro. Hãy cho phép micro, hoặc mở link bằng Safari/Chrome thay vì trong Zalo/Messenger. Bạn vẫn có thể đọc to rồi tự chấm.</p>`);}
     $("pHead").textContent="Đang ghi âm… đọc to, rõ";$("pPaceL").hidden=true;
     box.innerHTML=`<div class="stick"><div class="row" style="justify-content:center;margin-bottom:6px"><span class="pill" id="pClock">0:00</span></div><button class="btn okb big" id="pStop">■ Đọc xong</button></div>`;
@@ -777,7 +782,7 @@ function practice(b,L,onDone){
     $("pStop").onclick=async()=>{$("pStop").disabled=true;TIMERS.forEach(t=>{clearInterval(t);clearTimeout(t);});TIMERS=[];const r=await recStop();R=r||R;review(true);};
   };
   const pace=()=>{ // tô sáng lần lượt theo tốc độ mục tiêu để người đọc giữ nhịp
-    const msPer=60000/((sp[0]+sp[1])/2); const spans=[...el.querySelectorAll(".tk")]; let k=0;
+    const msPer=60000/(sp[0]-20); // chạy chậm hơn mức tối thiểu để người mới theo kịp const spans=[...el.querySelectorAll(".tk")]; let k=0;
     const stepPace=()=>{if(k>0)spans[k-1].className="tk read";if(k>=spans.length)return;const t=toks[+spans[k].dataset.i];spans[k].className="tk now";k++;
       TIMERS.push(setTimeout(stepPace,msPer*Math.max(1,t.w.length)+t.pause));};
     stepPace();
@@ -809,9 +814,8 @@ function practice(b,L,onDone){
       $("pHead").textContent=`Luyện lại câu ${i+1}/${sents.length}`;$("pPaceL").hidden=true;
       el.className="reader";el.innerHTML="";sub.forEach(t=>{if(t.sp!==undefined){el.appendChild(document.createTextNode(t.sp));return;}const s=document.createElement("span");s.className="tk"+(t.red?" red":"");s.textContent=t.d;el.appendChild(s);});
       box.innerHTML=`<p class="small muted">Đọc chậm, mở khẩu hình ở chữ đỏ. Ghi âm, nghe lại, thấy ổn thì bấm Đã ổn.</p>
-        <div class="row"><button class="btn rec" id="dRec" style="flex:1">● Ghi âm câu này</button>${VOICE?`<button class="btn" id="dHear">🔈 Mẫu</button>`:""}</div><div id="dOut"></div>`;
+        <div class="row"><button class="btn rec" id="dRec" style="flex:1">● Ghi âm câu này</button></div><div id="dOut"></div>`;
       after.innerHTML=`<div class="row"><button class="btn" id="dSkip" style="flex:1">Bỏ qua</button><button class="btn okb" id="dOk" style="flex:1">✓ Đã ổn</button></div>`;
-      if(VOICE)$("dHear").onclick=()=>say(txt,0.85);
       $("dRec").onclick=async()=>{
         if(!DR){DR=await recStart();$("dRec").textContent="■ Dừng";$("dRec").className="btn okb";$("dRec").style.flex="1";}
         else{const r=await recStop();DR=null;$("dRec").textContent="● Ghi âm lại";$("dRec").className="btn rec";
@@ -833,7 +837,7 @@ function saveResult(L,s,R){
 }
 
 /* ===================== BÀI TẬP (THƯ VIỆN) ===================== */
-let LIBM="pa";
+let LIBM="pa", LIBLV=0;
 function renderLib(){
   const tabs=[["warm","Khởi động"],["words","Từ luyện âm"],...MODULES.map(m=>[m.id,m.n]),["mine","Bài của tôi"]];
   $("libChips").innerHTML=tabs.map(([k,n])=>`<button class="chip ${k===LIBM?"on":""}" data-k="${k}">${n}</button>`).join("");
@@ -848,8 +852,12 @@ function renderLib(){
     $("mineGo").onclick=()=>{const tx=$("mineTx").value.trim();if(!tx)return;S.mine=tx;save();
       openSingle(b=>practice(b,{id:"mine",m:"th",lv:2,t:"Bài của tôi",goal:"Đọc trôi chảy, rõ chữ, đúng nhịp kịch bản của bạn.",tips:["Đánh dấu chỗ cần ngừng bằng dấu phẩy, dấu chấm trong kịch bản."],tx,sp:speedRange(prof())},()=>show("lib")),"Bài của tôi");};return;}
   const mod=MODULES.find(m=>m.id===LIBM);
-  box.innerHTML=`<p class="small muted" style="margin-top:0">${esc(mod.d)}</p>`+LESSONS.filter(l=>l.m===LIBM).map(l=>{const sc=S.lessons[l.id];
-    return `<div class="lrow" data-id="${l.id}"><div><b>${esc(l.t)}</b><br><span class="small muted">${LEVELS[l.lv]}</span></div>${sc?`<span class="pill ${sc.best>=80?"ok":""}">${sc.best} điểm</span>`:"<span>›</span>"}</div>`;}).join("");
+  const lvChips=[[0,"Tất cả"],[1,"Cơ bản"],[2,"Trung cấp"],[3,"Nâng cao"]].map(([v,n])=>`<button class="chip ${v===LIBLV?"on":""}" data-lv="${v}">${n}</button>`).join("");
+  const row=l=>{const sc=S.lessons[l.id];return `<div class="lrow" data-id="${l.id}"><div><b>${esc(l.t)}</b><br><span class="small muted">${esc(l.goal)}</span></div>${sc?`<span class="pill ${sc.best>=80?"ok":""}">${sc.best}đ</span>`:"<span>›</span>"}</div>`;};
+  box.innerHTML=`<p class="small muted" style="margin-top:0">${esc(mod.d)}</p><div class="chips">${lvChips}</div>`+
+    [1,2,3].filter(lv=>!LIBLV||lv===LIBLV).map(lv=>{const ls=LESSONS.filter(l=>l.m===LIBM&&l.lv===lv);
+      return ls.length?`<h3>${"●".repeat(lv)}${"○".repeat(3-lv)} ${LEVELS[lv]} (${ls.length} bài)</h3>`+ls.map(row).join(""):"";}).join("");
+  box.querySelectorAll("[data-lv]").forEach(c=>c.onclick=()=>{LIBLV=+c.dataset.lv;renderLib();});
   box.querySelectorAll("[data-id]").forEach(r=>r.onclick=()=>{const L=LESSONS.find(x=>x.id===r.dataset.id);openSingle(b=>practice(b,L,()=>show("lib")),"Bài tập");});
 }
 function openSingle(render,label){SESS={lib:true};show("sess");bar(0,1,label);$("sProg").style.width="0";stopAll();render($("sBody"));}
