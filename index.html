@@ -184,6 +184,7 @@ td,th{border-bottom:1px solid var(--line);padding:7px 4px;text-align:left}
     <div class="row" style="justify-content:space-between"><h2 id="hTitle">Ngày 1</h2><span class="pill" id="hWeek"></span></div>
     <p class="small muted" id="hTheme" style="margin:0"></p>
     <ul class="steps" id="hSteps"></ul>
+    <div class="row" id="hUse" style="margin:0 0 10px;gap:6px"></div>
     <button class="btn pri big" id="hGo">Bắt đầu buổi tập</button>
     <p class="small muted" id="hAfter" style="text-align:center;margin:8px 0 0"></p>
   </div>
@@ -236,8 +237,7 @@ td,th{border-bottom:1px solid var(--line);padding:7px 4px;text-align:left}
     <p class="small muted" id="pStore"></p>
     <div class="row">
       <button class="btn" id="pRedo">Làm lại khảo sát</button>
-      <button class="btn" id="pExport">Sao lưu</button>
-      <label class="btn" style="display:inline-flex;align-items:center">Khôi phục<input type="file" id="pImport" accept=".json" hidden></label>
+      <button class="btn" id="pMine">🎤 Kịch bản của tôi</button>
       <button class="btn" id="pLogout" hidden>Đăng xuất</button>
     </div>
     <p class="small" id="pMsg"></p>
@@ -815,7 +815,12 @@ function renderHome(){
   const sess=S.sess&&S.sess.d===d?S.sess.step:0; const G=PRON[P.pron[0]].items[P.pron[1]];
   const steps=[["Khởi động",P.fast?"Thở bụng và ngân “mmm” · 1 phút":"Thở bụng, giữ hơi, ngân “mmm” · 3 phút"],
     P.ownErr?["Sửa chữ bạn hay đọc sai",`${Math.min(15,S.errs.length)} chữ lấy từ các buổi trước · 3 phút`]:["Luyện âm: "+G.t,"Đọc to danh sách từ 3 lượt · 3 phút"],
-    ["Đọc bài: "+P.lesson.t,"Ghi âm, máy chấm, sửa chữ đỏ · 6 phút"]];
+    S.useMine&&mineArr().length?["Đọc kịch bản của bạn: "+(nextMinePart()||P.lesson).t,"Giảng viên nhắc trước, chấm điểm, sửa chữ đỏ · 6 phút"]:["Đọc bài: "+P.lesson.t,"Ghi âm, máy chấm, sửa chữ đỏ · 6 phút"]];
+  // chọn bài đọc ở bước 3: bài của lộ trình hay kịch bản riêng
+  $("hUse").innerHTML=mineArr().length?`<span class="small muted">Bước 3 đọc:</span> <button class="chip ${S.useMine?"":"on"}" data-u="0">Bài lộ trình</button><button class="chip ${S.useMine?"on":""}" data-u="1">🎤 Kịch bản của tôi</button>`
+    :`<button class="linkbtn" id="hAddMine" style="text-decoration:none">🎤 <u>Thêm kịch bản của bạn</u> để luyện đúng bài bạn sắp dẫn</button>`;
+  $("hUse").querySelectorAll("[data-u]").forEach(c=>c.onclick=()=>{S.useMine=c.dataset.u==="1";S.sess=null;save();renderHome();});
+  if($("hAddMine"))$("hAddMine").onclick=()=>{LIBM="mine";show("lib");};
   // chọn lộ trình
   const tr=prof().track==="fast"?"fast":"full";
   $("hTrack").innerHTML=`<button class="chip ${tr==="full"?"on":""}" data-tr="full">Đầy đủ từ cơ bản</button><button class="chip ${tr==="fast"?"on":""}" data-tr="fast">⚡ Thực chiến (học vượt)</button>`;
@@ -836,6 +841,7 @@ $("remGo").onclick=()=>addReminder(+$("remT").value);
 let SESS=null;
 function startSession(){
   const d=Math.min(S.cur,35), P=dayPlan(d);
+  if(S.useMine&&mineArr().length){const ml=nextMinePart();if(ml)P.lesson=ml;} // bước 3 dùng kịch bản riêng (phần điểm thấp nhất)
   const step=S.sess&&S.sess.d===d?S.sess.step:0;
   SESS={d,P,step,total:3,score:null}; show("sess"); runStep();
 }
@@ -998,10 +1004,12 @@ function say(t,rate){if(!VOICE)return;try{speechSynthesis.cancel();const u=new S
 const SRC=window.SpeechRecognition||window.webkitSpeechRecognition;
 let REC=null;
 function askMic(){return navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});}
-async function recStart(pre){ // pre: micro đã xin quyền sẵn (để hộp xin quyền hiện trước khi đếm ngược)
+async function recStart(pre,ac){ // pre: micro đã xin quyền sẵn; ac: AudioContext tạo ngay lúc bấm (để đo có tiếng nói thật)
   const R={chunks:[],heard:"",t0:Date.now(),blob:null,url:null,err:""};
   try{
     R.stream=pre||await askMic();
+    if(ac){try{const an=ac.createAnalyser();an.fftSize=1024;ac.createMediaStreamSource(R.stream).connect(an);const buf=new Float32Array(an.fftSize);
+      R.ac=ac;R.vn=0;R.vt=0;R.viv=setInterval(()=>{an.getFloatTimeDomainData(buf);let s=0;for(let i=0;i<buf.length;i++)s+=buf[i]*buf[i];R.vn++;if(Math.sqrt(s/buf.length)>0.015)R.vt++;},100);}catch(e){}}
     const mime=["audio/mp4","audio/webm;codecs=opus","audio/webm"].find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(m))||"";
     R.mr=new MediaRecorder(R.stream,mime?{mimeType:mime}:undefined);
     R.mr.ondataavailable=e=>e.data.size&&R.chunks.push(e.data); R.mr.start(250);
@@ -1016,13 +1024,15 @@ async function recStart(pre){ // pre: micro đã xin quyền sẵn (để hộp 
 }
 function recStop(){return new Promise(res=>{
   const R=REC; if(!R){res(null);return;} REC=null; R.on=false; R.secs=(Date.now()-R.t0)/1000;
+  // số giây thật sự có tiếng nói (null nếu trình duyệt không cho đo)
+  if(R.viv){clearInterval(R.viv);R.voiced=R.ac&&R.ac.state==="running"&&R.vn>5?R.vt*0.1:null;try{R.ac.close();}catch(e){}}
   try{R.sr&&R.sr.stop();}catch(e){}
   const fin=()=>{R.stream&&R.stream.getTracks().forEach(t=>t.stop());
     if(R.chunks.length){R.blob=new Blob(R.chunks,{type:R.mr.mimeType||"audio/mp4"});R.url=URL.createObjectURL(R.blob);}
     setTimeout(()=>res(R),R.sr?900:0);}; // chờ máy nghe trả nốt chữ cuối
   if(R.mr&&R.mr.state!=="inactive"){R.mr.onstop=fin;R.mr.stop();}else fin();
 });}
-function recStopSilent(){if(REC){const R=REC;REC=null;R.on=false;try{R.sr&&R.sr.stop();}catch(e){}try{R.mr&&R.mr.state!=="inactive"&&R.mr.stop();}catch(e){}R.stream&&R.stream.getTracks().forEach(t=>t.stop());}}
+function recStopSilent(){if(REC){const R=REC;REC=null;R.on=false;if(R.viv){clearInterval(R.viv);try{R.ac.close();}catch(e){}}try{R.sr&&R.sr.stop();}catch(e){}try{R.mr&&R.mr.state!=="inactive"&&R.mr.stop();}catch(e){}R.stream&&R.stream.getTracks().forEach(t=>t.stop());}}
 /* --- lưu bản ghi gần nhất của mỗi bài --- */
 const IDB={db:null,open(){return new Promise(r=>{try{const q=indexedDB.open("lgmc2",1);q.onupgradeneeded=()=>q.result.createObjectStore("rec");q.onsuccess=()=>{this.db=q.result;r();};q.onerror=()=>r();}catch(e){r();}});},
   put(k,v){try{this.db&&this.db.transaction("rec","readwrite").objectStore("rec").put(v,k);}catch(e){}},
@@ -1110,14 +1120,20 @@ function feedback(toks,s,sp,self){
   h+=`<p class="small"><b>Việc nên làm tiếp:</b> ${reds.length?`luyện hết chữ đỏ, rồi luyện bộ từ “${esc(top.c.n)}” 3 lượt, sau đó bấm Đọc lại cả bài để so điểm.`:s.total>=80?"bài này đã đạt, chuyển sang bài khó hơn trong tab Bài tập.":"đọc lại cả bài, tập trung vào tốc độ."}</p>`;
   return h;
 }
-function calcScore(toks,secs,sp){
+function calcScore(toks,secs,sp,voiced){
   const sc=toks.filter(t=>t.w&&t.w.length),n=sc.length,red=sc.filter(t=>t.red).length;
   const syl=sc.reduce((a,t)=>a+t.w.length,0);
+  // Căn cứ trước khi chấm: phải có bản ghi đủ dài và có tiếng nói thật, nếu không thì không chấm
+  const minSecs=syl/(sp[1]+60)*60; let reason="";
+  if(secs==null) reason="Chưa có bản ghi âm nên chưa chấm được.";
+  else if(secs<minSecs) reason=`Bản ghi chỉ ${Math.round(secs)} giây, trong khi đọc hết bài cần ít nhất khoảng ${Math.round(minSecs)} giây. Hãy đọc hết bài.`;
+  else if(voiced!=null&&voiced<minSecs*0.6) reason=`Máy gần như không nghe thấy tiếng đọc (chỉ khoảng ${Math.round(voiced)} giây có tiếng). Đọc to, rõ, để điện thoại gần miệng hơn.`;
+  if(reason) return {total:0,clear:0,spd:null,red,n,short:true,valid:false,reason};
   const clear=Math.round((n-red)/n*100);
   let spd=secs?Math.round(syl/Math.max(1,secs-0.5)*60):null, short=false;
   if(spd!=null&&spd>300){spd=null;short=true;} // bản ghi ngắn hơn nhiều so với bài: chưa đọc hết
   let spdScore=short?0:100;if(spd!=null){const off=spd<sp[0]?sp[0]-spd:spd>sp[1]?spd-sp[1]:0;spdScore=Math.max(0,100-off*1.5);}
-  return {total:Math.round(clear*0.7+spdScore*0.3),clear,spd,red,n,short};
+  return {total:Math.round(clear*0.7+spdScore*0.3),clear,spd,red,n,short,valid:true};
 }
 function practice(b,L,onDone){
   const sp=L.sp||speedRange(prof()), text=lessonText(L); let toks=tokenize(text), R=null;
@@ -1146,10 +1162,11 @@ function practice(b,L,onDone){
     IDB.get(L.id).then(b=>{if(b&&$("pPrev"))$("pPrev").innerHTML=`<p class="small muted" style="margin:10px 0 0">Nghe lại lần đọc trước của bạn để so sánh sau khi đọc lần này:</p><audio controls src="${URL.createObjectURL(b)}"></audio>`;});
   };
   const go=async()=>{
+    let ac=null; try{ac=new (window.AudioContext||window.webkitAudioContext)();ac.resume();}catch(e){} // tạo ngay trong cú bấm (iPhone yêu cầu)
     $("pRec").disabled=true; $("pRec").textContent="Đang mở micro…";
     let mic=null; try{mic=await askMic();}catch(e){} // xin quyền micro trước, rồi mới đếm ngược
     for(let c=3;c>0;c--){$("pRec").textContent="Chuẩn bị… "+c;await new Promise(r=>{const t=setTimeout(r,1000);TIMERS.push(t);});}
-    R=await recStart(mic);
+    R=await recStart(mic,ac);
     $("pHead").textContent=R.err==="mic"?"Không mở được micro – vẫn đọc to rồi tự chấm":"Đang ghi âm… đọc to, rõ";$("pPaceL").hidden=true;
     box.innerHTML=`${R.err==="mic"?`<p class="small" style="color:var(--red)">Hãy cho phép micro (Cài đặt › Safari › Micrô), hoặc mở link bằng Safari/Chrome thay vì trong Zalo/Messenger.</p>`:""}<div class="stick"><div class="row" style="justify-content:center;margin-bottom:6px"><span class="pill" id="pClock">0:00</span></div><button class="btn okb big" id="pStop">■ Đọc xong</button></div>`;
     const t0=Date.now();TIMERS.push(setInterval(()=>{const c=$("pClock");if(c)c.textContent=fmt((Date.now()-t0)/1000);},500));
@@ -1184,17 +1201,23 @@ function practice(b,L,onDone){
       <div class="row" style="margin-top:8px"><button class="btn" id="pAgain" style="flex:1">↻ Đọc lại cả bài</button><button class="btn okb" id="pDone" style="flex:1">✓ Hoàn thành</button></div></div>`;
     $("pChk").querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{const i=+b.dataset.c;SELF[i]=SELF[i]==="y"?"n":SELF[i]==="n"?"":"y";
       b.className="chk "+(SELF[i]||"");b.textContent=(SELF[i]==="y"?"✓ ":SELF[i]==="n"?"✗ ":"")+SELF_CHK[i][0];upd();});
-    upd();
-    $("pFix").onclick=()=>{const t=toks.find(x=>x.red);if(t)openWord(t,true);};
     $("pAgain").onclick=()=>{toks=tokenize(text);AUTO=false;ready();window.scrollTo(0,0);};
-    $("pDone").onclick=()=>{const s=upd(); saveResult(L,s,R,toks,!SESS||SESS.lib); onDone&&onDone(s);};
+    $("pDone").onclick=()=>{const s=upd(); if(!s.valid)return; saveResult(L,s,R,toks,!SESS||SESS.lib); onDone&&onDone(s);};
+    upd();
   };
   let AUTO=false; const SELF=["","","",""];
   const upd=()=>{
-    const s=calcScore(toks,R?R.secs:null,sp);
+    const s=calcScore(toks,R?R.secs:null,sp,R?R.voiced:null);
     if(!$("pSc"))return s;
+    if(!s.valid){
+      $("pSc").innerHTML=`<div style="grid-column:1/-1;background:var(--red-soft)"><b style="font-size:20px">Chưa chấm điểm</b><span style="color:var(--red);font-size:14px">${esc(s.reason)}</span></div>`;
+      $("pFb").innerHTML=""; $("pFix").textContent="↻ Đọc lại cả bài để được chấm";$("pFix").disabled=false;$("pFix").onclick=()=>$("pAgain").click();
+      $("pDone").disabled=true; $("pDone").textContent="Chưa thể hoàn thành";
+      renderToks(el,toks,"mark",null,t=>openWord(t)); return s;
+    }
+    $("pDone").disabled=false; $("pDone").textContent="✓ Hoàn thành"; $("pFix").onclick=()=>{const t=toks.find(x=>x.red);if(t)openWord(t,true);};
     const grade=s.total>=90?"Xuất sắc":s.total>=80?"Đạt":s.total>=65?"Khá":"Cần luyện lại";
-    $("pSc").innerHTML=`<div><b>${s.total}</b><span>điểm · ${grade}</span></div><div><b>${s.clear}%</b><span>rõ chữ (${s.red} chữ đỏ)</span></div><div><b>${s.spd??"–"}</b><span>tiếng/phút</span></div>`;
+    $("pSc").innerHTML=`<div><b>${s.total}</b><span>điểm${AUTO?"":" tự chấm"} · ${grade}</span></div><div><b>${s.clear}%</b><span>rõ chữ (${s.red} chữ đỏ)</span></div><div><b>${s.spd??"–"}</b><span>tiếng/phút</span></div>`;
     $("pFb").innerHTML=feedback(toks,s,sp,SELF);
     $("pFb").querySelectorAll("[data-word]").forEach(b=>b.onclick=()=>openWord(toks[+b.dataset.word]));
     $("pFb").querySelectorAll("[data-pron]").forEach(b=>b.onclick=()=>openWordList(b.dataset.pron.split("-").map(Number)));
@@ -1265,20 +1288,16 @@ function saveResult(L,s,R,toks,extra){
 }
 
 /* ===================== BÀI TẬP (THƯ VIỆN) ===================== */
-let LIBM="pa", LIBLV=0;
+let LIBM="mine", LIBLV=0;
 function renderLib(){
-  const tabs=[["warm","Khởi động"],["words","Từ luyện âm"],...MODULES.map(m=>[m.id,m.n]),["mine","Bài của tôi"]];
+  const tabs=[["mine","🎤 Kịch bản của tôi"],["warm","Khởi động"],["words","Từ luyện âm"],...MODULES.filter(m=>m.id!=="my").map(m=>[m.id,m.n])];
   $("libChips").innerHTML=tabs.map(([k,n])=>`<button class="chip ${k===LIBM?"on":""}" data-k="${k}">${n}</button>`).join("");
   $("libChips").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{LIBM=c.dataset.k;renderLib();});
   const box=$("libList");
   if(LIBM==="warm"){box.innerHTML=`<div class="lrow" id="lw"><div><b>Khởi động hơi</b><br><span class="small muted">Thở bụng 4–4–8 và giữ hơi dài</span></div><span>›</span></div>`;$("lw").onclick=()=>openSingle(b=>stepWarm(b,()=>show("lib")),"Khởi động");return;}
   if(LIBM==="words"){box.innerHTML=PRON.map((G,gi)=>`<h3>${esc(G.g)}</h3>`+G.items.map((it,ii)=>`<div class="lrow" data-p="${gi}-${ii}"><span>${esc(it.t)}</span><span>›</span></div>`).join("")).join("");
     box.querySelectorAll("[data-p]").forEach(r=>r.onclick=()=>{const [gi,ii]=r.dataset.p.split("-").map(Number);openSingle(b=>stepWords(b,[gi,ii],()=>show("lib")),"Luyện âm");});return;}
-  if(LIBM==="mine"){box.innerHTML=`<p class="small muted">Dán kịch bản của bạn (lời dẫn, bài thuyết trình, kịch bản video) để luyện như một bài học.</p>
-    <textarea id="mineTx" style="width:100%;min-height:160px;font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text)">${esc(S.mine||"")}</textarea>
-    <button class="btn pri big" id="mineGo" style="margin-top:8px">Luyện bài này</button>`;
-    $("mineGo").onclick=()=>{const tx=$("mineTx").value.trim();if(!tx)return;S.mine=tx;save();
-      openSingle(b=>practice(b,{id:"mine",m:"th",lv:2,t:"Bài của tôi",goal:"Đọc trôi chảy, rõ chữ, đúng nhịp kịch bản của bạn.",tips:["Đánh dấu chỗ cần ngừng bằng dấu phẩy, dấu chấm trong kịch bản."],tx,sp:speedRange(prof())},()=>show("lib")),"Bài của tôi");};return;}
+  if(LIBM==="mine"){renderMine(box);return;}
   const mod=MODULES.find(m=>m.id===LIBM);
   const lvChips=[[0,"Tất cả"],[1,"Cơ bản"],[2,"Trung cấp"],[3,"Nâng cao"]].map(([v,n])=>`<button class="chip ${v===LIBLV?"on":""}" data-lv="${v}">${n}</button>`).join("");
   const row=l=>{const sc=S.lessons[l.id];return `<div class="lrow" data-id="${l.id}"><div><b>${esc(l.t)}</b><br><span class="small muted">${esc(l.goal)}</span></div>${sc?`<span class="pill ${sc.best>=80?"ok":""}">${sc.best}đ</span>`:"<span>›</span>"}</div>`;};
@@ -1289,6 +1308,68 @@ function renderLib(){
   box.querySelectorAll("[data-id]").forEach(r=>r.onclick=()=>{const L=LESSONS.find(x=>x.id===r.dataset.id);openSingle(b=>practice(b,L,()=>show("lib")),"Bài tập");});
 }
 function openSingle(render,label){SESS={lib:true};$("sBack").hidden=true;show("sess");bar(0,1,label);$("sProg").style.width="0";stopAll();render($("sBody"));}
+
+/* ===================== KỊCH BẢN CỦA TÔI: app làm giảng viên cho kịch bản riêng của học viên ===================== */
+const MINE_MAX=6, MINE_CHARS=3000;
+if(!MODULES.find(m=>m.id==="my")) MODULES.push({id:"my",n:"Kịch bản của tôi",d:"Kịch bản riêng của bạn."});
+function mineArr(){ if(typeof S.mine==="string"){S.mine=S.mine.trim()?[{id:"my"+Date.now(),t:"Bài của tôi",tx:S.mine,at:todayStr()}]:[];} return S.mine=S.mine||[]; }
+function splitParts(tx){ // chia kịch bản dài thành phần khoảng 90 tiếng, cắt ở cuối câu
+  const sents=tx.replace(/\r/g,"").split(/\n+|(?<=[.!?…])\s+/).map(s=>s.trim()).filter(Boolean);
+  const parts=[];let cur="",n=0;
+  sents.forEach(s=>{const k=s.split(/\s+/).length;if(n+k>90&&cur){parts.push(cur.trim());cur="";n=0;}cur+=s+" ";n+=k;});
+  if(cur.trim())parts.push(cur.trim()); return parts.length?parts:[tx];
+}
+function coach(tx){ // “giảng viên” đọc trước kịch bản: chỉ chỗ dễ sai theo giáo trình + lỗi riêng của học viên
+  const p=prof(), toks=tokenize(tx).filter(t=>t.w&&t.w.length), tips=[];
+  const want=new Set(["v","r","trch","sx","ln","dem","doi"]); if((p.issues||[]).includes("final"))["nng","tc","inh"].forEach(k=>want.add(k));
+  const cnt={},ex={};
+  toks.forEach(t=>{const k=featureIssue(t.w[0]);if(!want.has(k))return;cnt[k]=(cnt[k]||0)+1;(ex[k]=ex[k]||new Set()).add(t.d.replace(/[^\p{L}\p{N}]/gu,"").toLowerCase());});
+  const mine=new Set((S.errs||[]).map(e=>e.w)), hit=[...new Set(toks.map(t=>t.d.replace(/[^\p{L}\p{N}]/gu,"").toLowerCase()))].filter(w=>mine.has(w));
+  if(hit.length) tips.push(`Có ${hit.length} chữ bạn từng đọc sai: ${hit.slice(0,6).join(", ")}. Đọc chậm, mở khẩu hình ở các chữ này.`);
+  Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,3).forEach(([k,c])=>tips.push(`${ISSUE[k].n}: ${c} chữ (vd: ${[...ex[k]].slice(0,4).join(", ")}). ${ISSUE[k].tip}`));
+  const longS=tx.split(/(?<=[.!?…])\s+|\n+/).filter(s=>s.split(/\s+/).length>30).length;
+  if(longS) tips.push(`Có ${longS} câu dài trên 30 tiếng: lấy hơi bụng trước câu, chia hơi ở dấu phẩy. Bật “Dễ nhìn khi nói” để thấy chỗ ngắt.`);
+  const syl=toks.reduce((a,t)=>a+t.w.length,0), sp=speedRange(p);
+  tips.push(`Đọc hết khoảng ${Math.round(syl/((sp[0]+sp[1])/2)*60)} giây ở tốc độ ${sp[0]}–${sp[1]} tiếng/phút.`);
+  return tips;
+}
+function mineLesson(m,i){const parts=splitParts(m.tx);return {id:m.id+"_"+i,m:"my",lv:2,t:m.t+(parts.length>1?` · phần ${i+1}/${parts.length}`:""),
+  goal:"Đọc kịch bản của bạn trôi chảy, rõ chữ, đúng nhịp như lúc dẫn thật.",tips:coach(parts[i]),tx:parts[i],sp:speedRange(prof())};}
+function nextMinePart(){ // ưu tiên phần chưa luyện, rồi phần điểm thấp nhất
+  const all=[];mineArr().forEach(m=>splitParts(m.tx).forEach((_,i)=>all.push([m,i])));
+  if(!all.length)return null; all.sort((a,b)=>((S.lessons[a[0].id+"_"+a[1]]||{best:-1}).best)-((S.lessons[b[0].id+"_"+b[1]]||{best:-1}).best));
+  return mineLesson(all[0][0],all[0][1]);
+}
+let MINE_OPEN=null;
+function renderMine(box){
+  const list=mineArr();
+  if(MINE_OPEN){const m=list.find(x=>x.id===MINE_OPEN);if(!m){MINE_OPEN=null;return renderMine(box);}
+    const parts=splitParts(m.tx);
+    box.innerHTML=`<button class="btn sm" id="myBack">‹ Danh sách kịch bản</button><h2 style="margin-top:10px">${esc(m.t)}</h2>
+      <p class="small muted">${parts.length>1?`Kịch bản dài nên được chia ${parts.length} phần để luyện từng phần, rồi đọc liền cả bài.`:"Chạm để luyện."}</p>
+      <div class="note small"><b>Giảng viên nhắc trước:</b><ul style="margin:4px 0 0;padding-left:18px">${coach(m.tx).map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
+      ${parts.map((p,i)=>{const sc=S.lessons[m.id+"_"+i];return `<div class="lrow" data-p="${i}"><div><b>${parts.length>1?`Phần ${i+1}`:"Cả bài"}</b><br><span class="small muted">${esc(p.slice(0,70))}…</span></div>${sc?`<span class="pill ${sc.best>=80?"ok":""}">${sc.best}đ</span>`:"<span>›</span>"}</div>`;}).join("")}
+      ${parts.length>1?`<div class="lrow" data-p="all"><div><b>Đọc liền cả bài</b><br><span class="small muted">Khi các phần đã từ 80 điểm</span></div><span>›</span></div>`:""}
+      <button class="linkbtn" id="myDel">Xóa kịch bản này</button>`;
+    $("myBack").onclick=()=>{MINE_OPEN=null;renderMine(box);};
+    box.querySelectorAll("[data-p]").forEach(r=>r.onclick=()=>{const L=r.dataset.p==="all"?{...mineLesson(m,0),id:m.id+"_all",t:m.t+" · cả bài",tx:m.tx,tips:coach(m.tx)}:mineLesson(m,+r.dataset.p);
+      openSingle(b=>practice(b,L,()=>{show("lib");}),"Kịch bản của tôi");});
+    $("myDel").onclick=()=>{const b=$("myDel");if(!b.dataset.sure){b.dataset.sure=1;b.textContent="Bấm lần nữa để xóa hẳn";return;}S.mine=list.filter(x=>x.id!==m.id);MINE_OPEN=null;save();renderMine(box);};
+    return;}
+  box.innerHTML=`<h2 style="margin-top:0">🎤 Kịch bản của tôi</h2>
+    <p class="small muted">Dán lời dẫn, bài thuyết trình, kịch bản video của chính bạn. App làm giảng viên: đọc trước để nhắc chỗ dễ sai, chia bài dài thành phần, chấm điểm, tô đỏ chữ sai và cho luyện lại đến khi chuẩn.</p>
+    ${list.map(m=>{const parts=splitParts(m.tx);const bs=parts.map((_,i)=>(S.lessons[m.id+"_"+i]||{}).best).filter(x=>x!=null);
+      return `<div class="lrow" data-m="${m.id}"><div><b>${esc(m.t)}</b><br><span class="small muted">${parts.length} phần · ${bs.length?`tốt nhất ${Math.max(...bs)}đ`:"chưa luyện"}</span></div><span>›</span></div>`;}).join("")}
+    ${list.length<MINE_MAX?`<h3>＋ Thêm kịch bản</h3>
+      <input type="text" id="myT" maxlength="60" placeholder="Tên, ví dụ: Lời dẫn hội nghị tháng 12">
+      <textarea id="myTx" maxlength="${MINE_CHARS}" placeholder="Dán nội dung kịch bản vào đây (tối đa ${MINE_CHARS} ký tự)" style="width:100%;min-height:150px;margin-top:8px;font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text)"></textarea>
+      <p class="small" id="myMsg" style="color:var(--red);margin:4px 0"></p><button class="btn pri big" id="myAdd">Lưu và để giảng viên xem</button>`
+      :`<p class="small muted">Đã đủ ${MINE_MAX} kịch bản. Xóa bớt để thêm mới.</p>`}`;
+  box.querySelectorAll("[data-m]").forEach(r=>r.onclick=()=>{MINE_OPEN=r.dataset.m;renderMine(box);});
+  if($("myAdd"))$("myAdd").onclick=()=>{const t=$("myT").value.trim()||"Kịch bản "+(list.length+1),tx=$("myTx").value.trim().slice(0,MINE_CHARS);
+    if(tx.split(/\s+/).length<15){$("myMsg").textContent="Kịch bản quá ngắn, cần ít nhất khoảng 15 chữ.";return;}
+    const m={id:"my"+Date.now().toString(36),t,tx,at:todayStr()};list.push(m);S.mine=list;save();MINE_OPEN=m.id;renderMine(box);};
+}
 
 /* ===================== TIẾN ĐỘ ===================== */
 function renderProg(){
@@ -1313,12 +1394,11 @@ function renderProg(){
   $("pDays").innerHTML=Array.from({length:35},(_,i)=>`<div class="day ${S.done[i+1]?"done":""} ${i+1===S.cur?"cur":""}">${i+1}</div>`).join("");
   $("pHist").innerHTML=h.length?`<table><thead><tr><th>Ngày</th><th>Bài</th><th>Điểm</th><th>Tốc độ</th><th></th></tr></thead><tbody>${h.slice(0,15).map((x,i)=>`<tr><td>${x.at.slice(5).split("-").reverse().join("/")}</td><td>${esc(x.t)}</td><td><b>${x.score}</b></td><td>${x.spd??"–"}</td><td>${i===h.findIndex(y=>y.id===x.id)?`<button class="btn sm" data-play="${x.id}">▶</button>`:""}</td></tr>`).join("")}</tbody></table><div id="pPlay"></div>`:'<p class="muted small">Chưa có buổi nào. Bắt đầu ở tab Hôm nay nhé!</p>';
   $("pHist").querySelectorAll("[data-play]").forEach(b=>b.onclick=async()=>{const blob=await IDB.get(b.dataset.play);$("pPlay").innerHTML=blob?`<audio controls autoplay src="${URL.createObjectURL(blob)}"></audio>`:'<p class="small muted">Bản ghi chỉ lưu trên máy đã ghi âm.</p>';});
-  $("pStore").textContent=ST.mode==="gas"?`Tiến độ lưu theo mã học viên ${ST.code}. Bản ghi âm chỉ lưu trên máy này.`:"Tiến độ lưu trên trình duyệt của máy này. Đổi máy thì dùng Sao lưu và Khôi phục.";
-  $("pLogout").hidden=!(GAS&&ST.code); $("pExport").hidden=GAS; $("pImport").parentElement.hidden=GAS;
+  $("pStore").textContent=ST.mode==="gas"?`Tiến độ lưu theo mã học viên ${ST.code}. Bản ghi âm chỉ lưu trên máy này.`:"Tiến độ lưu trên trình duyệt của máy này.";
+  $("pLogout").hidden=!(GAS&&ST.code);
 }
 $("pRedo").onclick=()=>openIntake(true);
-$("pExport").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:"application/json"}));a.download="luyen-giong-"+todayStr()+".json";a.click();};
-$("pImport").onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{S=Object.assign(BLANK(),JSON.parse(t));save();$("pMsg").textContent="Đã khôi phục.";renderProg();}catch(err){$("pMsg").textContent="File không hợp lệ.";}});};
+$("pMine").onclick=()=>{LIBM="mine";show("lib");};
 $("pLogout").onclick=()=>{const b=$("pLogout");if(!b.dataset.sure){b.dataset.sure=1;b.textContent="Bấm lần nữa để đăng xuất";return;}
   setCode("");ST.status="";ST.mode="local";S=BLANK();try{localStorage.removeItem(KEY);}catch(e){}b.dataset.sure="";b.textContent="Đăng xuất";route();};
 
