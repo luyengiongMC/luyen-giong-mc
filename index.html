@@ -86,6 +86,12 @@ body.notab #tabbar{display:none}
 audio{width:100%;margin:8px 0}
 .toggle{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--muted)}
 .toggle input{width:20px;height:20px;accent-color:var(--accent)}
+/* bảng luyện một chữ */
+.sheetBg{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:40}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;background:var(--surface);border-radius:18px 18px 0 0;
+  padding:16px 16px calc(16px + env(safe-area-inset-bottom));max-height:80vh;overflow:auto;max-width:720px;margin:0 auto;box-shadow:0 -4px 20px rgba(0,0,0,.15)}
+.sheet mark{background:var(--red);color:#fff;border-radius:5px;padding:1px 3px}
+details summary{cursor:pointer}
 /* thư viện, tiến độ */
 .lrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--line);cursor:pointer}
 .lrow:first-child{border-top:0}
@@ -622,7 +628,7 @@ function finishDay(b){
 
 /* ---------- bước 1: khởi động hơi ---------- */
 let TIMERS=[];
-function stopAll(){TIMERS.forEach(t=>{clearInterval(t);clearTimeout(t);});TIMERS=[];recStopSilent();try{speechSynthesis.cancel();}catch(e){}}
+function stopAll(){TIMERS.forEach(t=>{clearInterval(t);clearTimeout(t);});TIMERS=[];closeSheet();recStopSilent();try{speechSynthesis.cancel();}catch(e){}}
 function stepWarm(b,next){
   b.innerHTML=`<div class="card"><h2>Khởi động hơi</h2><p class="small muted">Đặt tay lên bụng. Hít bằng mũi cho bụng phình, vai không nhô. Làm theo vòng tròn: 3 vòng.</p>
     <div class="ball" id="wBall">Sẵn sàng</div><button class="btn pri big" id="wStart">Bắt đầu thở</button></div>
@@ -688,12 +694,12 @@ function autoMark(toks,heard){ // tô đỏ chữ máy không nghe đúng
   const n=words.length,m=hw.length,D=Array.from({length:n+1},()=>new Float32Array(m+1));
   for(let i=1;i<=n;i++)D[i][0]=i;for(let j=1;j<=m;j++)D[0][j]=j*0.6;
   for(let i=1;i<=n;i++)for(let j=1;j<=m;j++){const s=sameW(words[i-1],hw[j-1]);D[i][j]=Math.min(D[i-1][j-1]+(1-s),D[i-1][j]+1,D[i][j-1]+0.6);}
-  const ok=new Array(n).fill(false);let i=n,j=m;
+  const ok=new Array(n).fill(false), heardAt=new Array(n).fill("");let i=n,j=m;
   while(i>0){const s=j>0?sameW(words[i-1],hw[j-1]):0;
-    if(j>0&&Math.abs(D[i][j]-(D[i-1][j-1]+(1-s)))<1e-6){ok[i-1]=s>=0.6;i--;j--;}
+    if(j>0&&Math.abs(D[i][j]-(D[i-1][j-1]+(1-s)))<1e-6){ok[i-1]=s===1;heardAt[i-1]=s===1?"":hw[j-1];i--;j--;}
     else if(Math.abs(D[i][j]-(D[i-1][j]+1))<1e-6){i--;}else j--;}
-  toks.forEach(t=>{if(t.w&&t.w.length)t.red=false;});
-  ok.forEach((v,k)=>{if(!v)toks[own[k]].red=true;});
+  toks.forEach(t=>{if(t.w&&t.w.length){t.red=false;t.heard="";}});
+  ok.forEach((v,k)=>{if(!v){const t=toks[own[k]];t.red=true;t.heard=(t.heard?t.heard+" ":"")+heardAt[k];t.heard=t.heard.trim();}});
 }
 /* --- giọng mẫu (máy đọc) --- */
 let VOICE=null;
@@ -736,12 +742,74 @@ IDB.open();
 
 /* --- màn hình đọc bài (dùng cho buổi tập và bài lẻ) --- */
 function lessonText(L){return L.tx.replace(/\{ten\}/g,firstName());}
-function renderToks(el,toks,mode,onTap){
+function renderToks(el,toks,mode,onTap,onWord){
   el.innerHTML="";el.className="reader"+(mode==="mark"?" mark":"");
   toks.forEach((t,i)=>{if(t.sp!==undefined){el.appendChild(document.createTextNode(t.sp));return;}
     const s=document.createElement("span");s.className="tk"+(t.red?" red":"");s.textContent=t.d;s.dataset.i=i;
-    if(mode==="mark"&&t.w&&t.w.length)s.onclick=()=>{t.red=!t.red;s.classList.toggle("red",t.red);onTap&&onTap();};
+    if(mode==="mark"&&t.w&&t.w.length)s.onclick=()=>{if(onWord){onWord(t);return;}t.red=!t.red;s.classList.toggle("red",t.red);onTap&&onTap();};
     el.appendChild(s);});
+}
+function closeSheet(){const w=$("sheetWrap");if(w){recStopSilent();w.remove();}}
+/* --- phân loại lỗi theo giáo trình: điều chỉnh phương ngữ (Diamond Mic) + chuẩn hóa giọng Nam (Coach Lan Anh) --- */
+const ISSUE={
+ v:{n:"Phụ âm đầu V",tip:"Răng trên chạm nhẹ môi dưới, thổi hơi rung “vờ”. Không đọc thành “d/gi” (lỗi hay gặp của giọng Nam).",p:[0,0]},
+ r:{n:"Phụ âm đầu R",tip:"Uốn đầu lưỡi lên gần lợi trên, hơi rung nhẹ. Không đọc thành “g”.",p:[0,1]},
+ trch:{n:"Phụ âm TR – CH",tip:"TR: uốn lưỡi, bật hơi mạnh hơn. CH: mặt lưỡi áp lên vòm, gọn.",p:[0,2]},
+ sx:{n:"Phụ âm S – X",tip:"S: uốn lưỡi nhẹ, hơi “sh”. X: lưỡi thẳng, hơi lướt qua kẽ răng.",p:[0,3]},
+ ln:{n:"Phụ âm L – N",tip:"L: đầu lưỡi chạm lợi trên, hơi thoát hai bên lưỡi. N: hơi thoát qua mũi.",p:[2,7]},
+ nng:{n:"Âm cuối N – NG",tip:"N: kết thúc bằng đầu lưỡi chạm lợi trên. NG: cuống lưỡi chặn, miệng vẫn mở.",p:[0,4]},
+ tc:{n:"Âm cuối T – C",tip:"T: đầu lưỡi chặn ở lợi. C: cuống lưỡi chặn. Ví dụ “việt” khác “việc”.",p:[0,5]},
+ inh:{n:"Vần INH – ÊNH – ICH",tip:"Kéo khóe miệng ngang, giữ rõ âm i/ê; không đọc “tinh” thành “tưn”.",p:[0,6]},
+ dem:{n:"Âm đệm OA – OE – UY",tip:"Tròn môi trước rồi mới mở: “hoa” không đọc thành “ha”, “quy” không thành “wi”.",p:[0,7]},
+ doi:{n:"Nguyên âm đôi UÔ – ƯƠ – IÊ",tip:"Đọc trọn cả hai âm, kéo dài phần đầu: “người” không thành “ngừi”, “muối” không thành “múi”.",p:[1,0]},
+ tone:{n:"Dấu thanh",tip:"Đọc đủ thanh: sắc gọn không luyến, nặng dứt khoát, huyền hạ thấp. Giọng chuẩn Nam đọc ngã như hỏi.",p:[0,8]},
+ clear:{n:"Chưa rõ, nuốt chữ",tip:"Mở khẩu hình, đọc chậm lại, tách rõ chữ này với chữ sau, không dính chữ.",p:[2,10]},
+ miss:{n:"Bỏ sót chữ",tip:"Đọc đủ từng chữ, mắt nhìn trước nửa câu để không sót.",p:null}
+};
+const INIT=w=>(w.match(/^(ngh|ng|nh|ch|tr|th|ph|kh|gh|gi|qu|[bcdđghklmnpqrstvx])/)||[""])[0];
+const FIN=w=>(w.match(/(ng|nh|ch|[ctmnp])$/)||[""])[0];
+function featureIssue(w){ // chữ này dễ sai ở đâu (dùng khi không có máy nghe)
+  const i=INIT(w), f=FIN(w), b=noTone(w);
+  if(i==="v")return"v"; if(i==="r")return"r"; if(i==="tr"||i==="ch")return"trch"; if(i==="s"||i==="x")return"sx"; if(i==="l"||i==="n")return"ln";
+  if(/(oa|oe|uy|uâ)/.test(b)||i==="qu")return"dem"; if(/(uô|ươ|iê|yê)/.test(b))return"doi";
+  if(f==="nh"||(f==="ch"&&/[iê]ch$/.test(b)))return"inh"; if(f==="n"||f==="ng")return"nng"; if(f==="t"||f==="c")return"tc";
+  return "clear";
+}
+function classify(t){
+  const exp=t.w[0]||"", hd=(t.heard||"").split(" ")[0]||"";
+  if(t.red&&!hd&&AUTO_LAST) return ISSUE.miss;
+  if(!hd) return ISSUE[featureIssue(exp)];
+  const e=noTone(exp), h=noTone(hd);
+  if(e===h) return ISSUE.tone;
+  const ie=INIT(e), ih=INIT(h);
+  if(ie!==ih){ if(ie==="v")return ISSUE.v; if(ie==="r")return ISSUE.r; if(["tr","ch"].includes(ie))return ISSUE.trch; if(["s","x"].includes(ie))return ISSUE.sx; if(["l","n"].includes(ie))return ISSUE.ln; }
+  const fe=FIN(e), fh=FIN(h);
+  if(fe!==fh){ if(["n","ng"].includes(fe))return ISSUE.nng; if(["t","c"].includes(fe))return ISSUE.tc; if(["nh","ch"].includes(fe))return ISSUE.inh; }
+  if(/(oa|oe|uy|uâ)/.test(e))return ISSUE.dem; if(/(uô|ươ|iê|yê)/.test(e))return ISSUE.doi;
+  return ISSUE.clear;
+}
+let AUTO_LAST=false;
+function feedback(toks,s,sp){
+  const reds=toks.map((t,i)=>[t,i]).filter(([t])=>t.red);
+  const groups=new Map(); reds.forEach(([t,i])=>{const c=classify(t);if(!groups.has(c.n))groups.set(c.n,{c,items:[]});groups.get(c.n).items.push([t,i]);});
+  let h=`<h3>Nhận xét chi tiết</h3>`;
+  if(!reds.length) h+=`<p class="small">✅ <b>Phát âm:</b> không còn chữ đỏ. Giữ khẩu hình tròn vành như vậy.</p>`;
+  else{
+    h+=`<p class="small"><b>Phát âm:</b> ${reds.length} chữ cần sửa, chia theo nhóm lỗi trong giáo trình. Chạm vào chữ để luyện lại ngay.</p>`;
+    [...groups.values()].sort((a,b)=>b.items.length-a.items.length).forEach(g=>{
+      h+=`<div style="border-top:1px solid var(--line);padding:8px 0"><b>${esc(g.c.n)}</b> <span class="small muted">· ${g.items.length} chữ</span>
+        <div class="chips" style="margin:6px 0">${g.items.map(([t,i])=>`<button class="chip" data-word="${i}" style="background:var(--red-soft);border-color:var(--red)">${esc(t.d.replace(/[^\p{L}\p{N}%]/gu,""))}${t.heard?` <span class="small muted">→ ${esc(t.heard)}</span>`:""}</button>`).join("")}</div>
+        <div class="small">Cách sửa: ${esc(g.c.tip)}</div>${g.c.p?`<button class="btn sm" data-pron="${g.c.p.join("-")}" style="margin-top:6px">Luyện bộ từ ${esc(g.c.n)}</button>`:""}</div>`;});
+  }
+  const sp2=s.short?"Bản ghi ngắn hơn bài đọc: hãy đọc hết bài để được tính tốc độ."
+    :s.spd==null?"Chưa có bản ghi nên chưa tính được tốc độ."
+    :s.spd<sp[0]?`${s.spd} tiếng/phút, chậm hơn khung ${sp[0]}–${sp[1]}. Đọc liền mạch trong mỗi cụm từ, chỉ dừng ở dấu câu, bớt kéo dài cuối câu.`
+    :s.spd>sp[1]?`${s.spd} tiếng/phút, nhanh hơn khung ${sp[0]}–${sp[1]}. Nghỉ nửa nhịp ở dấu phẩy, một nhịp ở dấu chấm, lấy hơi ở dấu chấm.`
+    :`${s.spd} tiếng/phút, nằm trong khung ${sp[0]}–${sp[1]}. Tốc độ tốt, giữ nhịp này.`;
+  h+=`<p class="small" style="border-top:1px solid var(--line);padding-top:8px"><b>Tốc độ và ngắt nghỉ:</b> ${sp2}</p>`;
+  const top=[...groups.values()].sort((a,b)=>b.items.length-a.items.length)[0];
+  h+=`<p class="small"><b>Việc nên làm tiếp:</b> ${reds.length?`luyện hết chữ đỏ, rồi luyện bộ từ “${esc(top.c.n)}” 3 lượt, sau đó bấm Đọc lại cả bài để so điểm.`:s.total>=80?"bài này đã đạt, chuyển sang bài khó hơn trong tab Bài tập.":"đọc lại cả bài, tập trung vào tốc độ."}</p>`;
+  return h;
 }
 function calcScore(toks,secs,sp){
   const sc=toks.filter(t=>t.w&&t.w.length),n=sc.length,red=sc.filter(t=>t.red).length;
@@ -782,50 +850,93 @@ function practice(b,L,onDone){
     $("pStop").onclick=async()=>{$("pStop").disabled=true;TIMERS.forEach(t=>{clearInterval(t);clearTimeout(t);});TIMERS=[];const r=await recStop();R=r||R;review(true);};
   };
   const pace=()=>{ // tô sáng lần lượt theo tốc độ mục tiêu để người đọc giữ nhịp
-    const msPer=60000/(sp[0]-20); // chạy chậm hơn mức tối thiểu để người mới theo kịp const spans=[...el.querySelectorAll(".tk")]; let k=0;
+    const msPer=60000/(sp[0]-20); // chạy chậm hơn mức tối thiểu để người mới theo kịp
+    const spans=[...el.querySelectorAll(".tk")]; let k=0;
     const stepPace=()=>{if(k>0)spans[k-1].className="tk read";if(k>=spans.length)return;const t=toks[+spans[k].dataset.i];spans[k].className="tk now";k++;
       TIMERS.push(setTimeout(stepPace,msPer*Math.max(1,t.w.length)+t.pause));};
     stepPace();
   };
   const review=(first)=>{
     const auto=first&&R&&R.heard&&R.heard.trim().length>3;
-    if(first){toks.forEach(t=>t.red=false); if(auto) autoMark(toks,R.heard);}
-    $("pHead").textContent="Nghe lại và tô đỏ chỗ chưa rõ";
-    const upd=()=>{const s=calcScore(toks,R&&R.blob?R.secs:(R?R.secs:null),sp);
-      $("pSc").innerHTML=`<div><b>${s.total}</b><span>điểm</span></div><div><b>${s.clear}%</b><span>rõ chữ</span></div><div><b>${s.spd??"–"}</b><span>tiếng/phút</span></div>`;
-      $("pSpdT").textContent=s.short?"Bản ghi ngắn hơn bài đọc: hãy đọc hết bài để được tính tốc độ.":s.spd==null?"":s.spd<sp[0]?`Hơi chậm so với ${sp[0]}–${sp[1]}.`:s.spd>sp[1]?`Hơi nhanh so với ${sp[0]}–${sp[1]}: thêm khoảng lặng sau dấu câu.`:"Tốc độ đẹp.";
-      $("pFix").textContent=s.red?`Luyện lại ${new Set(toks.filter(t=>t.red).map(t=>t.s)).size} câu có chữ đỏ`:"Không có chữ đỏ";$("pFix").disabled=!s.red;return s;};
-    renderToks(el,toks,"mark",()=>upd());
+    if(first){toks.forEach(t=>{t.red=false;t.heard="";}); if(auto) autoMark(toks,R.heard);}
+    AUTO=auto||AUTO; AUTO_LAST=AUTO;
+    $("pHead").textContent="Kết quả – chạm vào chữ đỏ để luyện lại";$("pPaceL").hidden=true;
+    renderToks(el,toks,"mark",null,t=>openWord(t));
     box.innerHTML=`${R&&R.url?`<audio controls src="${R.url}"></audio>`:""}
-      <p class="note">${auto?"Máy đã tô đỏ những chữ nó nghe chưa rõ. Nghe lại bản ghi, chạm để thêm hoặc bỏ chữ đỏ cho đúng với cảm nhận của bạn.":"Nghe lại bản ghi của bạn. Chữ nào đọc chưa rõ, nuốt chữ hay sai dấu thì chạm vào để tô đỏ."}</p>
-      <div class="scores" id="pSc"></div><p class="small muted" id="pSpdT" style="text-align:center"></p>`;
+      <p class="note">${AUTO?"Máy đã nghe bản đọc và <b>tô đỏ những chữ đọc chưa chuẩn</b>. Chạm vào chữ đỏ để luyện lại ngay chữ đó cho đến khi chuẩn. Thấy máy tô nhầm thì chạm vào chữ và chọn “Mình đọc đúng”.":"Máy chưa nghe được giọng trên trình duyệt này, nên <b>bạn tự chấm</b>: nghe lại bản ghi, chạm vào chữ đọc chưa rõ để tô đỏ, rồi luyện lại. (Mở bằng Chrome trên máy tính hoặc Android để máy tự chấm.)"}</p>
+      <div class="scores" id="pSc"></div>
+      <div id="pFb"></div>
+      <details class="small muted" style="margin-top:8px"><summary>Cách tính điểm</summary>
+        <p>• <b>Rõ chữ – 70%</b>: tỉ lệ chữ không bị tô đỏ. Chữ đỏ là chữ đọc sai phụ âm, sai vần, sai dấu, nuốt chữ hoặc bỏ sót.<br>
+        • <b>Tốc độ – 30%</b>: số tiếng mỗi phút tính từ độ dài bản ghi, so với khung mục tiêu ${sp[0]}–${sp[1]}. Lệch 1 tiếng/phút trừ 1,5 điểm phần này.<br>
+        • Xếp loại: từ 90 Xuất sắc · từ 80 Đạt · từ 65 Khá · dưới 65 Cần luyện lại.<br>
+        • Nhóm lỗi lấy theo giáo trình: điều chỉnh phương ngữ (Diamond Mic) và chuẩn hóa giọng miền Nam (Coach Lan Anh).</p></details>`;
     after.innerHTML=`<button class="btn pri big" id="pFix"></button>
       <div class="row" style="margin-top:8px"><button class="btn" id="pAgain" style="flex:1">↻ Đọc lại cả bài</button><button class="btn okb" id="pDone" style="flex:1">✓ Hoàn thành</button></div>`;
     upd();
-    $("pFix").onclick=()=>drill();
-    $("pAgain").onclick=()=>{toks=tokenize(text);ready();window.scrollTo(0,0);};
+    $("pFix").onclick=()=>{const t=toks.find(x=>x.red);if(t)openWord(t,true);};
+    $("pAgain").onclick=()=>{toks=tokenize(text);AUTO=false;ready();window.scrollTo(0,0);};
     $("pDone").onclick=()=>{const s=upd(); saveResult(L,s,R); onDone&&onDone(s);};
   };
-  const drill=()=>{
-    const sents=[...new Set(toks.filter(t=>t.red).map(t=>t.s))]; let i=0, DR=null;
-    const one=()=>{
-      if(i>=sents.length){review(false);window.scrollTo(0,0);return;}
-      const sub=toks.filter(t=>t.s===sents[i]); const txt=sub.map(t=>t.sp!==undefined?t.sp:t.d).join("").trim();
-      $("pHead").textContent=`Luyện lại câu ${i+1}/${sents.length}`;$("pPaceL").hidden=true;
-      el.className="reader";el.innerHTML="";sub.forEach(t=>{if(t.sp!==undefined){el.appendChild(document.createTextNode(t.sp));return;}const s=document.createElement("span");s.className="tk"+(t.red?" red":"");s.textContent=t.d;el.appendChild(s);});
-      box.innerHTML=`<p class="small muted">Đọc chậm, mở khẩu hình ở chữ đỏ. Ghi âm, nghe lại, thấy ổn thì bấm Đã ổn.</p>
-        <div class="row"><button class="btn rec" id="dRec" style="flex:1">● Ghi âm câu này</button></div><div id="dOut"></div>`;
-      after.innerHTML=`<div class="row"><button class="btn" id="dSkip" style="flex:1">Bỏ qua</button><button class="btn okb" id="dOk" style="flex:1">✓ Đã ổn</button></div>`;
-      $("dRec").onclick=async()=>{
-        if(!DR){DR=await recStart();$("dRec").textContent="■ Dừng";$("dRec").className="btn okb";$("dRec").style.flex="1";}
-        else{const r=await recStop();DR=null;$("dRec").textContent="● Ghi âm lại";$("dRec").className="btn rec";
-          $("dOut").innerHTML=r&&r.url?`<audio controls autoplay src="${r.url}"></audio>`:"";}
-      };
-      $("dOk").onclick=()=>{recStopSilent();DR=null;sub.forEach(t=>t.red=false);i++;one();};
-      $("dSkip").onclick=()=>{recStopSilent();DR=null;i++;one();};
-      window.scrollTo(0,0);
+  let AUTO=false;
+  const upd=()=>{
+    const s=calcScore(toks,R?R.secs:null,sp);
+    if(!$("pSc"))return s;
+    const grade=s.total>=90?"Xuất sắc":s.total>=80?"Đạt":s.total>=65?"Khá":"Cần luyện lại";
+    $("pSc").innerHTML=`<div><b>${s.total}</b><span>điểm · ${grade}</span></div><div><b>${s.clear}%</b><span>rõ chữ (${s.red} chữ đỏ)</span></div><div><b>${s.spd??"–"}</b><span>tiếng/phút</span></div>`;
+    $("pFb").innerHTML=feedback(toks,s,sp);
+    $("pFb").querySelectorAll("[data-word]").forEach(b=>b.onclick=()=>openWord(toks[+b.dataset.word]));
+    $("pFb").querySelectorAll("[data-pron]").forEach(b=>b.onclick=()=>openWordList(b.dataset.pron.split("-").map(Number)));
+    $("pFix").textContent=s.red?`Luyện lần lượt ${s.red} chữ đỏ`:"✓ Không còn chữ đỏ";$("pFix").disabled=!s.red;
+    renderToks(el,toks,"mark",null,t=>openWord(t));
+    return s;
+  };
+  /* --- bảng luyện một chữ: đọc lại câu chứa chữ đó đến khi chuẩn --- */
+  const openWord=(t,chain)=>{
+    closeSheet(); const sub=toks.filter(x=>x.s===t.s);
+    const sent=sub.map(x=>x.sp!==undefined?x.sp:(x===t?`<mark>${esc(x.d)}</mark>`:esc(x.d))).join("").trim();
+    const iss=t.red?classify(t):null; let tries=0, DR=null;
+    const sh=document.createElement("div");sh.id="sheetWrap";
+    sh.innerHTML=`<div class="sheetBg"></div><div class="sheet">
+      <div class="row" style="justify-content:space-between"><b style="font-size:26px">${esc(t.d.replace(/[^\p{L}\p{N}%]/gu,""))}</b><button class="btn sm" id="shX">Đóng</button></div>
+      ${iss?`<p class="small" style="margin:4px 0"><span class="pill" style="background:var(--red-soft);color:var(--red)">${esc(iss.n)}</span>${t.heard?` · máy nghe thành “<b>${esc(t.heard)}</b>”`:""}</p>
+        <p class="note">${esc(iss.tip)}</p>`:`<p class="small muted">Chữ này đang không bị tô đỏ.</p>`}
+      <p class="small muted" style="margin:6px 0 2px">Đọc lại cả câu, chú ý chữ được tô:</p>
+      <div class="reader" style="font-size:19px">${sent}</div>
+      <div id="shOut" class="small"></div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn rec" id="shRec" style="flex:1">● Đọc lại câu này</button>
+        ${t.red?`<button class="btn" id="shOk">Mình đọc đúng</button>`:`<button class="btn" id="shMark">Tô đỏ chữ này</button>`}
+      </div></div>`;
+    document.body.appendChild(sh);
+    const done=(msg)=>{t.red=false;t.heard="";$("shOut").innerHTML=`<p style="color:var(--ok);font-weight:700;font-size:17px">${msg}</p>`;upd();
+      setTimeout(()=>{closeSheet();if(chain){const nx=toks.find(x=>x.red);if(nx)openWord(nx,true);}},1100);};
+    $("shX").onclick=closeSheet; sh.querySelector(".sheetBg").onclick=closeSheet;
+    if($("shOk"))$("shOk").onclick=()=>done("Đã bỏ chữ đỏ.");
+    if($("shMark"))$("shMark").onclick=()=>{t.red=true;upd();closeSheet();openWord(t);};
+    $("shRec").onclick=async()=>{
+      if(!DR){DR=await recStart();$("shRec").textContent="■ Đọc xong";$("shRec").className="btn okb";$("shRec").style.flex="1";return;}
+      const r=await recStop();DR=null;tries++;$("shRec").textContent="● Đọc lại lần nữa";$("shRec").className="btn rec";
+      const audio=r&&r.url?`<audio controls src="${r.url}"></audio>`:"";
+      if(r&&r.heard&&r.heard.trim()){
+        // so khớp cả câu vừa đọc với câu mẫu, xem chữ đang luyện có được nghe đúng không
+        const copy=sub.map(x=>({...x})); autoMark(copy,r.heard); const me=copy[sub.indexOf(t)];
+        if(me&&!me.red){done(`✅ Chuẩn rồi! (lần thử ${tries})`);return;}
+        const near=me?me.heard:""; t.heard=near; const c=classify(t);
+        $("shOut").innerHTML=`${audio}<p style="color:var(--red)">Chưa chuẩn${near?`: máy nghe thành “<b>${esc(near)}</b>”`:""} (${esc(c.n)}). ${esc(c.tip)} Thử lại nhé.</p>`;
+      } else {
+        $("shOut").innerHTML=`${audio}<p>Nghe lại bản vừa ghi. Đã chuẩn chưa?</p><div class="row"><button class="btn okb" id="shYes" style="flex:1">✓ Đã chuẩn</button><button class="btn" id="shNo" style="flex:1">Chưa, đọc lại</button></div>`;
+        $("shYes").onclick=()=>done("✅ Đã chuẩn!"); $("shNo").onclick=()=>{$("shOut").innerHTML="";};
+      }
     };
-    one();
+  };
+  const openWordList=(pr)=>{
+    closeSheet(); const G=PRON[pr[0]],it=G.items[pr[1]];
+    const sh=document.createElement("div");sh.id="sheetWrap";
+    sh.innerHTML=`<div class="sheetBg"></div><div class="sheet"><div class="row" style="justify-content:space-between"><b>${esc(it.t)}</b><button class="btn sm" id="shX">Đóng</button></div>
+      ${it.tip?`<p class="note">${esc(it.tip)}</p>`:""}<p class="small muted">Đọc to 3 lượt: chậm, vừa, nhanh.</p>
+      <div class="words">${it.w.split(/,\s*/).map(w=>`<button>${esc(w)}</button>`).join("")}</div></div>`;
+    document.body.appendChild(sh); $("shX").onclick=closeSheet; sh.querySelector(".sheetBg").onclick=closeSheet;
   };
   ready();
 }
