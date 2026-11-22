@@ -1,0 +1,1553 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Luyện Giọng MC</title>
+<style>
+:root{
+  --bg:#faf7f2;--surface:#ffffff;--surface2:#f3eee6;--text:#2a2420;--muted:#7a6e64;
+  --line:#e6ddd1;--accent:#b4532a;--accent-soft:#f6e3d8;--ok:#2f7a4f;--ok-soft:#dff0e5;
+  --warn:#a86a00;--rec:#c62828;--shadow:0 1px 3px rgba(60,40,20,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1a1714;--surface:#24201c;--surface2:#2e2924;--text:#f1ebe4;--muted:#a99d91;
+    --line:#3b352f;--accent:#e58a5c;--accent-soft:#3d2a20;--ok:#6cc392;--ok-soft:#1f3328;
+    --warn:#e0a640;--rec:#ff6b6b;--shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1a1714;--surface:#24201c;--surface2:#2e2924;--text:#f1ebe4;--muted:#a99d91;
+  --line:#3b352f;--accent:#e58a5c;--accent-soft:#3d2a20;--ok:#6cc392;--ok-soft:#1f3328;
+  --warn:#e0a640;--rec:#ff6b6b;--shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:96px}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.top{max-width:960px;margin:0 auto;padding:12px 16px 0;display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.top h1{font-size:20px;margin:0}
+.top small{color:var(--muted)}
+nav{max-width:960px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:8px 16px 0;scrollbar-width:none}
+nav button{flex:0 0 auto;border:0;background:none;color:var(--muted);padding:8px 12px;font:inherit;font-size:15px;border-bottom:3px solid transparent;cursor:pointer}
+nav button.on{color:var(--text);border-color:var(--accent);font-weight:600}
+main{max-width:960px;margin:0 auto;padding:16px}
+section.tab{display:none}section.tab.on{display:block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h2{font-size:18px;margin:0 0 8px}.card h3{font-size:16px;margin:12px 0 6px}
+.muted{color:var(--muted)}.small{font-size:14px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+button.b{border:1px solid var(--line);background:var(--surface2);color:var(--text);border-radius:999px;padding:8px 14px;font:inherit;font-size:15px;cursor:pointer}
+button.b.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+button.b.rec{background:var(--rec);border-color:var(--rec);color:#fff}
+button.b:disabled{opacity:.5;cursor:default}
+select,input[type=number],textarea{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+textarea{width:100%;min-height:140px}
+label.inl{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface2);border-radius:999px;padding:4px 10px;font-size:14px;cursor:pointer;color:var(--text)}
+.chip.on{background:var(--accent-soft);border-color:var(--accent)}
+.words{font-size:22px;line-height:1.9}
+.words span{display:inline-block;margin:0 10px 0 0}
+.big{font-size:40px;font-weight:700;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:13px;background:var(--surface2)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.check{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line)}
+.check:first-of-type{border-top:0}
+.check input{width:20px;height:20px;margin-top:3px;accent-color:var(--accent)}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day{aspect-ratio:1;border:1px solid var(--line);border-radius:8px;background:var(--surface2);font:inherit;font-size:14px;color:var(--text);cursor:pointer}
+.day.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:600}
+.day.cur{outline:2px solid var(--accent)}
+.note{border-left:3px solid var(--accent);padding:6px 10px;background:var(--accent-soft);border-radius:0 8px 8px 0;font-size:14px}
+/* breathing */
+.breath{width:180px;height:180px;border-radius:50%;margin:10px auto;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);border:2px solid var(--accent);transition:transform 1s linear;text-align:center;font-weight:600}
+/* teleprompter */
+#tpBox{background:#111;color:#f5f0e8;border-radius:12px;height:62vh;overflow:hidden;position:relative}
+#tpBox.full{position:fixed;inset:0;height:100vh;border-radius:0;z-index:50}
+#tpText{padding:40vh 6% 60vh;white-space:pre-wrap;line-height:1.6}
+#tpBox.mirror #tpText{transform:scaleX(-1)}
+#tpGuide{position:absolute;left:0;right:0;top:33%;height:0;border-top:2px dashed rgba(229,138,92,.6);pointer-events:none}
+#tpCount{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:96px;font-weight:700;color:#e58a5c;background:rgba(0,0,0,.5)}
+#tpExit{position:absolute;top:10px;right:10px;display:none}
+#tpBox.full #tpExit{display:block}
+/* meter */
+.meter{height:10px;background:var(--surface2);border-radius:999px;overflow:hidden;flex:1;min-width:80px}
+.meter i{display:block;height:100%;width:0;background:var(--ok);transition:width .08s}
+.gauge{height:14px;border-radius:999px;background:linear-gradient(90deg,#8fb3d9 0 30%,#6cc392 30% 70%,#e0a640 70% 100%);position:relative;margin:8px 0 4px}
+.gauge b{position:absolute;top:-5px;width:4px;height:24px;background:var(--text);border-radius:2px;left:0;transition:left .3s}
+/* recorder bar */
+#recBar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);z-index:20;padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+#recBar .in{max-width:960px;margin:0 auto;display:flex;gap:10px;align-items:center}
+#recTime{font-variant-numeric:tabular-nums;min-width:48px}
+.recItem{border-top:1px solid var(--line);padding:10px 0}
+.recItem audio{width:100%;margin:6px 0}
+.score{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px}
+.score select{padding:2px 4px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+td,th{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left}
+/* bài đọc chấm điểm */
+.reader{font-size:20px;line-height:2;margin-top:8px;white-space:pre-line}
+.tk{border-radius:4px;padding:0 2px;cursor:default}
+.tk.ok{background:var(--ok-soft)}
+.tk.bad{color:#fff;background:var(--rec);cursor:pointer}
+.tk.miss{color:var(--rec);text-decoration:line-through wavy;cursor:pointer}
+.tk.tone{background:#f3c27a;color:#3b2a00;cursor:pointer}
+.tk.mark{outline:2px solid var(--rec)}
+.reader.selfmode .tk{cursor:pointer;border-bottom:1px dashed var(--line)}
+.lcard{cursor:pointer}
+body.locked nav, body.locked #recBar{display:none}
+.lcard h3{margin:4px 0}
+@media (max-width:520px){.words{font-size:20px}.big{font-size:34px}.reader{font-size:18px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top"><h1>🎙️ Luyện Giọng MC</h1><small id="hdrStreak"></small></div>
+  <nav id="nav">
+    <button data-t="today" class="on">Hôm nay</button>
+    <button data-t="learn">Bài học</button>
+    <button data-t="warm">Khởi động</button>
+    <button data-t="pron">Từ luyện âm</button>
+    <button data-t="tp">Nhắc chữ</button>
+    <button data-t="speed">Tốc độ nói</button>
+    <button data-t="recs">Bản ghi</button>
+    <button data-t="log">Nhật ký</button>
+    <button data-t="learners" id="navLearners" hidden>Học viên</button>
+  </nav>
+</header>
+<main>
+<!-- CỔNG VÀO: đăng ký, chờ duyệt, đăng nhập (chỉ khi chạy với Apps Script) -->
+<section class="tab" id="t-gate">
+  <div class="card" id="gReg">
+    <h2>Đăng ký học</h2>
+    <p class="muted small">Nhập họ và tên. Bạn sẽ nhận mã học viên và vào học sau khi được duyệt.</p>
+    <input type="text" id="gName" maxlength="60" autocomplete="name" placeholder="Họ và tên, ví dụ: Nguyễn Ngọc Anh" style="width:100%;font:inherit;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text)">
+    <div class="row" style="margin-top:10px"><button class="b pri" type="button" id="gRegBtn">Gửi đăng ký</button></div>
+    <p class="small" id="gRegMsg"></p>
+  </div>
+  <div class="card" id="gLogin">
+    <h2>Đã có mã học viên?</h2>
+    <div class="row"><input type="text" id="loginCode" maxlength="8" autocomplete="off" placeholder="Ví dụ: HV2601" style="font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);text-transform:uppercase;width:150px"><button class="b pri" type="button" id="loginBtn">Đăng nhập</button></div>
+    <p class="small" id="loginMsg"></p>
+  </div>
+  <div class="card" id="gWait" hidden>
+    <h2 id="gWaitTitle">Đang chờ duyệt</h2>
+    <p>Mã học viên của bạn: <b id="gWaitCode" style="font-size:1.4em;letter-spacing:2px"></b></p>
+    <p class="small" id="gWaitMsg">Hãy ghi lại mã này. Khi được duyệt, mở lại link và bấm Kiểm tra lại để bắt đầu học.</p>
+    <div class="row"><button class="b pri" type="button" id="gCheck">Kiểm tra lại</button><button class="b" type="button" id="gOther">Dùng mã khác</button></div>
+  </div>
+</section>
+
+<!-- KHẢO SÁT ĐẦU VÀO -->
+<section class="tab" id="t-intake">
+  <div class="card">
+    <h2>Chào bạn! Trả lời 7 câu để có lộ trình riêng</h2>
+    <p class="muted small">Mất khoảng 1 phút. Web dựa vào câu trả lời để chọn bài phát âm, bài đọc và tốc độ nói phù hợp với bạn. Làm lại khảo sát bất cứ lúc nào ở tab Nhật ký.</p>
+    <form id="intakeForm">
+      <h3>1. Họ và tên</h3>
+      <input type="text" id="qName" maxlength="40" placeholder="Ví dụ: Ngọc Anh" style="width:100%;font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text)">
+      <h3>2. Bạn luyện giọng chủ yếu để làm gì?</h3>
+      <div class="chips" data-q="goal" data-single></div>
+      <h3>3. Giọng gốc của bạn</h3>
+      <div class="chips" data-q="origin" data-single></div>
+      <h3>4. Bạn muốn hướng tới giọng nào?</h3>
+      <div class="chips" data-q="target" data-single></div>
+      <h3>5. Bạn hay gặp vấn đề nào? (chọn nhiều)</h3>
+      <div class="chips" data-q="issues"></div>
+      <h3>6. Mỗi ngày bạn tập được bao lâu?</h3>
+      <div class="chips" data-q="minutes" data-single></div>
+      <h3>7. Kinh nghiệm nói trước đông người</h3>
+      <div class="chips" data-q="level" data-single></div>
+      <p class="small" id="intakeErr" style="color:var(--rec)"></p>
+      <div class="row" style="margin-top:8px"><button class="b pri" type="submit">Tạo lộ trình của tôi</button><button class="b" type="button" id="intakeCancel" hidden>Hủy</button></div>
+      <p class="muted small" id="intakePrivacy"></p>
+    </form>
+  </div>
+</section>
+
+<!-- HỌC VIÊN (chỉ người tạo thấy) -->
+<section class="tab" id="t-learners">
+  <div class="card">
+    <h2>Học viên đang theo lộ trình</h2>
+    <p class="muted small">Chỉ Uyên (người tạo trang) thấy tab này. Mỗi người học có lộ trình riêng theo câu trả lời khảo sát.</p>
+    <div style="overflow-x:auto"><table><thead><tr><th>Tên</th><th>Mục tiêu</th><th>Hướng tới</th><th>Vấn đề</th><th>Đã học</th><th>Hoạt động gần nhất</th></tr></thead><tbody id="lnBody"><tr><td colspan="6" class="muted">Chưa có học viên nào làm khảo sát.</td></tr></tbody></table></div>
+  </div>
+</section>
+
+<!-- HÔM NAY -->
+<section class="tab on" id="t-today">
+  <p class="note" id="codeBanner" hidden style="margin:0 0 14px"></p>
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <h2 id="dayTitle">Ngày 1</h2>
+      <span class="pill" id="dayWeek"></span>
+    </div>
+    <p class="muted small" id="dayGoal"></p>
+    <div id="dayTasks"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="b pri" id="btnDayDone">Hoàn thành ngày này</button>
+      <button class="b" id="btnPrev">‹ Ngày trước</button>
+      <button class="b" id="btnNext">Ngày sau ›</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Lộ trình 35 ngày</h2>
+    <p class="muted small">Mỗi ngày 15–20 phút. Bấm vào ô để xem bài của ngày đó. Ngày 7 mỗi tuần là ngày ghi âm tổng kết, so với bản ghi ngày 1.</p>
+    <div class="days" id="dayGrid"></div>
+  </div>
+  <div class="card">
+    <h2 id="tgTitle">Lộ trình của bạn</h2>
+    <p class="small" id="tgBody"></p>
+  </div>
+</section>
+
+<!-- BÀI HỌC -->
+<section class="tab" id="t-learn">
+  <div id="lnList">
+    <div class="card">
+      <h2>Bài học theo module</h2>
+      <p class="muted small">Chọn module và cấp độ. Mỗi bài: đọc theo, máy chấm điểm, tô đỏ chỗ chưa rõ, rồi luyện lại đúng câu đó.</p>
+      <div class="chips" id="modChips"></div>
+      <div class="chips" id="lvChips" style="margin-top:8px"></div>
+    </div>
+    <div id="lessonCards" class="grid2"></div>
+  </div>
+  <div id="lnView" hidden>
+    <div class="row" style="margin-bottom:10px"><button class="b" id="lnBack">‹ Danh sách bài</button><span class="pill" id="lnMeta"></span></div>
+    <div class="card">
+      <h2 id="lnTitle"></h2>
+      <p class="small" id="lnGoal"></p>
+      <ul class="small muted" id="lnTips" style="margin:6px 0 0;padding-left:20px"></ul>
+    </div>
+    <div class="card">
+      <div class="row" style="justify-content:space-between"><b>Bài đọc</b><span class="small muted" id="lnCount"></span></div>
+      <div id="lnText" class="reader"></div>
+      <div class="row" style="margin-top:12px">
+        <button class="b pri" id="rdStart">● Đọc và chấm điểm</button>
+        <button class="b" id="rdStop" disabled>■ Đọc xong</button>
+        <button class="b" id="rdSelf">Tự chấm</button>
+        <button class="b" id="rdTp">Mở máy nhắc chữ</button>
+        <button class="b" id="rdListen" hidden>🔈 Nghe máy đọc</button>
+      </div>
+      <p class="small muted" id="rdStatus"></p>
+      <div id="rdLive" class="small" style="min-height:24px;color:var(--muted)"></div>
+    </div>
+    <div class="card" id="rsCard" hidden>
+      <h2>Bảng chấm điểm</h2>
+      <div class="grid2" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr))">
+        <div><div class="muted small">Điểm tổng</div><div class="big" id="rsTotal">–</div><div id="rsGrade" class="pill"></div></div>
+        <div><div class="muted small">Đọc đúng</div><div class="big" id="rsAcc">–</div></div>
+        <div><div class="muted small">Tốc độ (tiếng/phút)</div><div class="big" id="rsSpd">–</div><div class="small muted" id="rsSpdT"></div></div>
+        <div><div class="muted small">Thời gian</div><div class="big" id="rsTime">–</div></div>
+      </div>
+      <table style="margin-top:10px"><tbody id="rsRows"></tbody></table>
+      <div class="row small" style="margin-top:10px;gap:14px"><span><span class="tk bad">đỏ</span> đọc sai / không rõ</span><span><span class="tk miss">gạch</span> bỏ sót</span><span><span class="tk tone">cam</span> sai dấu</span></div>
+      <h3>Chỗ cần sửa</h3>
+      <div id="rsErr" class="small"></div>
+      <div class="row" style="margin-top:10px"><button class="b pri" id="drStart">Luyện lại các câu sai</button><button class="b" id="rdAgain">Đọc lại cả bài</button></div>
+      <p class="muted small" style="margin-top:8px">Máy chấm theo những gì nó nghe được, nên dùng như người nghe khó tính, không thay được thầy cô. Có khi máy tự sửa giúp từ phát âm chưa chuẩn, nên vẫn cần tự nghe lại.</p>
+    </div>
+    <div class="card" id="drCard" hidden>
+      <div class="row" style="justify-content:space-between"><h2 style="margin:0">Luyện lại cho đúng</h2><span class="pill" id="drProg"></span></div>
+      <p class="muted small">Đọc lại đúng câu này. Đạt khi không còn chữ đỏ.</p>
+      <div id="drText" class="reader" style="font-size:24px"></div>
+      <div class="row" style="margin-top:10px">
+        <button class="b pri" id="drRec">● Đọc câu này</button>
+        <button class="b" id="drStop" disabled>■ Xong</button>
+        <button class="b" id="drListen" hidden>🔈 Nghe máy đọc</button>
+        <button class="b" id="drSkip">Bỏ qua ›</button>
+      </div>
+      <p class="small" id="drMsg"></p>
+    </div>
+  </div>
+</section>
+
+<!-- KHỞI ĐỘNG -->
+<section class="tab" id="t-warm">
+  <div class="grid2">
+    <div class="card">
+      <h2>1. Thở bụng 4–4–8</h2>
+      <p class="muted small">Đặt tay lên bụng. Hít bằng mũi cho bụng phình, giữ, rồi thở ra thật chậm bằng miệng. Vai không nhô lên.</p>
+      <div class="breath" id="breathBall">Sẵn sàng</div>
+      <div class="row" style="justify-content:center">
+        <button class="b pri" id="btnBreath">Bắt đầu 6 vòng</button>
+        <button class="b" id="btnBreathStop">Dừng</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>2. Giữ hơi dài (đo cột hơi)</h2>
+      <p class="muted small">Hít sâu bằng bụng, rồi thở ra thật chậm qua kẽ răng thành âm “sss” kéo dài, đều, không đứt, không to nhỏ thất thường. Mục tiêu: trên 25 giây, MC tốt trên 40 giây.</p>
+      <div class="big" id="hissTime" style="text-align:center">0,0 giây</div>
+      <p class="small" style="text-align:center">Kỷ lục: <b id="hissBest">–</b></p>
+      <div class="row" style="justify-content:center">
+        <button class="b pri" id="btnHiss">Bắt đầu giữ hơi</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>3. Ngân cộng hưởng (giọng trầm ấm)</h2>
+      <p class="muted small">Ngậm môi ngân "mmm" ở tông thấp, cảm nhận rung ở môi, mũi và ngực. Sau đó mở miệng thành "mmm–a", "mmm–ô". Mỗi lần 10 giây, nghỉ 5 giây.</p>
+      <div class="big" id="humTime" style="text-align:center">–</div>
+      <p class="small" style="text-align:center" id="humLabel">5 lần × 10 giây</p>
+      <div class="row" style="justify-content:center"><button class="b pri" id="btnHum">Bắt đầu</button></div>
+    </div>
+    <div class="card">
+      <h2>4. Khẩu hình &amp; lưỡi (2 phút)</h2>
+      <div class="check"><input type="checkbox"><div>Mở miệng thật to đọc chậm: <b>A – Ê – I – Ô – U – Ơ – Ư</b> (5 lượt). Miệng phải đổi hình rõ ràng.</div></div>
+      <div class="check"><input type="checkbox"><div>Rung môi "brrr" 15 giây, sau đó rung lưỡi "trrr" 15 giây.</div></div>
+      <div class="check"><input type="checkbox"><div>Đẩy lưỡi chạm má trái, má phải 10 lần. Xoay lưỡi quanh răng 5 vòng mỗi chiều.</div></div>
+      <div class="check"><input type="checkbox"><div>Ngáp thật to 3 lần để mở họng, giữ cảm giác họng mở khi nói.</div></div>
+      <div class="check"><input type="checkbox"><div>Cười "ha – ha – ha" bật từ bụng, 3 nhịp × 5 lần.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PHÁT ÂM -->
+<section class="tab" id="t-pron">
+  <div class="card">
+    <h2>Bài tập phát âm</h2>
+    <p class="muted small">Chọn nhóm bài, đọc chậm và rõ từng tiếng rồi tăng dần tốc độ. Bật ghi âm ở thanh dưới cùng để nghe lại.</p>
+    <div class="chips" id="pronGroups"></div>
+    <div class="chips" id="pronItems" style="margin-top:10px"></div>
+  </div>
+  <div class="card">
+    <h3 id="pronTitle" style="margin-top:0"></h3>
+    <p class="note" id="pronTip" style="display:none"></p>
+    <div class="words" id="pronWords"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="b" id="pronToTp">Mở bằng máy nhắc chữ</button>
+      <button class="b" id="pronShuffle">Đảo thứ tự</button>
+    </div>
+  </div>
+</section>
+
+<!-- NHẮC CHỮ -->
+<section class="tab" id="t-tp">
+  <div class="card">
+    <h2>Máy nhắc chữ</h2>
+    <div class="row">
+      <select id="tpPick"></select>
+      <button class="b" id="tpEditBtn">Sửa / dán bài</button>
+    </div>
+    <div id="tpEdit" style="display:none;margin-top:10px">
+      <textarea id="tpArea" placeholder="Dán kịch bản của Uyên vào đây..."></textarea>
+      <div class="row" style="margin-top:6px"><button class="b pri" id="tpSave">Dùng bài này</button><span class="muted small">Bài tự dán được lưu lại trên máy này.</span></div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <label class="inl">Tốc độ <input type="number" id="tpWpm" value="140" min="60" max="260" step="5" style="width:72px"> tiếng/phút</label>
+      <label class="inl">Cỡ chữ <input type="range" id="tpSize" min="20" max="64" value="34"></label>
+      <label class="inl"><input type="checkbox" id="tpMirror"> Lật gương</label>
+      <label class="inl"><input type="checkbox" id="tpRec" checked> Tự ghi âm</label>
+    </div>
+    <p class="muted small" id="tpInfo"></p>
+  </div>
+  <div id="tpBox"><div id="tpGuide"></div><div id="tpText"></div><div id="tpCount"></div><button class="b" id="tpExit">Thoát</button></div>
+  <div class="row" style="margin-top:10px">
+    <button class="b pri" id="tpStart">▶ Bắt đầu</button>
+    <button class="b" id="tpPause" disabled>Tạm dừng</button>
+    <button class="b" id="tpReset">Về đầu</button>
+    <button class="b" id="tpFull">Toàn màn hình</button>
+    <span class="muted small" id="tpClock"></span>
+  </div>
+</section>
+
+<!-- TỐC ĐỘ -->
+<section class="tab" id="t-speed">
+  <div class="card">
+    <h2>Đo tốc độ nói</h2>
+    <p class="muted small" id="srSupport"></p>
+    <div class="row">
+      <select id="spMode">
+        <option value="mc">MC sự kiện, HNKH (140–170)</option>
+        <option value="video">Video mạng xã hội (160–190)</option>
+        <option value="train">Đào tạo, họp nhóm (150–180)</option>
+      </select>
+      <button class="b pri" id="spStart">Bắt đầu nói</button>
+      <button class="b" id="spStop" disabled>Dừng</button>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <div class="muted small">Tốc độ hiện tại (15 giây gần nhất)</div>
+        <div class="big"><span id="spNow">–</span> <span class="small muted">tiếng/phút</span></div>
+        <div class="gauge"><b id="spNeedle"></b></div>
+        <div class="row small muted" style="justify-content:space-between"><span>chậm</span><span id="spRange"></span><span>nhanh</span></div>
+        <p class="small" id="spAdvice"></p>
+      </div>
+      <div>
+        <div class="muted small">Cả lượt</div>
+        <div class="big"><span id="spAvg">–</span> <span class="small muted">tiếng/phút</span></div>
+        <div class="small">Thời gian <b id="spTime">0:00</b> · Số tiếng <b id="spWords">0</b></div>
+        <div class="row small" style="margin-top:8px">Âm lượng <div class="meter"><i id="spVol"></i></div></div>
+      </div>
+    </div>
+    <h3>Máy nghe được</h3>
+    <div id="spText" class="small muted" style="min-height:48px"></div>
+  </div>
+  <div class="card">
+    <h2>Không có nhận giọng? Đo thủ công</h2>
+    <p class="muted small">Đọc một bài trong máy nhắc chữ ở chế độ tự cuộn tắt. Bấm bắt đầu khi đọc chữ đầu, bấm dừng ở chữ cuối. Web tự chia số tiếng của bài cho thời gian.</p>
+    <div class="row"><select id="manPick"></select><button class="b pri" id="manBtn">Bắt đầu đọc</button><span id="manOut" class="small"></span></div>
+  </div>
+</section>
+
+<!-- BẢN GHI -->
+<section class="tab" id="t-recs">
+  <div class="card">
+    <h2>Bản ghi của Uyên</h2>
+    <p class="muted small">Nghe lại và tự chấm 1–5 theo 5 tiêu chí. Bản ghi lưu trong trình duyệt này; tải về nếu muốn giữ lâu hoặc gửi người khác nghe.</p>
+    <div id="recList"><p class="muted">Chưa có bản ghi. Bấm nút ● Ghi âm ở dưới cùng.</p></div>
+  </div>
+</section>
+
+<!-- NHẬT KÝ -->
+<section class="tab" id="t-log">
+  <div class="grid2">
+    <div class="card"><div class="muted small">Chuỗi ngày liên tục</div><div class="big" id="lgStreak">0</div></div>
+    <div class="card"><div class="muted small">Số ngày đã hoàn thành</div><div class="big" id="lgDays">0/35</div></div>
+    <div class="card"><div class="muted small">Kỷ lục giữ hơi</div><div class="big" id="lgHiss">–</div></div>
+    <div class="card"><div class="muted small">Điểm tự chấm trung bình</div><div class="big" id="lgScore">–</div></div>
+  </div>
+  <div class="card">
+    <h2>Lịch sử đo tốc độ</h2>
+    <table><thead><tr><th>Ngày</th><th>Loại</th><th>Tiếng/phút</th><th>Thời lượng</th></tr></thead><tbody id="lgSpeed"></tbody></table>
+  </div>
+  <div class="card">
+    <h2>Dữ liệu</h2>
+    <p class="muted small">Dữ liệu lưu trên trình duyệt của máy này. Đổi máy hay xóa dữ liệu duyệt web sẽ mất, nên thỉnh thoảng sao lưu.</p>
+    <div class="row"><button class="b" id="lgExport">Sao lưu (tải file)</button><label class="b" style="cursor:pointer">Khôi phục<input type="file" id="lgImport" accept=".json" hidden></label></div>
+    <p class="small" id="lgMsg"></p>
+    <p class="small muted" id="storeNote"></p>
+    <div class="row"><button class="b" id="lgRedo">Làm lại khảo sát, đổi lộ trình</button><button class="b" id="lgLogout" hidden>Đăng xuất</button></div>
+  </div>
+</section>
+</main>
+
+<div id="recBar"><div class="in">
+  <button class="b rec" id="recBtn">● Ghi âm</button>
+  <span id="recTime">0:00</span>
+  <div class="meter"><i id="recVol"></i></div>
+  <span class="small muted" id="recMsg"></span>
+</div></div>
+
+<script>
+/* BỘ BÀI HỌC THEO MODULE VÀ CẤP ĐỘ
+   Bài viết mới theo khung ebook Coach Lan Anh Vũ và giáo trình Diamond Mic (không chép nguyên văn).
+   lv: 1 Cơ bản · 2 Trung cấp · 3 Nâng cao. sp: tốc độ mục tiêu (tiếng/phút, giá trị tham khảo).
+   self:true = bài âm rời, máy khó nghe, nên tự chấm. */
+const MODULES = [
+ {id:"pa", n:"Luyện phát âm", d:"Khẩu hình, nguyên âm, dấu thanh, phụ âm đầu, vần khó, chuẩn miền Nam."},
+ {id:"dc", n:"Đọc diễn cảm", d:"Ngắt nghỉ, lên xuống giọng, giọng ấm, truyền cảm xúc."},
+ {id:"tt", n:"Đọc tin tức, bản tin", d:"Giọng rõ, dứt khoát, đọc con số, chuyển tin."},
+ {id:"th", n:"Thuyết trình", d:"Mở đầu cuốn hút, trình bày 3 ý, số liệu, kể chuyện, kêu gọi hành động."},
+ {id:"mc", n:"Dẫn chương trình (MC)", d:"Khai mạc, giới thiệu tiết mục, vinh danh, hội nghị khách hàng."}
+];
+const LEVELS = {1:"Cơ bản", 2:"Trung cấp", 3:"Nâng cao"};
+const LESSONS = [
+/* ---------- PHÁT ÂM ---------- */
+{id:"pa1", m:"pa", lv:1, self:true, sp:[60,100], t:"Khẩu hình 11 nguyên âm và 6 thanh",
+ goal:"Mở khẩu hình đúng, tròn tiếng, đọc rõ 6 thanh.",
+ tips:["Mỗi nguyên âm đọc 5 lần, miệng đổi hình rõ ràng.","Chuẩn miền Nam: dấu ngã đọc gần như dấu hỏi; dấu sắc gọn, không luyến; dấu nặng dứt khoát.","Bài âm rời máy khó nghe, nên dùng nút Tự chấm."],
+ tx:"a, ă, â, e, ê, i, o, ô, ơ, u, ư.\nba, bà, bá, bả, bã, bạ.\nme, mè, mé, mẻ, mẽ, mẹ.\nla, là, lá, lả, lã, lạ.\nto, tò, tó, tỏ, tõ, tọ.\nmơ, mờ, mớ, mở, mỡ, mợ.\nthu, thù, thú, thủ, thũ, thụ."},
+{id:"pa2", m:"pa", lv:1, sp:[140,170], t:"Đoạn văn nguyên âm A – Ă – Â",
+ goal:"Mở rộng khẩu hình với âm a, giữ âm ă và â gọn, không bẹt.",
+ tips:["Âm a: hạ hàm, mở miệng rộng.","Âm ă, â ngắn hơn a, khép miệng sớm hơn.","Đọc chậm lượt 1, lượt 2 tăng tốc nhưng giữ tròn chữ."],
+ tx:"Sáng nay, má tôi dậy sớm, nấu nồi cháo cá, bày ra mâm nhỏ ngoài hiên. Nắng vàng nhạt trải ngang sân, bầy gà con chạy lăng xăng quanh chân bà ngoại. Ba tôi xắn tay áo, mang can nước ra tưới hàng cà, hàng cải. Cả nhà ăn sáng, bàn chuyện làm ăn, chuyện mùa màng, ai cũng thấy lòng nhẹ nhàng, an tâm lạ."},
+{id:"pa3", m:"pa", lv:1, sp:[140,170], t:"Đoạn văn nguyên âm O – Ô – Ơ",
+ goal:"Tròn môi đúng ba mức: o mở, ô tròn, ơ thả lỏng.",
+ tips:["Âm o: môi tròn, miệng mở vừa.","Âm ô: môi chúm tròn hơn.","Âm ơ: môi không tròn, thả lỏng."],
+ tx:"Chiều nọ, cô Hồng ngồi bên bờ hồ, ngó những con sóng nhỏ xô vào bờ đá. Gió thổi lồng lộng, mấy cây cờ đỏ trước cổng chợ phơ phới bay. Cô nhớ hồi còn nhỏ, mẹ thường chở cô qua đò, mua bó rau, rổ ốc, rồi về nấu nồi canh ngọt. Giờ chợ đã khác, đò không còn, nhưng nỗi nhớ vẫn còn đó, đơn sơ mà ấm lòng."},
+{id:"pa4", m:"pa", lv:1, sp:[140,170], t:"Phụ âm V – không đọc thành D",
+ goal:"Đọc đúng âm v: răng trên chạm nhẹ môi dưới, thổi hơi rung.",
+ tips:["Miền Nam hay đọc v thành d (“dui dẻ”). Phóng đại môi ở lượt đầu.","Đặt tay trước miệng, thấy hơi thổi ra là đúng."],
+ tx:"Vân vui vẻ vào văn phòng, vừa vào đã vội vàng viết vài việc cần làm. Vị khách quen ghé ví von rằng văn phòng của Vân vừa vặn, vững vàng, vô cùng vui. Vân vâng dạ, vẫn vừa nghe vừa ghi, vì việc nào Vân cũng muốn làm vẹn toàn, vẻ vang."},
+{id:"pa5", m:"pa", lv:2, sp:[150,180], t:"Phân biệt TR và CH",
+ goal:"TR uốn lưỡi, bật hơi; CH áp mặt lưỡi lên vòm, gọn.",
+ tips:["Đọc từng cặp chậm trước: tre – che, trung – chung, trải – chải.","Không uốn lưỡi quá đà, tránh nghe nặng nề."],
+ tx:"Chị Trâm trưởng nhóm chăm chỉ chuẩn bị chương trình chào mừng khách hàng. Trên chiếc bàn trắng, chị trải tấm khăn, chọn chậu cây xanh, trang trí chu đáo. Chiều nay, trung tâm chật kín người, chị trân trọng chào từng vị khách, chia sẻ chân thành về trách nhiệm và sự tận tâm của cả nhóm."},
+{id:"pa6", m:"pa", lv:2, sp:[150,180], t:"Phân biệt S và X",
+ goal:"S uốn lưỡi nhẹ; X lưỡi thẳng, hơi lướt qua kẽ răng.",
+ tips:["Cặp luyện: sinh – xinh, sâu – xâu, sắc – xắc.","Giữ hơi đều, không xì quá mạnh."],
+ tx:"Sáng sớm, Sương sắp xếp sổ sách, sẵn sàng cho buổi xét duyệt. Xe xếp hàng dài trên con đường xa, Sương vẫn say sưa soạn số liệu. Sếp khen Sương sâu sắc, sáng suốt, xứng đáng được xếp vào nhóm xuất sắc. Sương xúc động, xin cảm ơn, rồi lại xắn tay vào việc."},
+{id:"pa7", m:"pa", lv:2, sp:[150,180], t:"Phụ âm R rung nhẹ, không đọc thành G",
+ goal:"Đầu lưỡi cong gần lợi trên, hơi rung nhẹ.",
+ tips:["Không đọc “rõ ràng” thành “gõ gàng”.","Nếu chưa rung được, uốn lưỡi rõ là đủ cho giọng chuẩn Nam."],
+ tx:"Rạng sáng, Rin rủ Ri ra ruộng rau. Rau răm, rau ngò rì rào trong gió, ruộng rộng rãi, rực rỡ nắng. Hai đứa rửa rổ, rải rơm, rồi rảo bước ra rạch. Rõ ràng, ruộng rau là niềm tự hào của cả xóm, ai ra cũng rạng rỡ, rôm rả."},
+{id:"pa8", m:"pa", lv:2, sp:[150,180], t:"Vần OA, OE, UY, UYÊN – giữ âm đệm",
+ goal:"Tròn môi trước rồi mới mở: “hoa” không đọc thành “ha”, “quy” không thành “wi”.",
+ tips:["Đọc chậm phần âm đệm o/u, rồi nối liền.","Kiểm tra bằng gương: môi phải tròn ở đầu tiếng."],
+ tx:"Hoàng khoác áo, hoà vào dòng người đi xem hội hoa xuân. Hoa huệ, hoa quỳnh khoe sắc, khách thập phương tuyên dương ban tổ chức chu đáo. Hoàng khuyên em gái luyện tập kiên trì, vì chuyến đi này là phần thưởng quý cho người quyết tâm hoàn thành mục tiêu."},
+{id:"pa9", m:"pa", lv:3, sp:[160,190], t:"Đuôi N – NG và T – C",
+ goal:"Kết thúc âm tiết đúng vị trí lưỡi: n, t đầu lưỡi; ng, c cuống lưỡi.",
+ tips:["Cặp luyện: lan – lang, bản – bảng, mát – mác, việt – việc.","Đuôi in, ên, inh, ênh của giọng Nam: giữ khóe miệng kéo ngang."],
+ tx:"Anh Thanh làm việc tại ngân hàng, mỗi tháng đều lập bảng kế hoạch cẩn thận. Bản kế hoạch năm nay tập trung vào khách hàng thân thiết, mở rộng mạng lưới, nâng cao chất lượng phục vụ. Cuối buổi họp, anh nhắc mọi người: việc nhỏ cũng phải làm tận tâm, vì uy tín của chi nhánh được xây từng ngày."},
+{id:"pa10", m:"pa", lv:3, sp:[160,190], t:"Vần khó UÔI, ƯƠI, ƯƠM, IÊU",
+ goal:"Đọc trọn nguyên âm đôi, không rút gọn thành âm đơn.",
+ tips:["Miền Nam hay đọc “người” gần “ngừi”, “muối” gần “múi”: kéo dài phần đầu của vần.","Đọc chậm từng tiếng trước khi đọc liền câu."],
+ tx:"Buổi chiều cuối tuần, mười người bạn cũ hẹn nhau bên bờ suối. Ai cũng tươi cười, kể chuyện tuổi thơ, chuyện nuôi con, chuyện chuyển việc. Gió chiều hiu hiu, mùi cơm nướng thơm lừng, tiếng cười ấm áp. Người nhiều tuổi nhất nói: niềm vui đơn giản nhất là được ngồi bên nhau thế này."},
+{id:"pa11", m:"pa", lv:3, sp:[160,190], t:"Tổng hợp chuẩn giọng miền Nam",
+ goal:"Giữ chất giọng Nam ấm áp nhưng tròn vành, rõ chữ, không nuốt chữ.",
+ tips:["Chú ý: v, r, tr, s, đuôi n/ng, t/c, vần oa/uy, inh/ênh.","Chuẩn miền Nam: dấu ngã đọc như dấu hỏi, không cần cố phân biệt."],
+ tx:"Kính thưa quý vị, chương trình tri ân khách hàng năm nay được tổ chức với chủ đề Vững vàng tương lai. Trong suốt một năm qua, quý khách đã tin tưởng đồng hành, cùng chúng tôi xây dựng những kế hoạch tài chính an toàn, bền vững. Sự tin yêu ấy là động lực để toàn thể đội ngũ tiếp tục rèn luyện, phục vụ tận tình và chuyên nghiệp hơn mỗi ngày."},
+
+/* ---------- ĐỌC DIỄN CẢM ---------- */
+{id:"dc1", m:"dc", lv:1, sp:[130,160], t:"Ngắt hơi đúng dấu câu",
+ goal:"Dấu phẩy nghỉ nửa nhịp, dấu chấm nghỉ một nhịp, xuống giọng cuối câu.",
+ tips:["Lấy hơi ở dấu chấm, không lấy hơi giữa cụm từ.","Cuối câu kể hạ giọng nhẹ, không bỏ lửng."],
+ tx:"Mỗi sáng, tôi dậy sớm hơn mọi người một chút. Tôi pha một ly cà phê, mở cửa sổ, và nghe tiếng xe đầu tiên chạy qua con hẻm nhỏ. Khoảnh khắc ấy rất ngắn. Nhưng nó cho tôi đủ bình yên để bắt đầu một ngày dài."},
+{id:"dc2", m:"dc", lv:1, sp:[130,160], t:"Giọng ấm, chậm: Quê ngoại",
+ goal:"Hạ tông giọng, nói chậm, để hơi chạy dài cuối câu.",
+ tips:["Thở bụng trước khi đọc.","Kéo nhẹ các từ gợi cảm xúc: thương, nhớ, ấm."],
+ tx:"Quê ngoại tôi có hàng dừa nghiêng bóng xuống dòng kênh. Mỗi lần về, ngoại đều đứng chờ ở đầu ngõ, tay cầm nón lá, mắt nheo nheo nhìn xa. Ngoại không nói nhiều, chỉ hỏi con đi đường có mệt không, rồi dắt tôi vào nhà. Bữa cơm có canh chua, cá kho, và cả một trời thương nhớ."},
+{id:"dc3", m:"dc", lv:2, sp:[140,170], t:"Lên giọng, xuống giọng: Lá thư gửi mẹ",
+ goal:"Đổi cao độ theo cảm xúc: nhẹ nhàng, nghẹn ngào, rồi hy vọng.",
+ tips:["Đoạn đầu giọng nhẹ, đoạn giữa chậm và trầm, đoạn cuối sáng lên.","Ngừng 2 nhịp trước câu cuối."],
+ tx:"Mẹ ơi, đã lâu rồi con chưa viết thư cho mẹ. Thành phố bận rộn quá, con cứ hẹn lần hẹn lữa. Có những đêm con về muộn, nhìn căn phòng trống, con chợt nhớ mâm cơm mẹ nấu đến nao lòng. Mẹ đừng lo cho con nhé. Con vẫn khỏe, vẫn cố gắng từng ngày. Tết này, con nhất định sẽ về."},
+{id:"dc4", m:"dc", lv:2, sp:[140,170], t:"Lời thoại hai nhân vật",
+ goal:"Phân biệt giọng người kể và giọng nhân vật bằng tốc độ, cao độ.",
+ tips:["Người kể: giọng đều, trung tính.","Nhân vật lo lắng: nhanh, cao hơn; nhân vật điềm tĩnh: chậm, trầm."],
+ tx:"Minh bước vào, giọng gấp gáp: Chị ơi, em làm hỏng bản báo cáo rồi, sếp sắp tới nơi! Chị Hạnh đặt ly nước xuống, chậm rãi nói: Em ngồi xuống đã. Chuyện gì cũng có cách giải quyết. Mình cùng xem lại từng trang nhé. Minh thở ra một hơi dài, khẽ gật đầu."},
+{id:"dc5", m:"dc", lv:3, sp:[150,180], t:"Văn chính luận: Tuyên ngôn Độc lập (trích)",
+ goal:"Giọng trang trọng, dõng dạc, nhấn mạnh từ khóa, ngắt nghỉ rõ.",
+ tips:["Đọc đứng, thẳng lưng, mở họng.","Nhấn: bình đẳng, quyền được sống, tự do, hạnh phúc."],
+ tx:"Hỡi đồng bào cả nước! Tất cả mọi người đều sinh ra có quyền bình đẳng. Tạo hóa cho họ những quyền không ai có thể xâm phạm được; trong những quyền ấy, có quyền được sống, quyền tự do và quyền mưu cầu hạnh phúc. Lời bất hủ ấy ở trong bản Tuyên ngôn Độc lập năm 1776 của nước Mỹ. Suy rộng ra, câu ấy có ý nghĩa là: tất cả các dân tộc trên thế giới đều sinh ra bình đẳng; dân tộc nào cũng có quyền sống, quyền sung sướng và quyền tự do."},
+{id:"dc6", m:"dc", lv:3, sp:[140,170], t:"Truyền cảm: Đôi bàn tay của cha",
+ goal:"Dẫn dắt cảm xúc tăng dần, giữ hơi ở câu dài, khoảng lặng có chủ ý.",
+ tips:["Câu dài đọc một hơi, chỉ nghỉ ở dấu phẩy.","Hạ giọng và chậm hẳn ở câu cuối."],
+ tx:"Hồi nhỏ, tôi từng xấu hổ vì đôi bàn tay của cha. Đôi tay ấy thô ráp, chai sạn, móng tay lúc nào cũng dính dầu nhớt từ tiệm sửa xe đầu hẻm. Tôi lớn lên, đi học xa, đi làm, rồi một ngày chính tôi phải ký những tờ giấy vay tiền đầu tiên trong đời. Lúc ấy tôi mới hiểu, đôi bàn tay chai sạn kia đã âm thầm gánh cả tuổi thơ tôi, chưa một lần than vãn."},
+
+/* ---------- TIN TỨC ---------- */
+{id:"tt1", m:"tt", lv:1, sp:[170,200], t:"Bản tin thời tiết",
+ goal:"Giọng rõ, tươi, đều nhịp; đọc nhiệt độ chính xác.",
+ tips:["Bản tin mẫu để luyện đọc, số liệu minh họa.","Mỗi câu một ý, nghỉ ngắn giữa các khu vực."],
+ tx:"Thời tiết ngày mai: khu vực Thành phố Hồ Chí Minh và các tỉnh Nam Bộ có mây, ngày nắng, chiều tối có mưa rào và dông vài nơi. Nhiệt độ thấp nhất từ 24 đến 26 độ, cao nhất từ 32 đến 34 độ. Trong cơn dông có khả năng xảy ra lốc, sét và gió giật mạnh, người dân cần chủ động phòng tránh."},
+{id:"tt2", m:"tt", lv:1, sp:[170,200], t:"Tin ngắn giao thông",
+ goal:"Đọc dứt khoát, đúng tên đường, nhấn thông tin quan trọng.",
+ tips:["Bản tin mẫu để luyện đọc, nội dung minh họa.","Nhấn: thời gian, địa điểm, lời khuyên."],
+ tx:"Từ sáng nay, nhiều tuyến đường ở khu vực trung tâm thành phố ùn tắc kéo dài do lượng xe tăng cao dịp cuối tuần. Lực lượng chức năng đã có mặt điều tiết, phân luồng tại các giao lộ lớn. Người tham gia giao thông nên xuất phát sớm, theo dõi thông tin và chọn lộ trình phù hợp để tránh mất thời gian."},
+{id:"tt3", m:"tt", lv:2, sp:[180,210], t:"Tin kinh tế: đọc con số",
+ goal:"Đọc số liệu rõ ràng, không vấp, nhấn con số chính.",
+ tips:["Bản tin mẫu để luyện đọc, số liệu minh họa, không phải tin thật.","Số thập phân đọc “phẩy”, ký hiệu % đọc “phần trăm”."],
+ tx:"Theo khảo sát của chúng tôi, lãi suất tiết kiệm kỳ hạn 12 tháng tại nhiều ngân hàng hiện dao động từ 4,5% đến 6% một năm. Một số ngân hàng áp dụng mức ưu đãi cho khách hàng gửi trực tuyến, cao hơn khoảng 0,2% so với gửi tại quầy. Chuyên gia khuyên người gửi tiền nên so sánh kỹ điều kiện, kỳ hạn và uy tín ngân hàng trước khi quyết định."},
+{id:"tt4", m:"tt", lv:2, sp:[180,210], t:"Tin xã hội: ngày hội hiến máu",
+ goal:"Giọng ấm hơn tin kinh tế, vẫn giữ nhịp bản tin.",
+ tips:["Bản tin mẫu để luyện đọc, nội dung minh họa.","Câu trích lời nhân vật đọc chậm lại một chút."],
+ tx:"Sáng nay, ngày hội hiến máu tình nguyện đã thu hút hàng trăm bạn trẻ, công nhân và cán bộ văn phòng tham gia. Nhiều người lần đầu hiến máu chia sẻ rằng họ chỉ hơi run lúc đầu, nhưng cảm thấy rất vui khi biết giọt máu của mình có thể cứu một người bệnh. Ban tổ chức cho biết các đơn vị máu sẽ được chuyển ngay đến các bệnh viện đang thiếu hụt."},
+{id:"tt5", m:"tt", lv:3, sp:[190,220], t:"Bản tin tổng hợp: chuyển tin mượt",
+ goal:"Đổi sắc thái giữa các tin, dùng câu chuyển gọn, không ngập ngừng.",
+ tips:["Bản tin mẫu để luyện đọc, nội dung minh họa.","Giữa hai tin nghỉ 1 nhịp, đổi tông nhẹ."],
+ tx:"Kính chào quý vị, mời quý vị theo dõi bản tin sáng. Tin đầu tiên, tuyến xe buýt điện mới chính thức đi vào hoạt động, kết nối khu vực trung tâm với các khu dân cư phía đông thành phố. Tiếp theo là tin giáo dục, nhiều trường học tổ chức ngày hội đọc sách, khuyến khích học sinh dành ít nhất ba mươi phút mỗi ngày để đọc. Và cuối cùng, dự báo thời tiết cuối tuần trời nắng ráo, thuận lợi cho các hoạt động ngoài trời. Cảm ơn quý vị đã theo dõi."},
+{id:"tt6", m:"tt", lv:3, sp:[160,190], t:"Lời dẫn phóng sự: người giữ đò",
+ goal:"Kết hợp giọng tin tức và giọng kể, có hình ảnh, có cảm xúc.",
+ tips:["Nội dung minh họa để luyện đọc.","Đoạn mô tả đọc chậm hơn đoạn thông tin."],
+ tx:"Hơn hai mươi năm nay, bến đò nhỏ cuối làng vẫn có một người đàn ông lặng lẽ chở khách qua sông. Mỗi ngày, ông dậy từ bốn giờ sáng, lau chiếc đò gỗ, kiểm tra từng chiếc phao. Học trò, người đi chợ, cả những cụ già đi khám bệnh, ai cũng quen tiếng gọi đò của ông. Ông nói, chừng nào cây cầu còn chưa xây xong, chừng đó ông vẫn còn giữ bến."},
+
+/* ---------- THUYẾT TRÌNH ---------- */
+{id:"th1", m:"th", lv:1, sp:[150,180], t:"Giới thiệu bản thân 1 phút",
+ goal:"Nói tự nhiên, rõ tên, rõ việc mình làm, kết thúc bằng một câu ấn tượng.",
+ tips:["Nhìn thẳng camera hoặc người nghe.","Thay phần trong ngoặc bằng thông tin của bạn khi tập nói tự do."],
+ tx:"Xin chào mọi người, mình là Uyên. Mình đã làm việc trong ngành tài chính ngân hàng hơn bảy năm, và hiện đang đồng hành cùng các gia đình xây dựng kế hoạch bảo vệ tài chính. Điều mình thích nhất ở công việc này là được lắng nghe câu chuyện của từng người. Rất vui được làm quen với mọi người hôm nay."},
+{id:"th2", m:"th", lv:1, sp:[150,180], t:"Mở đầu bằng câu hỏi",
+ goal:"Đặt câu hỏi lên giọng cuối câu, dừng chờ người nghe suy nghĩ.",
+ tips:["Sau câu hỏi, đếm thầm 2 nhịp.","Câu trả lời đọc chậm, nhấn từ khóa."],
+ tx:"Có bao nhiêu người ở đây từng hứa với bản thân sẽ tiết kiệm, nhưng đến cuối tháng lại không còn đồng nào? Nếu bạn vừa giơ tay, bạn không cô đơn đâu. Theo kinh nghiệm của tôi, vấn đề không nằm ở thu nhập, mà nằm ở việc chúng ta chưa có một kế hoạch rõ ràng. Hôm nay, chúng ta sẽ cùng xây dựng kế hoạch đó."},
+{id:"th3", m:"th", lv:2, sp:[150,180], t:"Cấu trúc 3 ý",
+ goal:"Báo trước 3 ý, đánh dấu từng ý bằng thứ nhất, thứ hai, thứ ba.",
+ tips:["Nhấn mạnh từ đánh dấu ý.","Nghỉ 1 nhịp sau mỗi ý."],
+ tx:"Trong mười lăm phút tới, tôi xin trình bày ba nội dung. Thứ nhất, kết quả kinh doanh tháng vừa qua. Thứ hai, hai điểm chúng ta cần cải thiện. Thứ ba, kế hoạch hành động cho tháng tới. Trước hết, về kết quả, cả nhóm đã hoàn thành chín mươi tám phần trăm kế hoạch, tăng mười hai phần trăm so với tháng trước."},
+{id:"th4", m:"th", lv:2, sp:[150,180], t:"Trình bày số liệu dễ nhớ",
+ goal:"Biến con số thành hình ảnh, nhấn và ngừng sau con số quan trọng.",
+ tips:["Ngừng 1 nhịp trước con số chính.","So sánh con số với điều gần gũi."],
+ tx:"Năm vừa qua, đội ngũ của chúng ta đã hỗ trợ hơn ba trăm gia đình. Ba trăm gia đình, nghĩa là gần như mỗi ngày làm việc, chúng ta giúp được một gia đình an tâm hơn về tương lai. Con số ấy không chỉ là doanh số. Đó là ba trăm lời hứa mà chúng ta phải giữ trọn."},
+{id:"th5", m:"th", lv:3, sp:[150,180], t:"Kể chuyện thuyết phục",
+ goal:"Dẫn chuyện có nhân vật, có nút thắt, có bài học, giọng thay đổi theo diễn biến.",
+ tips:["Phần kể chuyện chậm, hạ giọng ở nút thắt.","Bài học cuối nói rõ, nhìn thẳng người nghe."],
+ tx:"Ba năm trước, tôi gặp một khách hàng là chị Lan, bán tạp hóa ở chợ. Chị từ chối tôi rất lịch sự: em ơi, chị còn trẻ, chưa cần đâu. Sáu tháng sau, chồng chị nhập viện. Chị gọi cho tôi, giọng nghẹn lại: giá như hôm đó chị nghe em. Từ ngày ấy, tôi hiểu rằng việc của mình không phải là bán một sản phẩm, mà là kiên nhẫn giúp mọi người nhìn thấy điều họ chưa kịp nghĩ tới."},
+{id:"th6", m:"th", lv:3, sp:[150,180], t:"Kết thúc bằng lời kêu gọi hành động",
+ goal:"Tóm tắt gọn, nâng năng lượng, kêu gọi một việc cụ thể.",
+ tips:["Câu kêu gọi ngắn, dứt khoát, nhìn thẳng người nghe.","Mỉm cười ở câu cảm ơn."],
+ tx:"Tóm lại, chúng ta vừa đi qua ba điều: hiểu rõ nhu cầu khách hàng, chuẩn bị kỹ trước mỗi cuộc hẹn, và kiên trì chăm sóc sau bán hàng. Bây giờ, tôi muốn mỗi người chọn ra ba khách hàng cũ và gọi lại cho họ ngay trong tuần này. Chỉ ba cuộc gọi thôi. Hãy bắt đầu từ hôm nay. Cảm ơn mọi người đã lắng nghe."},
+
+/* ---------- DẪN CHƯƠNG TRÌNH ---------- */
+{id:"mc1", m:"mc", lv:1, sp:[140,170], t:"Lời chào khai mạc",
+ goal:"Giọng sáng, trang trọng, nụ cười trong giọng nói.",
+ tips:["Kính thưa đọc chậm, rõ.","Mỉm cười khi nói câu chào."],
+ tx:"Kính thưa quý vị đại biểu, thưa toàn thể quý khách! Lời đầu tiên, thay mặt ban tổ chức, xin gửi đến quý vị lời chào trân trọng và lời chúc sức khỏe, hạnh phúc. Hôm nay, chúng ta cùng có mặt tại đây để chào đón một chương trình đặc biệt, nơi kết nối những người cùng chung niềm tin và khát vọng phát triển."},
+{id:"mc2", m:"mc", lv:1, sp:[150,180], t:"Mở đầu video ngắn",
+ goal:"Thân thiện như nói chuyện với một người, câu đầu thu hút ngay.",
+ tips:["Nhìn thẳng ống kính, nói như với bạn thân.","Câu đầu nhanh và rõ, câu hứa hẹn cuối chậm lại."],
+ tx:"Chào bạn, mình là Uyên. Mình từng làm ngân hàng hơn năm năm, ngày nào cũng nghe khách hỏi gửi tiết kiệm hay mua bảo hiểm thì tốt hơn. Hồi đó mình trả lời theo kịch bản. Bây giờ, mình muốn trả lời bạn bằng sự thật. Xem đến cuối nha, vì điều thứ ba là điều mình ước gì đã biết sớm hơn."},
+{id:"mc3", m:"mc", lv:2, sp:[150,180], t:"Giới thiệu tiết mục văn nghệ",
+ goal:"Dẫn dắt cảm xúc, giới thiệu tên tiết mục và người biểu diễn rõ ràng.",
+ tips:["Tên tiết mục và tên người biểu diễn đọc chậm, nhấn rõ.","Kết bằng lời mời vỗ tay, nâng giọng."],
+ tx:"Thưa quý vị, có những giai điệu chỉ cần cất lên đã đưa chúng ta trở về với tuổi thơ, với mái nhà và vòng tay của mẹ. Ngay sau đây, mời quý vị cùng thưởng thức ca khúc Mẹ yêu con, qua tiếng hát của chị Ngọc Hân, đến từ phòng chăm sóc khách hàng. Xin một tràng pháo tay thật nồng nhiệt!"},
+{id:"mc4", m:"mc", lv:2, sp:[150,180], t:"Vinh danh cá nhân xuất sắc",
+ goal:"Tạo hồi hộp bằng khoảng lặng, công bố tên rõ, nâng giọng chúc mừng.",
+ tips:["Ngừng 2 nhịp trước khi đọc tên.","Tên người được vinh danh đọc chậm, rõ từng tiếng."],
+ tx:"Kính thưa quý vị, có những con số không chỉ là doanh số. Đằng sau mỗi hợp đồng là một gia đình được bảo vệ, là một lời hứa được giữ trọn. Tháng vừa qua, có một người đã bền bỉ gặp gỡ, lắng nghe và đồng hành cùng khách hàng mỗi ngày. Xin trân trọng kính mời tư vấn viên xuất sắc nhất tháng, chị Phương Thảo! Xin quý vị cho một tràng pháo tay thật lớn để chúc mừng chị."},
+{id:"mc5", m:"mc", lv:3, sp:[140,170], t:"Mở màn hội nghị khách hàng",
+ goal:"Trang trọng mà gần gũi, đặt câu hỏi gợi suy nghĩ, chuyển sang diễn giả mượt.",
+ tips:["Câu hỏi giữa bài hạ giọng, chậm lại.","Lời mời diễn giả nâng giọng, tươi sáng."],
+ tx:"Kính thưa quý khách hàng thân mến! Thay mặt Bảo Việt Nhân thọ Gia Định, em xin gửi lời cảm ơn chân thành đến quý anh chị đã dành thời gian quý báu tham dự chương trình hôm nay. Hôm nay không phải là một buổi bán hàng. Hôm nay là một buổi trò chuyện về sức khỏe, về tương lai của con cái và sự an tâm cho cả gia đình. Có một câu hỏi em muốn quý anh chị giữ trong đầu suốt chương trình: nếu ngày mai mình không thể đi làm, ai sẽ lo cho những người mình thương? Và để cùng tìm câu trả lời, xin trân trọng kính mời quý anh chị cùng lắng nghe phần chia sẻ của diễn giả."},
+{id:"mc6", m:"mc", lv:3, sp:[150,180], t:"Xử lý sự cố trên sân khấu",
+ goal:"Giữ bình tĩnh, giọng vững, biến sự cố thành khoảnh khắc thân thiện.",
+ tips:["Không nói nhanh khi có sự cố, hạ tốc độ, mỉm cười.","Câu đùa nhẹ nhàng, không đổ lỗi."],
+ tx:"Thưa quý vị, có vẻ như chiếc micro của chúng ta cũng đang hồi hộp không kém ca sĩ. Trong lúc đội kỹ thuật chuẩn bị lại, mời quý vị cùng nhìn lên màn hình, nơi lưu lại những khoảnh khắc đẹp nhất của cả năm vừa qua. Và chỉ một phút nữa thôi, tiết mục đặc biệt sẽ trở lại, hứa hẹn còn bùng nổ hơn. Xin cảm ơn sự kiên nhẫn và tình cảm của quý vị."}
+];
+
+</script>
+<script>
+/* ============ DỮ LIỆU BÀI TẬP (theo giáo trình Diamond Mic + bổ sung chuẩn miền Nam) ============ */
+const PRON = [
+ {g:"Chuẩn miền Nam", items:[
+  {t:"V – không đọc thành D", tip:"Răng trên chạm nhẹ môi dưới, thổi hơi rung: “vờ”. Miền Nam hay đọc v thành d (“dui dẻ”). Đọc chậm, phóng đại môi.", w:"vui vẻ, văn võ, vững vàng, vào việc, viễn vông, vĩnh viễn, Việt Nam, vinh quang, vẻ vang, vượt qua, vận may, vạn sự, ví von, vô vàn, vừa vặn"},
+  {t:"R – rung, không đọc thành G", tip:"Đầu lưỡi cong lên gần lợi trên, hơi rung nhẹ. Không đọc “rõ ràng” thành “gõ gàng”.", w:"rõ ràng, rực rỡ, rộn ràng, rủi ro, ra về, rạng rỡ, rèn luyện, rộng rãi, rì rào, rảnh rang, rắn rỏi, rạo rực"},
+  {t:"TR khác CH", tip:"TR: lưỡi cong, bật hơi mạnh hơn. CH: mặt lưỡi áp lên vòm, gọn.", w:"trân trọng – chân thành, chương trình, trách nhiệm, trung thực, trao chứng nhận, chúc mừng, trọn vẹn, chắc chắn, trưởng phòng, chuyên viên, triển khai, chia sẻ"},
+  {t:"S khác X", tip:"S: đầu lưỡi cong, hơi “sh” nhẹ. X: lưỡi thẳng, hơi đi qua kẽ răng.", w:"sản xuất, sáng suốt, xuất sắc, sẵn sàng, sức khỏe, xin chào, sinh sống, xa xôi, sự nghiệp, xứng đáng, sâu sắc, xây dựng"},
+  {t:"Đuôi N khác NG", tip:"N: đầu lưỡi chạm lợi trên khi kết thúc. NG: cuống lưỡi chặn, miệng mở. Miền Nam hay đọc lẫn hai âm này.", w:"an – ang, lan – lang, bản – bảng, tan – tang, cần – càng, ân – âng, lên – lênh, tin – tinh, bàn – bàng, ăn – ăng, vần – vầng, sơn – sông"},
+  {t:"Đuôi T khác C", tip:"T: đầu lưỡi chặn ở lợi. C: cuống lưỡi chặn. Ví dụ “việt” khác “việc”.", w:"mát – mác, bát – bác, tất – tấc, phát – phác, việt – việc, hạt – hạc, cắt – cắc, lát – lác, mặt – mặc, chút – chúc"},
+  {t:"INH, ÊNH, ÍCH tròn vành", tip:"Không đọc “tinh” thành “tưn”, “bệnh” thành “bện”. Khóe miệng kéo ngang, giữ âm i/ê rõ.", w:"bình minh, kinh doanh, thân tình, chính sách, xinh xinh, lênh đênh, bệnh viện, thích thú, lịch sự, kịch tính, minh bạch, linh hoạt"},
+  {t:"Giữ âm đệm OA, OE, UY", tip:"Tròn môi trước rồi mới mở: “hoa” không phải “ha”, “quy” không phải “wi”.", w:"hoa hồng, hoàn thành, khoa học, xoay quanh, quy định, quyền lợi, khuyến khích, thuyết trình, huy chương, khỏe mạnh, ngoan ngoãn, quý khách"},
+  {t:"Phân biệt HỎI – NGÃ", tip:"Giọng chuẩn miền Nam: dấu ngã đọc như dấu hỏi, không cần tách (theo ebook Coach Lan Anh). Giọng chuẩn miền Bắc: hỏi hạ rồi lên nhẹ, ngã lên cao và gãy giữa chừng.", w:"bảo hiểm – sẵn sàng, kỹ năng – kể cả, những – nhỏ, mãi mãi – mải mê, nghĩ – nghỉ, giữ gìn – giản dị, vững chãi – vả lại, đã – đả, sữa – sửa, lễ – lể"},
+  {t:"Thuật ngữ nghề bảo hiểm", tip:"Đọc trơn, rõ và tự tin. Đây là những từ Uyên nói hằng ngày trước khách hàng.", w:"Bảo Việt Nhân thọ, hợp đồng bảo hiểm, quyền lợi bảo vệ, phí bảo hiểm, an tâm tài chính, kế hoạch hưu trí, quỹ giáo dục, tư vấn viên, khách hàng thân thiết, giải pháp tài chính, chi trả quyền lợi, đáo hạn hợp đồng"}
+ ]},
+ {g:"Ngữ điệu tiếng Việt", items:[
+  {t:"Kết luận 2a", w:"Chiến tranh, sáng mai, cuối thu, đám mây, kỷ niệm, mái hiên, lan tỏa, kính thưa, cấp trên, phát triển, thứ tư, khách quan, cánh tay, dấn thân, chứa chan, biết bao, dã man, rối ren, cá nhân, thế gian"},
+  {t:"Kết luận 2b", w:"Địa phương, đề ra, khả quan, thực tiễn, triển khai, thành viên, hội viên, thời gian, truyền thông, bản thân, đầu tư, thành công, tự do, mùa thu, Việt Minh, Việt Nam, cổ xưa, sử xanh, điềm nhiên, cổ vũ"},
+  {t:"Kết luận 3 – thanh ngang", w:"Tham gia, mênh mông, miên man, tương lai, chung quanh, hoang mang, sương thu, luân phiên, quan tâm, không gian, dây tơ, như sau, đam mê, doanh nhân, bao la, xua tan, âu lo, tuyên ngôn, hôm nay, trăm năm, lâu la, nhân dân, nêu cao, noi theo, huân chương"},
+  {t:"Kết luận 3 – thanh sắc", w:"Chính sách, dấu ấn, cống hiến, đối tác, bác ái, áo giáp, thái ấp, đắc chí, thế giới, biến cố, quốc tế, sáng suốt, xuất chúng, áp bức, bất khuất, chí khí, tháng tám, sát cánh, mất mát, chắc chắn"},
+  {t:"Kết luận 3 – thanh nặng", w:"Hiệp hội, lực lượng, độc lập, mệnh lệnh, sự thật, trọn vẹn, hội nghị, mặt trận, hiện tại, hội nhập, vận mệnh, lạm dụng, loạc choạc, lạo xạo, lạy lục, ngược ngạo"},
+  {t:"Kết luận 3 – thanh hỏi", w:"Thủy thủ, thủ thỉ, thỏ thẻ, lẻ tẻ, đỏng đảnh, của cải, lẩm bẩm, lảm nhảm, kể lể, lủng củng, thỉnh thoảng, lảo đảo, tỉ mỉ, hổn hển, lỏng lẻo, tủm tỉm, bỏm bẻm, thủy sản, sản phẩm"},
+  {t:"Kết luận 3 – thanh ngã", w:"Bẽn lẽn, nghĩa sĩ, chữ nghĩa, mãi mãi, lã chã, lẵng đẵng, lẵng nhẵng, nhũng nhiễu, nhũn não, miễn cưỡng, ngã ngũ, mũ lễ, vĩnh viễn"},
+  {t:"Kết luận 3 – thanh huyền", w:"Buồn phiền, bần cùng, nghèo nàn, đầu hàng, đàn bầu, đàn bà, triều đình, nồng nàn, cầm quyền, hòa bình, làm giàu, thì thào, lào xào, lầm rầm, xì xào, phù nề, nằm vùng"},
+  {t:"Kết luận 4 – cụm 3 tiếng", w:"Chiêu đãi viên, phát thanh viên, kinh tế mới, công nghiệp hóa, điện khí hóa, lãng mạn hóa, Việt võ đạo, thực tập sinh, phi hành gia, chính trị gia, nữ giáo viên, tân sinh viên, liên lạc viên, cụm công nghiệp, đô thị hóa, cách mạng hóa"},
+  {t:"Kết luận 5 – thành ngữ", w:"Lắm thầy nhiều ma, khố rách áo ôm, một nắng hai sương, lạ nước lạ cái, làm dâu trăm họ, miệng ăn núi lở, cao chạy xa bay, ngồi chưa ấm chỗ, bạch câu quá khích, miệng hùm gan sứa, một chín một mười, chín bỏ làm mười, quất ngựa truy phong, mâm cao cỗ đầy"}
+ ]},
+ {g:"Điều chỉnh phương ngữ", items:[
+  {t:"B", w:"bốn, bày, bài, boa, bong, bôn ba, bảo, bão, bạo, bạn, bạc, bạt, bòn bon, biên, biêng, bảng, bang, bãng, bàn, bót, bóc, bệnh, bết, bện, bền, bệt, bồng bềnh, bao biện, bầm, bay bổng, bão biển, bèo bọt"},
+  {t:"C – CH", w:"ca, cà, cả, cạ, can, cang, càng, cảng, căng, căn, cẳng, cày, cuốc, cào, cấu, cam, cảm, cắt, cân, cẩn, cần, cận, cởi, cha, chan, chán, chân, chẳng, chằm, chào, cháo, chanh, chảnh, chành, chạnh, chết chóc, chênh chếch, chả cá, canh cánh, con cào cào, châu chấu, chũm chọe, cầm canh"},
+  {t:"D", w:"da, dã, dạ, dà, dan, dang, dăng, dằng, dân, dâng, dẫn, don, dong, dòng, dõng dạc, dào dạt, dạo, dạy, dậy, dốc, dóc, dởm, dốt, dông, doi, dơi, dùng dằng"},
+  {t:"Đ", w:"đa, đã, đà, đam, đạm, đàm đạo, đan, đạn, đàn, đàng, đảng, đãng, đạt, đoàn, đoản, đoạn đầu đài, đâu, đậu, đẩu, đăm, đằm, đom đóm, đó đây, đấy, đáy, đậy, đong đầy, động đậy, đỏng đảnh, đau đáu, đằng đẵng, đả đảo, đớn đau, đọa đày"},
+  {t:"G – GI", w:"ga, gà, gã, gân, găng, gắn, gắng, gằn, gàu, gàn, gán, gạn, gang, giăng, giang, giảng, giao, giáo, giàu, giậu, gợn, gỡ, gạo, góa, giỡn, giọng, giỏi, giục giã"},
+  {t:"H", w:"ha, hả, hà, hạ, hãi, hải, hài, hai, hân hoan, hão huyền, hạo, hảo, hằng, hoàng hôn, hoảng hốt, hoa, hòa, hỏa hoạn, hàm, huy, huyện, hay, hãy, hạc, học, hộc, hội họp, hộp, hợp, hờn, hỗn, hồn, hoẵng, hươu, họa hoằn"},
+  {t:"KH", w:"kha, khan, khang, khá, kháng, khản, khàn, khạng, khả, khao, khào, khát, khác, khạc, khấm, khất, khốn khổ, khẩn, khom, khòm, khảm, khăm, khoảnh khắc, khệnh khạng, kết, khét, khắc"},
+  {t:"L", w:"la, lan, lang, lã, lạ, làm, lân, lâng, lẫn, lận, lần, lạng, lãng, lảng, lõm, lão, lao, lăm, lam, lãm, lầm, lắm, lấm láp, lắp, lắc, lơ, lớn, lợn, lơi, lộc, loan, loạn, loãng, lạc, lạt, lệch, lết, lâu, lều, lẩu, lầu, lậu, lóng lánh, lồng lộng, lòng, luyến láy, lão luyện, lạt lẽo, lầm lỡ"},
+  {t:"M", w:"ma, mã, mà, manh, mãnh, mạnh, mành, mênh mông, mệt, mang, man mác, mát mẻ, mắng, măng, mẫn, mận, mắm muối, mai mốt, một, mão, mạo, mơn mởn, mềm mại, mùa màng, mệnh, may mắn, mãi mãi, mai một, mày mò"},
+  {t:"N – NG – NH", w:"na, nã, nao, não, nang, nàng, nạn, nàn, nản, năm, nằm, nằng nặc, nắc nẻ, nách, nát, nên, nết, nhút nhát, nhếch nhác, nghênh ngang, ngờ nghệch, ngao ngán, ngăn nắp, ngắn, nâng niu, nuôi nấng, ngông nghênh, ngỡ ngàng, nghẹn ngào, ngào ngạt, não nùng, nhào nặn, nhạc, nhạt nhẽo, nảy, nãy, non nớt, nhạt nhòa, nhỏng nhẽo"},
+  {t:"Nguyên âm A Ă Â O Ô Ơ Ê", w:"an, ang, ác, át, am, áp, ăn, ăm, ẳng, ắp, ắt, ân, âng, ất, âm, ấm, ầm, ậm, ẩm, oa, òa, oác, óc, ỏm, ong, ỏng, óng, oi, ốt, ốc, ôi, ôm, ồm, ông, ơn, ớt, ớn, ếch, ên, êm"},
+  {t:"PH", w:"pha, phang, phanh, phành phạch, phần phật, phấp phới, phao, phào, phật, phẳng, phết, phếch, phà, phạm, phàm, phá, phả, phăng, pháo, phồn, phi pháp, phũ phàng, phong phú, phương phi"},
+  {t:"QU", w:"qua, quang, quảng, quờ quạng, quét, quyết, quết, quơ, quở, quầng, quân, quanh quẩn, quan, quàng, quận, quần, quốc, quắc, quất"},
+  {t:"R", w:"ra, rao, rào rạt, rạc, răn, răm rắp, rỗ rá, rêu rao, rắn rết, rõ ràng, rệu rã, rập, rộn ràng, rầm rộ, rần rần, rũ rượi, rền, rên rỉ, rẻ rúng, răng, rắn, rận, rờn rợn, rộn rịp, rạo rực, rắn rỏi, rảo, rì rào, rượu, rã rời, rảnh rang, rãnh rỗi, rắn ráo, rổn rảng"},
+  {t:"S", w:"sa, sả, sà, sạ, sào, sao, sảo, sắt, sáo, sáng, sắm sanh, sành sạch, săm soi, sắc sảo, sắn, sân, sần, sơn, son sắt, sổ sàng, sang sông, sên, sền sệt, soi, sôi, sóc, sốc, song"},
+  {t:"T – TH – TR", w:"ta, tao, Tào Tháo, tảo, tàm tạm, tạc, tát, tai, tan tát, tang, tàng, tản, tạng, tặng, tăng, tết, thết, thếch, tân, tần tật, tất thảy, tất toán, thiếu thốn, thậm thò thậm thụt, thêu thùa, thật thà, thắng thế, trong trắng, trâng tráo, trêu, tròng trành"},
+  {t:"V", w:"vào, vâng, vân, vật vờ, vênh váo, vệt, vết, vòng vo, võng, vàm, vắng vẻ, vắt, vu vơ, viễn vông, va vấp, vòm, với, vằn vện, vàng võ"},
+  {t:"X", w:"xào xạc, xanh xao, xa xăm, xui xẻo, xum xoe, xin xỏ, xem xét, xinh xắn, xơ xác, xây xẩm, xấu xa, xoen xoét, xếch, xông"}
+ ]},
+ {g:"Luyện giọng từ ghép", items:[
+  {t:"A – B", w:"A lô, an nhiên, an khang, anh minh, ăn sâu, ấm no, âm thanh, ba mươi, bạc phơ, ban mai, bản năng, bang giao, bao la, băn khoăn, bâng khuâng, bên trong, biên tập viên, biện minh, biết bao, biệt ly, biểu dương, bổ sung, bỗng nhiên, bơ vơ, buông tha, bút danh"},
+  {t:"C – D", w:"Ca dao, cà phê, cá nhân, cảm ơn, canh khuya, cần lao, chang chang, chẳng qua, chân dung, chênh vênh, chia tay, chiến công, chiều sâu, chu niên, chúng tôi, chung quanh, chuyên viên, chuyên tâm, cố nhân, công dân, công lao, danh ca, danh ngôn, dân ca, du dương, dung nhan, dư âm, đa đoan, đại dương, đu đưa, đồng dao"},
+  {t:"G – H – K", w:"Ganh đua, găng tay, gần xa, gần đây, ghen tuông, gia công, gia phong, giá như, giai nhân, giang sơn, giáo viên, giáo sư, hải lưu, hàng không, hanh hao, hành văn, hậu phương, heo may, hoang mang, hiểm nguy, hoan nghênh, hồi hương, hôm qua, hôm nay, hư không, kết hôn, khả năng, khả quan, khăn tay, khẩn trương, khôn ngoan, khoan thai, khoe khoang, kiểm tra, khó khăn, khô khan"},
+  {t:"L – M", w:"Làm dâu, lan man, lang thang, lao nhao, lâng lâng, long lanh, liên hoan phim, lo âu, lơ thơ, lung lay, lung linh, lửng lơ, lương tâm, mang tên, măng tây, mặt trăng, mấp mô, mấy khi, mê cung, mến thương, mệnh danh, mênh mông, mênh mang, minh tinh, mong manh, mồ hôi, mông lung, mưa bay, mưa ngâu, mơn man"},
+  {t:"N – NG – NH", w:"Nao nao, nảy sinh, năm xưa, nằm mơ, nắng mưa, nâng niu, nên chăng, nên thơ, nêu gương, ngã nghiêng, ngàn thu, ngang nhiên, ngao du, ngày nay, ngân nga, ngẩn ngơ, ngây ngô, ngẫu nhiên, nghiêm minh, nghiêng nghiêng, nghìn xưa, ngôi sao, ngổn ngang, nguy nga, nguyên nhân, nhà văn, nhâm nhi, nhân danh, nhấp nhô, nhớ nhung, nói chung, núi sông, nữ sinh, nước non"},
+  {t:"O – P – Q – R", w:"Oai danh, oan gia, ô mai, ông tơ, phạm vi, pháo bông, phát huy, phát sinh, phân công, phấn son, phất phơ, phi công, phong ba, phôi pha, phu nhân, phù dung, phương châm, qua loa, quả nhiên, quan tâm, quanh co, quê hương, quốc ca, quý nhân, quyền năng, quỳnh hương, ra đi, rạng danh, rập khuôn, rong chơi, rung rinh, rừng xanh"},
+  {t:"S – T", w:"San hô, sang trang, sáng choang, sánh đôi, sao băng, sau đây, sáu mươi, say mê, siêu âm, song ca, song thân, sơn ca, suy tư, tác giả, tài hoa, tán dương, tang thương, tất nhiên, tha phương, thanh danh, thăm nom, thân yêu, thênh thang, thông minh, thơ ngây, thường xuyên, tiễn đưa, tin yêu, tinh anh, tình ca, tình yêu, trầm ngâm, tri âm, trông mong, trung thu, tương lai, tuy nhiên"},
+  {t:"U – V – X – Y", w:"Uốn quanh, uổng công, uy phong, ước mơ, ưu tư, ưu tiên, vành khuyên, văn chương, vẻ vang, vết thương, vĩ nhân, vì sao, ví von, viễn vông, vinh quang, vô biên, vô duyên, vu quy, vừa qua, xa xăm, xác minh, xanh lơ, xinh xinh, xoay quanh, xông pha, xuất thân, xuân xanh, xung phong, xưa kia, yên thân, yêu đương, yêu thương"}
+ ]}
+];
+
+const TEXTS = [
+ {id:"c", n:"Đọc phụ âm C (Cậu Cẩn)", tx:`Cậu Cẩn, con của cụ Chánh, cháu của cô Cư, cháu của chú Chiến. Cậu Cẩn có con chó cỡ con chồn, cẳng con chó cao cỡ cẳng con cò. Cổ cũn cỡn cỡ cổ con cóc. Cổ con chó cậu cột cái chuông. Cậu cưng con chó cùng cực, con chó cũng cưng cậu. Cứ chiều chiều cậu cõng con chó, cầm chiếc cần câu chăm chỉ câu cá chép cạnh chân cầu cuối cồn cát. Cậu chăm chú canh chừng cước cần câu, chốc chốc cậu cất cao cần câu coi. Con cá chép cắc cớ cắn câu, cậu Cẩn cất cao cần câu, cậu cười. Chốc chốc cá con, cá chuối cũng cắn câu. Cậu Cẩn cầm con cá chuối chặt cổ, chìa cho con chó cưng của cậu. Con chó của cậu cắn cổ con cá chuối co cẳng chạy. Cậu Cẩn cất cần câu, cùng các cậu choai choai chơi cờ cạnh cổng chợ.
+
+Chơi cờ chán chê, cậu cõng con chó, cầm con cá chép cậu chuồn. Cậu Cẩn cho con chó của cậu chui chuồng. Cậu cầm con cá chép cậu cạo, cậu chặt, cậu cho cháu của cậu chiên. Cá chín, cậu Cẩn cùng cụ Chánh chén cá chép chiên, chấm cà cuống cùng chuối chát. Con chó cưng của cậu Cẩn cứ chập chờn cửa chuồng chờ chực. Cuối cùng, cậu Cẩn cho con chó chén cơm chiên cùng chút cá chép. Con chó cạp chén cơm chui chuồng.`},
+ {id:"t", n:"Đọc phụ âm T (Đời là một chữ T)", tx:`Thủ trưởng trường tôi tên Trần Trung Tố, tướng tá thầy thâm thấp, thoạt trông tướng thầy trường thọ. Tổ tiên thầy trú tại tỉnh Thừa Thiên từ thời Thành Thái. Thầy trúng tuyển tú tài, thông thạo tiếng Tây, tiếng Trung, tiếng Thái, tiếng Tây Tạng. Thuở thiếu thời, thầy thường thưởng thức thơ trong thi tập Thánh Tông, thi tập Thâm Tâm; tới thời trưởng thành thì thầy thích tửu, thích tỏ tình. Trong trường thầy thương Trần Thị Thu Tâm, tiểu thư thầy Trần Thái Tuấn. Thầy thường tới tư thất thầy Tuấn thăm Thu Tâm, thầy thường theo Thu Tâm thủ thỉ:
+
+– Thu Tâm! Từ thuở thấy Thu Tâm trái tim tôi thổn thức tàn thâu, trăng tháng tư tỏa trên tóc tôi tiếng thì thầm tình tứ, tôi thề tôi thương Thu Tâm thật tình, Thu Tâm thương tôi thì thành thật tỏ tình.
+
+Trần Thị Thu Tâm thẹn thùng thỏ thẻ:
+– Thôi! Thầy thương tôi theo thói thường tình, tới thời trăng tàn thì thầy tặng tôi tâm trạng thất tình tê tái.
+
+Thầy Tố tủi thân, thầy trông trời thốt thành thơ. Thấy thầy Tố thề thốt, Thu Tâm thương thầy Tố. Thật tình Thu Tâm thương thầy Tố từ tám tháng trước.
+
+Từ thuở thầy Tố thương Thu Tâm, tập thể thường thấy thầy theo Thu Tâm tới tư thất. Thu Tâm thích thịt thì thầy tặng thịt, thích thỏ tái thì thầy tặng thỏ tái, thích tôm tươi thì thầy tặng tôm tươi, thích trái tươi thì thầy tặng trái tươi, thích tiền thì thầy tặng thêm tiền. Thôi thì thầy tặng Thu Tâm trăm thứ. Thành thử tiền tháng thầy tiêu trước, tiêu thâm, thầy thiếu tiền tứ tung, thầy tủi thân, thân thể thầy teo từ từ trông thật thê thảm!
+
+Thầy Tuấn thường theo thầy Tố thủ thỉ: Thầy Tố! Tiền thì tiêu từ từ, tiêu trật tự, tiêu trước, tiêu thâm thì túng, thì thiếu, thì tồi thì tệ, thì tù thì tội!
+
+Tóm tắt truyện tình thầy Trần Trung Tố thì ta thấy: Tài tình tiền tù – tội.`},
+ {id:"tn", n:"Diễn cảm chính luận: Tuyên ngôn Độc lập (trích)", tx:`Hỡi đồng bào cả nước,
+
+"Tất cả mọi người đều sinh ra có quyền bình đẳng. Tạo hóa cho họ những quyền không ai có thể xâm phạm được; trong những quyền ấy, có quyền được sống, quyền tự do và quyền mưu cầu hạnh phúc."
+
+Lời bất hủ ấy ở trong bản Tuyên ngôn độc lập năm 1776 của nước Mỹ. Suy rộng ra, câu ấy có ý nghĩa là: tất cả các dân tộc trên thế giới đều sinh ra bình đẳng; dân tộc nào cũng có quyền sống, quyền sung sướng và quyền tự do.
+
+Bản tuyên ngôn nhân quyền và dân quyền của cách mạng Pháp năm 1791 cũng nói: "Người ta sinh ra tự do và bình đẳng về quyền lợi, và phải luôn luôn được tự do và bình đẳng về quyền lợi".
+
+Đó là những lẽ phải không ai chối cãi được.
+
+Một dân tộc đã gan góc chống ách nô lệ của Pháp hơn tám mươi năm nay, một dân tộc đã gan góc đứng về phe đồng minh chống phát-xít mấy năm nay, dân tộc đó phải được tự do! Dân tộc đó phải được độc lập!
+
+Vì những lẽ trên, chúng tôi, Chính phủ lâm thời của nước Việt Nam Dân chủ Cộng hòa, trịnh trọng tuyên bố với thế giới rằng:
+
+Nước Việt Nam có quyền hưởng tự do và độc lập, và sự thật đã thành một nước tự do, độc lập. Toàn thể dân tộc Việt Nam quyết đem tất cả tinh thần và lực lượng, tính mạng và của cải để giữ vững quyền tự do, độc lập ấy.`},
+ {id:"l1", n:"MC cấp độ 1: Trang nghiêm (lễ truy điệu)", tx:`Kính thưa quý vị!
+
+Thay mặt ban tổ chức lễ truy điệu Mẹ Việt Nam anh hùng Nguyễn Thị Hương, chúng tôi xin gửi đến Quý lãnh đạo, bà con thân thuộc, bạn bè gần xa của gia đình lời cảm ơn chân thành và sâu sắc nhất.
+
+Kính thưa quý vị! Mẹ Việt Nam anh hùng Nguyễn Thị Hương là người con ưu tú của quê hương Củ Chi đất thép thành đồng. Trong hai cuộc kháng chiến chống xâm lược, Mẹ đã trực tiếp cầm súng cùng với các đồng chí du kích quả cảm làm nên những chiến thắng lẫy lừng. Mẹ còn lần lượt tiễn đưa những người con yêu quý của mình lên đường giết giặc và ba trong số các anh mãi mãi không về.
+
+Trước khi tiễn đưa Mẹ về nơi an nghỉ cuối cùng, chúng tôi xin trân trọng kính mời đồng chí Nguyễn Văn Năm, chủ tịch Ủy ban Mặt trận Tổ quốc Việt Nam phường lên đọc điếu văn.
+
+Trân trọng kính mời đồng chí!`},
+ {id:"l2", n:"MC cấp độ 2: Sâu lắng (đêm nhạc tưởng niệm)", tx:`Kính thưa quý vị!
+
+Nhạc sĩ Trịnh Công Sơn qua đời là một tổn thất to lớn cho nền âm nhạc Việt Nam và những người đã từng yêu nhạc Trịnh. Với hơn 600 ca khúc để lại, là những chiêm nghiệm của người nhạc sĩ tài hoa này về quê hương, tình yêu và thân phận con người.
+
+Trong đêm nhạc tưởng niệm nhạc sĩ Trịnh Công Sơn hôm nay, chúng tôi xin mời quý vị thưởng thức ca khúc "Cát bụi" qua tiếng hát của ca sĩ Hồng Nhung.`},
+ {id:"l3", n:"MC cấp độ 3: Lạc quan (giới thiệu tiết mục)", tx:`Kính thưa quý vị!
+
+Nhạc sĩ Hoàng Việt đã hy sinh trên tuyến đầu tổ quốc nhưng những ca khúc của ông như Lá xanh, Nhạc rừng, Lên ngàn, Tình ca, Mùa lúa chín vẫn còn lay động trái tim những người yêu âm nhạc Việt Nam. Là một người lính đã từng gắn bó với chiến trường miền Nam nên ông đã có cái nhìn hết sức sinh động về cuộc đấu tranh đầy máu và nước mắt của dân tộc. Cảm xúc chủ đạo trong các ca khúc của ông là niềm lạc quan và hy vọng.
+
+Sau đây, chúng tôi xin mời quý vị thưởng thức ca khúc Nhạc rừng qua tiếng hát của NSND Tạ Minh Tâm.`},
+ {id:"l4", n:"MC cấp độ 4: Sôi nổi (mở màn gala)", tx:`Kính thưa quý vị!
+
+Sân khấu hài TP HCM trong những năm qua đã khởi sắc. Nhiều tụ điểm sân khấu ra đời đã đáp ứng nhu cầu thưởng thức của công chúng. Trong những nghệ sĩ tài năng và tâm huyết, có nhiều nghệ sĩ đã cống hiến hết mình cho sân khấu hài thành phố và cả nước.
+
+Trong chương trình Gala Nụ Cười Xuân năm 2019, chúng tôi giới thiệu đến quý vị các danh hài: Hoài Linh, Hữu Nghĩa, Xuân Bắc, Trung Dân, Nhật Cường, Cát Phượng và một số nghệ sĩ nổi tiếng khác.
+
+Xin quý vị cho một tràng pháo tay nồng nhiệt để Gala Nụ Cười Xuân năm 2019 xin được phép bắt đầu!`},
+ {id:"hnkh", n:"Thực chiến: Mở màn Hội nghị khách hàng", tx:`Kính thưa quý khách hàng thân mến!
+
+Thay mặt Bảo Việt Nhân thọ Gia Định, em xin gửi lời chào trân trọng và lời cảm ơn chân thành nhất đến quý anh chị đã dành thời gian quý báu tham dự chương trình hôm nay.
+
+[Ngừng 1 nhịp, nhìn quanh khán phòng]
+
+Hôm nay không phải là một buổi bán hàng. Hôm nay là một buổi trò chuyện, về những điều mà ai trong chúng ta cũng quan tâm: sức khỏe của bản thân, tương lai của con cái, và sự an tâm cho cả gia đình.
+
+[Hạ giọng, chậm lại]
+
+Có một câu hỏi em muốn quý anh chị giữ trong đầu suốt chương trình: Nếu ngày mai mình không thể đi làm, thì ai sẽ lo cho những người mình thương?
+
+[Nâng giọng, tươi sáng]
+
+Và để cùng tìm câu trả lời, sau đây, xin trân trọng kính mời quý anh chị cùng lắng nghe phần chia sẻ của diễn giả…
+
+Xin một tràng pháo tay thật nồng nhiệt!`},
+ {id:"vinh", n:"Thực chiến: Vinh danh tư vấn viên", tx:`Kính thưa quý vị!
+
+Có những con số không chỉ là doanh số. Đằng sau mỗi hợp đồng là một gia đình được bảo vệ, là một lời hứa được giữ trọn.
+
+Tháng vừa qua, có một người đã bền bỉ gặp gỡ, lắng nghe và đồng hành cùng khách hàng mỗi ngày. Chị không chỉ hoàn thành chỉ tiêu, mà còn trở thành người bạn đáng tin cậy của hàng chục gia đình.
+
+[Ngừng 2 nhịp — tạo hồi hộp]
+
+Xin trân trọng kính mời… tư vấn viên xuất sắc nhất tháng… chị (tên)!
+
+Xin quý vị cho một tràng pháo tay thật lớn để chúc mừng chị!`},
+ {id:"video", n:"Thực chiến: Mở đầu video Banker đổi nghề", tx:`Chào bạn, mình là Uyên.
+
+Mình từng làm ngân hàng hơn năm năm. Ngày nào cũng ngồi quầy, cũng nghe khách hỏi: "Gửi tiết kiệm hay mua bảo hiểm thì tốt hơn em?"
+
+[Ngừng 1 nhịp]
+
+Hồi đó mình trả lời theo kịch bản. Bây giờ, sau khi đổi nghề, mình muốn trả lời bạn bằng sự thật.
+
+Trong video này, mình sẽ nói cho bạn ba điều mà nhân viên ngân hàng ít khi nói ra khi bán bảo hiểm.
+
+[Mỉm cười, nhìn thẳng camera]
+
+Xem đến cuối nha, vì điều thứ ba là điều mình ước gì đã biết sớm hơn.`},
+ {id:"hop", n:"Thực chiến: Mở đầu họp sáng tư vấn viên", tx:`Chào cả nhà, chúc cả nhà một buổi sáng thật nhiều năng lượng!
+
+Trước khi vào việc, mình cùng nhìn lại một chút nha. Tuần rồi, đội mình đã có thêm năm hợp đồng mới. Đó là năm gia đình được bảo vệ nhờ sự kiên trì của các bạn.
+
+[Nhấn mạnh]
+
+Nhưng hôm nay mình không nói về con số. Hôm nay mình nói về một kỹ năng: cách đặt câu hỏi để khách hàng tự nói ra nhu cầu của họ.
+
+Mình sẽ chia làm ba phần. Một: vì sao khách hàng từ chối. Hai: ba câu hỏi mở. Ba: thực hành theo cặp.
+
+Sẵn sàng chưa cả nhà? Mình bắt đầu nha!`},
+ {id:"tv", n:"Thực chiến: Mở đầu buổi tư vấn 1-1", tx:`Dạ em chào anh, cảm ơn anh đã dành cho em ba mươi phút hôm nay.
+
+[Mỉm cười, chậm lại]
+
+Trước khi em nói gì, em muốn nghe anh trước. Hiện tại, điều anh lo nhất cho gia đình mình trong năm năm tới là gì ạ?
+
+[Ngừng, lắng nghe — đếm thầm 3 nhịp trước khi nói tiếp]
+
+Dạ, em hiểu. Nhiều anh chị em gặp cũng có cùng nỗi lo đó. Hôm nay em sẽ không giới thiệu sản phẩm ngay. Em xin phép hỏi anh thêm ba câu, rồi mình cùng xem có giải pháp nào thật sự phù hợp hay không. Anh thấy vậy có được không ạ?`},
+ {id:"tt", n:"Thực chiến: Mở đầu thuyết trình công việc", tx:`Kính chào anh chị.
+
+Trong mười lăm phút tới, em xin trình bày ba nội dung: kết quả tháng vừa qua, hai điểm cần cải thiện, và kế hoạch cho tháng tới.
+
+[Nhấn mạnh con số, ngừng sau mỗi ý]
+
+Thứ nhất, về kết quả. Tháng vừa qua, chúng ta đạt chín mươi tám phần trăm kế hoạch. Con số này cao hơn tháng trước mười hai phần trăm.
+
+Thứ hai, về điểm cần cải thiện. Tỷ lệ khách hàng hẹn gặp lại còn thấp, và thời gian xử lý hồ sơ còn dài.
+
+Thứ ba, kế hoạch tháng tới. Em đề xuất tập trung vào một việc duy nhất: gọi lại toàn bộ khách hàng cũ trong hai tuần đầu tháng.
+
+Sau đây em xin đi vào chi tiết từng phần.`}
+];
+
+/* ============ LỘ TRÌNH 35 NGÀY ============ */
+/* Câu hỏi khảo sát */
+const Q = {
+ goal:{mc:"Dẫn sự kiện, hội nghị khách hàng",video:"Quay video mạng xã hội",train:"Đào tạo, họp nhóm",sale:"Tư vấn khách hàng 1-1",talk:"Thuyết trình công việc"},
+ origin:{nam:"Miền Nam",trung:"Miền Trung",bac:"Miền Bắc",khac:"Khác"},
+ target:{nam:"Chuẩn miền Nam",bac:"Chuẩn miền Bắc",keep:"Giữ giọng gốc, chỉ cần rõ và hay"},
+ issues:{fast:"Nói nhanh, vội",swallow:"Nuốt chữ, dính chữ",breath:"Hụt hơi, câu dài bị đứt",thin:"Giọng mỏng, chưa ấm",flat:"Giọng đều đều, thiếu cảm xúc",hoinga:"Lẫn dấu hỏi và ngã",ln:"Ngọng L và N",cons:"Lẫn v/d, r/g, tr/ch, s/x",final:"Lẫn đuôi n/ng, t/c",nerve:"Run khi nói trước đông người"},
+ minutes:{"10":"10 phút","15":"15–20 phút","25":"25–30 phút"},
+ level:{new:"Mới bắt đầu",some:"Đã nói vài lần",pro:"Thường xuyên dẫn, nói"}
+};
+const MOD_ORDER={mc:["pa","dc","tt","mc","mc"],video:["pa","dc","th","mc","th"],train:["pa","dc","tt","th","th"],sale:["pa","dc","th","th","mc"],talk:["pa","dc","tt","th","th"]};
+function pickLesson(p,w,wd){
+  const mod=(MOD_ORDER[p.goal]||MOD_ORDER.mc)[w], base=p.level==="pro"?2:1;
+  let list=LESSONS.filter(l=>l.m===mod&&l.lv>=base).sort((a,b)=>a.lv-b.lv);
+  if(!list.length) list=LESSONS.filter(l=>l.m===mod);
+  return list[wd%list.length];
+}
+const GOALS={
+ mc:{sp:[140,170],w5:["hnkh","vinh","hnkh","l4","vinh","hnkh"]},
+ video:{sp:[160,190],w5:["video","video","l4","video","tv","video"]},
+ train:{sp:[150,180],w5:["hop","tt","hop","vinh","tt","hop"]},
+ sale:{sp:[140,170],w5:["tv","tv","hop","tv","video","tv"]},
+ talk:{sp:[150,180],w5:["tt","tt","hop","tt","hnkh","tt"]}
+};
+const ISSUE_PRON={swallow:[[0,7],[0,6],[2,10]],flat:[[1,0],[1,1],[1,9]],hoinga:[[0,8],[1,5],[1,6]],ln:[[2,7],[2,9]],cons:[[0,0],[0,1],[0,2],[0,3]],final:[[0,4],[0,5]]};
+const TARGET_PRON={
+ nam:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9]],
+ bac:[[0,2],[0,3],[0,8],[2,13],[2,14],[0,1],[0,7],[1,5],[1,6],[2,7],[2,9],[0,9]],
+ keep:[[0,7],[0,4],[0,5],[1,0],[1,1],[0,9]]
+};
+const TOPICS=["Giới thiệu bản thân trong 1 phút","Kể về một khách hàng làm bạn nhớ nhất","Vì sao bạn chọn công việc hiện tại","Một bài học bạn rút ra trong năm nay","Giới thiệu sản phẩm bạn tin nhất","Kể một lần bạn vượt qua nỗi sợ","Chia sẻ mục tiêu 3 tháng tới"];
+function defaultProfile(){return {name:"Uyên",goal:"mc",origin:"nam",target:"nam",issues:["cons","final","hoinga"],minutes:"15",level:"some"};}
+let PLAN=null;
+function buildPlan(p){
+  p=p||defaultProfile(); const g=GOALS[p.goal]||GOALS.mc;
+  const seen=new Set(), q=[]; const add=a=>{const k=a.join("-");if(!seen.has(k)){seen.add(k);q.push(a);}};
+  (p.issues||[]).forEach(i=>(ISSUE_PRON[i]||[]).forEach(add));
+  (TARGET_PRON[p.target]||TARGET_PRON.keep).forEach(add);
+  PRON.forEach((G,gi)=>G.items.forEach((_,ii)=>add([gi,ii])));
+  const lo=p.level==="new"?g.sp[0]-10:g.sp[0], hi=p.level==="new"?g.sp[1]-10:g.sp[1];
+  const tg={nam:"chuẩn miền Nam",bac:"chuẩn miền Bắc",keep:"giọng gốc rõ ràng"}[p.target]||"rõ ràng";
+  const weeks=[
+   {n:"Tuần 1 · Nền: khẩu hình và phát âm "+tg, goal:"Mở khẩu hình, đọc tròn vành rõ chữ, sửa các âm bạn hay sai.", text:["c","t","c","t","c","t"], speed:"Đọc chậm 100–120 tiếng/phút, ưu tiên rõ chữ hơn nhanh."},
+   {n:"Tuần 2 · Hơi và cộng hưởng: giọng trầm ấm", goal:"Thở bụng, cột hơi dài, giọng dày và ấm hơn, không gồng cổ.", text:["tn","tn","l1","tn","l1","tn"], speed:"Giữ 110–130 tiếng/phút, câu dài đọc một hơi không đứt."},
+   {n:"Tuần 3 · Nhịp và ngắt nghỉ", goal:"Ngắt đúng chỗ, nhấn đúng từ, có khoảng lặng trước thông tin quan trọng.", text:["l2","l3","l2","l3",g.w5[0],"l3"], speed:`Đo tốc độ: ${lo}–${hi} tiếng/phút, có ngắt nghỉ rõ.`},
+   {n:"Tuần 4 · Cao độ, cường độ và cảm xúc", goal:"Đổi tông theo cảm xúc: trang nghiêm, sâu lắng, lạc quan, sôi nổi.", text:["l1","l2","l3","l4",g.w5[1],"l4"], speed:"Đọc 4 cấp độ MC, mỗi cấp một màu giọng khác nhau."},
+   {n:"Tuần 5 · Thực chiến: "+Q.goal[p.goal].toLowerCase(), goal:"Dùng kịch bản đúng việc bạn làm hằng ngày, nói như thật.", text:g.w5, speed:`Mục tiêu ${lo}–${hi} tiếng/phút.`}
+  ];
+  return {p,q,weeks,lo,hi,tg};
+}
+function dayPlan(d){ // d: 1..35
+  const P_=PLAN, p=P_.p, w=Math.floor((d-1)/7), wd=(d-1)%7, W=P_.weeks[w];
+  const iss=new Set(p.issues||[]), short=p.minutes==="10", long=p.minutes==="25";
+  const warm={k:"warm",t:short?"Khởi động nhanh: thở 4–4–8 và giữ hơi dài (3 phút)":"Khởi động: thở 4–4–8, giữ hơi dài, ngân, khẩu hình (5 phút)"};
+  const topic=TOPICS[(d-1)%TOPICS.length];
+  if(wd===6){
+    const t=TEXTS.find(x=>x.id===W.text[0]);
+    const tasks=[warm,{k:"tp",t:`Ghi âm tổng kết: đọc lại bài "${t.n}" bằng máy nhắc chữ`,text:t.id},
+      {k:"recs",t:"Nghe lại bản ghi hôm nay, so với bản ghi ngày đầu tuần, tự chấm 5 tiêu chí"},
+      {k:"speed",t:`Đo tốc độ nói 1 phút, chủ đề tự do: ${topic.toLowerCase()}`}];
+    return {w,W,review:true,tasks};
+  }
+  const idx=w*6+wd, [gi,ii]=P_.q[idx%P_.q.length], Pi=PRON[gi].items[ii], T=TEXTS.find(x=>x.id===W.text[wd]);
+  const tasks=[warm];
+  if(iss.has("breath")) tasks.push({k:"warm",t:"Thêm cho hơi: giữ hơi dài 3 lần, cố vượt kỷ lục"});
+  if(iss.has("thin")) tasks.push({k:"warm",t:"Thêm cho giọng ấm: ngân cộng hưởng 5 lần × 10 giây"});
+  const L=pickLesson(p,w,wd);
+  tasks.push({k:"learn",t:`Bài học: ${MODULES.find(m=>m.id===L.m).n} · ${L.t} (đọc và chấm điểm, đạt từ 80 điểm)`,lesson:L.id});
+  tasks.push({k:"pron",t:`Từ luyện âm: ${PRON[gi].g} · ${Pi.t} (đọc 3 lượt: chậm, vừa, nhanh)`,pron:[gi,ii]});
+  if(long){const [g2,i2]=P_.q[(idx+30)%P_.q.length];tasks.push({k:"pron",t:`Phát âm thêm: ${PRON[g2].g} · ${PRON[g2].items[i2].t}`,pron:[g2,i2]});}
+  tasks.push({k:"tp",t:`Đọc bài: ${T.n} bằng máy nhắc chữ, có ghi âm`,text:T.id});
+  if(iss.has("fast")) tasks.push({k:"speed",t:`Đo tốc độ khi đọc lại bài trên, giữ trong ${P_.lo}–${P_.hi} tiếng/phút`});
+  if(iss.has("nerve")&&wd%2===1) tasks.push({k:"speed",t:`Nói tự do 1 phút nhìn thẳng camera: ${topic.toLowerCase()}`});
+  if(!short) tasks.push({k:"recs",t:"Nghe lại bản ghi, tự chấm 5 tiêu chí"});
+  return {w,W,tasks};
+}
+
+/* ============ LƯU TRỮ ============ */
+const KEY="lgmc_v1";
+const BLANK=()=>({cur:1, done:{}, checks:{}, hissBest:0, speeds:[], scores:{}, custom:"", profile:null, lessons:{}});
+let S = BLANK();
+try{ const raw=localStorage.getItem(KEY); if(raw) S=Object.assign(S,JSON.parse(raw)); }catch(e){}
+if(!S.profile && Object.keys(S.done).length) S.profile=defaultProfile();
+/* Lưu: luôn lưu trên máy; khi mở bằng link Claude và được phép ghi thì lưu thêm lên tài khoản */
+const ST={db:null,user:null,uid:null,mode:"local",ready:false,timer:null,busy:false,again:false,code:""};
+/* Chạy trong Google Apps Script: lưu theo mã học viên vào Google Sheet */
+/* LG_API: để trống khi trang chạy ngay trong Apps Script. Nếu đặt trang ở nơi khác (vd. Firebase Hosting, để micro chạy được),
+   dán URL ứng dụng web Apps Script vào đây, trang sẽ gửi dữ liệu qua đó. */
+const LG_API="https://script.google.com/macros/s/AKfycbwYjliN-5pL-gISO--JOsAga_-QjiQbGDd-HAXdnQOLzpy_qr8mVjp_kqlzY4a07hA0/exec";
+const GAS_NATIVE=typeof google!=="undefined"&&!!(google.script&&google.script.run);
+const GAS=GAS_NATIVE||!!LG_API;
+function gas(fn,...a){
+  if(GAS_NATIVE) return new Promise((res,rej)=>{google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](...a);});
+  return fetch(LG_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({fn,args:a})})
+    .then(r=>r.json()).then(j=>{if(j.error)throw new Error(j.error);return j.result;});
+}
+try{ST.code=localStorage.getItem(KEY+"_code")||"";}catch(e){}
+ST.loading=GAS&&!!ST.code;
+function setCode(c){ST.code=c;try{c?localStorage.setItem(KEY+"_code",c):localStorage.removeItem(KEY+"_code");}catch(e){}}
+async function pushGas(){
+  if(ST.busy){ST.again=true;return;} ST.busy=true;
+  try{const r=await gas("api_save",ST.code,JSON.stringify(S));
+    if(!r||!r.ok){ if(r&&r.status){ST.status=r.status;S.approved=false;start();} else {ST.mode="local";storeNote();} }}
+  catch(e){setTimeout(()=>{ST.timer=null;save();},5000);} // mạng chập chờn: thử lại sau
+  ST.busy=false; if(ST.again){ST.again=false;pushGas();}
+}
+function save(){
+  try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){}
+  if(ST.mode==="db"){clearTimeout(ST.timer);ST.timer=setTimeout(pushDb,1200);}
+  if(ST.mode==="gas"){clearTimeout(ST.timer);ST.timer=setTimeout(pushGas,1200);}
+}
+async function pushDb(){
+  if(ST.busy){ST.again=true;return;} ST.busy=true;
+  const p=S.profile||{};
+  try{
+    await ST.db.doc("learners/"+ST.uid).set({name:p.name||"",goal:p.goal||"",target:p.target||"",origin:p.origin||"",issues:p.issues||[],minutes:p.minutes||"",level:p.level||"",
+      doneCount:Object.keys(S.done).length,cur:S.cur,lastActive:new Date().toISOString(),state:JSON.stringify(S)});
+  }catch(e){
+    if(e&&e.code==="unavailable"){setTimeout(pushDb,1500+Math.random()*1000);}
+    else{ST.mode="local";storeNote();}
+  }
+  ST.busy=false; if(ST.again){ST.again=false;pushDb();}
+}
+function storeNote(){
+  const el=$("storeNote"); if(!el) return;
+  el.textContent=ST.mode==="gas"?`Tiến độ được lưu lên hệ thống theo mã học viên ${ST.code}. Sang máy khác, mở link và nhập mã này.`:
+    ST.mode==="db"?"Tiến độ được lưu vào tài khoản Claude của bạn, mở trên máy nào cũng thấy.":
+    ST.uid?"Tiến độ đang lưu trên trình duyệt của máy này (tài khoản của bạn chưa được quyền lưu lên mạng). Đổi máy thì dùng Sao lưu và Khôi phục.":
+    "Tiến độ lưu trên trình duyệt của máy này. Đổi máy thì dùng Sao lưu và Khôi phục.";
+}
+function loadState(json){
+  try{const o=JSON.parse(json||"{}"); if(o&&o.profile){S=Object.assign(BLANK(),o);return true;}}catch(e){}
+  return false;
+}
+async function gasLogin(code){
+  const r=await gas("api_login",code);
+  if(!r||!r.ok) return null;
+  if(r.code!==ST.code){S=BLANK();} // đổi sang mã khác: bỏ dữ liệu của mã cũ trên máy
+  setCode(r.code); ST.status=r.status; ST.name=r.name;
+  if(r.status===APPROVED){ loadState(r.state); S.approved=true; ST.mode="gas"; save(); }
+  else { S.approved=false; ST.mode="local"; }
+  return r;
+}
+const APPROVED="Đã duyệt";
+async function initStore(){
+  if(GAS){
+    if(ST.code){
+      ST.loading=true;
+      try{ if(!(await gasLogin(ST.code))){ setCode(""); ST.status=""; } }
+      catch(e){ if(S.approved){ST.status=APPROVED;ST.mode="gas";} else ST.netErr=true; } // mất mạng: đã duyệt thì vẫn học, lưu sau
+      finally{ ST.loading=false; }
+    }
+    return;
+  }
+  if(!(window.claude&&window.claude.use)) return;
+  try{
+    const [db,user]=await Promise.all([window.claude.use("db"),window.claude.use("user")]);
+    ST.db=db;ST.user=user; if(!db||!user) return;
+    ST.uid=await user.id(); if(!ST.uid) return;
+    const snap=await Promise.race([ST.db.doc("learners/"+ST.uid).get(),new Promise((_,r)=>setTimeout(()=>r({code:"timeout"}),10000))]);
+    let canWrite=await user.can("data.write");
+    if(snap.exists){ try{S=Object.assign(BLANK(),JSON.parse(snap.data().state||"{}"));}catch(e){} }
+    if(canWrite!==false){ST.mode="db"; if(!snap.exists&&S.profile) pushDb();}
+    if(user.isOwner()||user.canEdit()){ $("navLearners").hidden=false; watchLearners(); }
+  }catch(e){}
+}
+async function watchLearners(){
+  ST.db.collection("learners").onSnapshot(qs=>{
+    const rows=qs.docs.map(d=>d.data()).sort((a,b)=>(b.lastActive||"").localeCompare(a.lastActive||""));
+    $("lnBody").innerHTML=rows.length?rows.map(r=>`<tr><td><b>${esc(r.name||"(chưa ghi tên)")}</b></td><td>${esc(Q.goal[r.goal]||"")}</td><td>${esc(Q.target[r.target]||"")}</td><td class="small">${(r.issues||[]).map(i=>esc(Q.issues[i]||"")).join(", ")}</td><td>${r.doneCount||0}/35</td><td class="small">${r.lastActive?new Date(r.lastActive).toLocaleString("vi-VN"):""}</td></tr>`).join(""):'<tr><td colspan="6" class="muted">Chưa có học viên nào làm khảo sát.</td></tr>';
+  },()=>{});
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+const $=id=>document.getElementById(id);
+const todayStr=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const words=s=>(s.replace(/\[[^\]]*\]/g," ").match(/[^\s.,;:!?"“”()\-–…]+/g)||[]).length;
+const fmt=s=>Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
+
+/* ============ TABS ============ */
+function go(t){
+  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
+  document.querySelectorAll("section.tab").forEach(s=>s.classList.toggle("on",s.id==="t-"+t));
+  if(t==="log") renderLog(); if(t==="recs") renderRecs(); if(t==="learn"&&!$("lnList").hidden) renderLessonList();
+  window.scrollTo(0,0);
+}
+$("nav").onclick=e=>{const b=e.target.closest("button"); if(b) go(b.dataset.t);};
+
+/* ============ HÔM NAY ============ */
+function renderToday(){
+  const d=S.cur, p=dayPlan(d);
+  $("dayTitle").textContent="Ngày "+d+(p.review?" · Ôn và ghi âm tổng kết":"");
+  $("dayWeek").textContent=p.W.n.split(" · ")[0];
+  $("dayGoal").innerHTML="<b>"+p.W.n.split(" · ")[1]+".</b> "+p.W.goal+"<br>Tốc độ: "+p.W.speed;
+  const ck=S.checks[d]||{};
+  $("dayTasks").innerHTML=p.tasks.map((t,i)=>`<div class="check"><input type="checkbox" data-i="${i}" ${ck[i]?"checked":""}><div>${t.t}<br><button class="b small" style="margin-top:6px;padding:4px 12px" data-go="${i}">Mở bài →</button></div></div>`).join("");
+  $("dayTasks").querySelectorAll("input").forEach(c=>c.onchange=()=>{S.checks[d]=S.checks[d]||{};S.checks[d][c.dataset.i]=c.checked;save();});
+  $("dayTasks").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{
+    const t=p.tasks[b.dataset.go];
+    if(t.pron){openPron(t.pron[0],t.pron[1]);}
+    if(t.lesson){openLesson(t.lesson);}
+    if(t.text){tpLoad(t.text);}
+    go(t.k);
+  });
+  $("btnDayDone").textContent=S.done[d]?"✓ Đã hoàn thành":"Hoàn thành ngày này";
+  $("btnDayDone").classList.toggle("pri",!S.done[d]);
+  $("dayGrid").innerHTML=Array.from({length:35},(_,i)=>`<button class="day ${S.done[i+1]?"done":""} ${i+1===d?"cur":""}" data-d="${i+1}">${i+1}</button>`).join("");
+  $("dayGrid").querySelectorAll(".day").forEach(b=>b.onclick=()=>{S.cur=+b.dataset.d;save();renderToday();});
+  renderTarget();
+}
+$("btnDayDone").onclick=()=>{
+  const d=S.cur;
+  if(S.done[d]){delete S.done[d];}
+  else{S.done[d]=todayStr(); if(d<35) S.cur=d+1;}
+  save();renderToday();
+};
+$("btnPrev").onclick=()=>{if(S.cur>1){S.cur--;save();renderToday();}};
+$("btnNext").onclick=()=>{if(S.cur<35){S.cur++;save();renderToday();}};
+function streak(){
+  const days=new Set(Object.values(S.done)); let n=0; const d=new Date();
+  if(!days.has(todayStr())) d.setDate(d.getDate()-1);
+  while(true){const s=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); if(days.has(s)){n++;d.setDate(d.getDate()-1);}else break;}
+  return n;
+}
+
+/* ============ KHỞI ĐỘNG ============ */
+let breathTimer=null;
+$("btnBreath").onclick=()=>{
+  clearInterval(breathTimer); const ball=$("breathBall");
+  const phases=[["Hít vào",4,1.35],["Giữ",4,1.35],["Thở ra",8,1]]; let round=1,pi=0,left=phases[0][1];
+  const show=()=>{ball.innerHTML=phases[pi][0]+"<br>"+left+"<br><small>vòng "+round+"/6</small>";ball.style.transform="scale("+phases[pi][2]+")";};
+  ball.style.transition="transform 4s ease-in-out"; show();
+  breathTimer=setInterval(()=>{left--; if(left<=0){pi++; if(pi>2){pi=0;round++; if(round>6){clearInterval(breathTimer);ball.textContent="Xong 👏";ball.style.transform="scale(1)";return;}} left=phases[pi][1]; ball.style.transition="transform "+phases[pi][1]+"s ease-in-out";} show();},1000);
+};
+$("btnBreathStop").onclick=()=>{clearInterval(breathTimer);$("breathBall").textContent="Sẵn sàng";$("breathBall").style.transform="scale(1)";};
+let hissStart=0,hissRaf=null;
+$("hissBest").textContent=S.hissBest?S.hissBest.toFixed(1).replace(".",",")+" giây":"–";
+$("btnHiss").onclick=()=>{
+  if(!hissStart){hissStart=performance.now();$("btnHiss").textContent="Hết hơi – Dừng";
+    const tick=()=>{$("hissTime").textContent=((performance.now()-hissStart)/1000).toFixed(1).replace(".",",")+" giây";hissRaf=requestAnimationFrame(tick);};tick();}
+  else{cancelAnimationFrame(hissRaf);const s=(performance.now()-hissStart)/1000;hissStart=0;$("btnHiss").textContent="Bắt đầu giữ hơi";
+    if(s>S.hissBest){S.hissBest=s;save();$("hissBest").textContent=s.toFixed(1).replace(".",",")+" giây 🎉";}}
+};
+let humTimer=null;
+$("btnHum").onclick=()=>{
+  clearInterval(humTimer); const seq=[]; const lab=["mmm (ngậm môi)","mmm–a","mmm–ô","mmm–ơ","mmm–a (tông thấp hơn)"];
+  lab.forEach(l=>{seq.push([l,10]);seq.push(["Nghỉ",5]);}); seq.pop();
+  let i=0,left=seq[0][1]; const show=()=>{$("humTime").textContent=left;$("humLabel").textContent=seq[i][0];};show();
+  humTimer=setInterval(()=>{left--; if(left<=0){i++; if(i>=seq.length){clearInterval(humTimer);$("humTime").textContent="✓";$("humLabel").textContent="Xong";return;} left=seq[i][1];} show();},1000);
+};
+
+/* ============ PHÁT ÂM ============ */
+let pg=0,pi_=0;
+function openPron(g,i){pg=g;pi_=i;renderPron();}
+function renderPron(){
+  $("pronGroups").innerHTML=PRON.map((x,i)=>`<button class="chip ${i===pg?"on":""}" data-g="${i}">${x.g}</button>`).join("");
+  $("pronItems").innerHTML=PRON[pg].items.map((x,i)=>`<button class="chip ${i===pi_?"on":""}" data-i="${i}">${x.t}</button>`).join("");
+  const it=PRON[pg].items[pi_];
+  $("pronTitle").textContent=PRON[pg].g+" · "+it.t;
+  $("pronTip").style.display=it.tip?"block":"none"; $("pronTip").textContent=it.tip||"";
+  $("pronWords").innerHTML=it.w.split(/,\s*/).map(w=>`<span>${w}</span>`).join("");
+  $("pronGroups").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{pg=+b.dataset.g;pi_=0;renderPron();});
+  $("pronItems").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{pi_=+b.dataset.i;renderPron();});
+}
+$("pronShuffle").onclick=()=>{const sp=[...$("pronWords").children];sp.sort(()=>Math.random()-.5).forEach(s=>$("pronWords").appendChild(s));};
+$("pronToTp").onclick=()=>{const it=PRON[pg].items[pi_];tpSetText(it.w.split(/,\s*/).join(",   "),"Phát âm: "+it.t);go("tp");};
+
+/* ============ MÁY NHẮC CHỮ ============ */
+let tpRaw="",tpName="",tpRun=false,tpPos=0,tpLast=0,tpRaf=null,tpElapsed=0;
+function tpFill(){
+  const opts=TEXTS.map(t=>`<option value="${t.id}">${t.n}</option>`).join("")+`<option value="custom">Bài của Uyên (tự dán)</option>`;
+  $("tpPick").innerHTML=opts; $("manPick").innerHTML=opts;
+}
+function tpLoad(id){
+  $("tpPick").value=id;
+  if(id==="custom") tpSetText(S.custom||"Bấm “Sửa / dán bài” để dán kịch bản của Uyên.","Bài của Uyên");
+  else{const t=TEXTS.find(x=>x.id===id);tpSetText(t.tx,t.n);}
+}
+function tpSetText(tx,name){
+  tpRaw=tx;tpName=name;
+  $("tpText").innerHTML=tx.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\[([^\]]*)\]/g,'<span style="color:#e58a5c;font-size:.6em">[$1]</span>');
+  tpResetPos(); tpInfo();
+}
+function tpInfo(){const n=words(tpRaw),w=+$("tpWpm").value||140;$("tpInfo").textContent=`${n} tiếng · ở ${w} tiếng/phút mất khoảng ${fmt(n/w*60)}. Ghi chú trong [ngoặc vuông] là chỉ dẫn diễn xuất, không đọc.`;}
+function tpResetPos(){tpPos=0;tpElapsed=0;$("tpBox").scrollTop=0;$("tpClock").textContent="";}
+function tpStep(){
+  if(!tpRun) return;
+  const ts=performance.now(); const dt=(ts-tpLast)/1000; tpLast=ts; tpElapsed+=dt;
+  const box=$("tpBox"), txt=$("tpText");
+  const n=Math.max(1,words(tpRaw)), w=+$("tpWpm").value||140;
+  const cs=getComputedStyle(txt); const contentH=txt.scrollHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom); // phần chữ thực
+  if(contentH<=0) return; // tab đang ẩn
+  const pxPerSec=contentH/(n/w*60);
+  tpPos+=pxPerSec*dt; box.scrollTop=tpPos;
+  $("tpClock").textContent="⏱ "+fmt(tpElapsed);
+  if(tpPos>txt.scrollHeight-box.clientHeight){tpStop(true);return;}
+}
+function tpStop(end){
+  tpRun=false;clearInterval(tpRaf);$("tpStart").disabled=false;$("tpPause").disabled=true;$("tpStart").textContent="▶ Tiếp tục";
+  if(end){$("tpStart").textContent="▶ Bắt đầu";tpPos=0;if(rec.on&&tpAutoRec){recStop();tpAutoRec=false;}}
+}
+let tpAutoRec=false;
+$("tpStart").onclick=async()=>{
+  $("tpStart").disabled=true;
+  if(tpPos===0){
+    if($("tpRec").checked && !rec.on){ await recStart(tpName); tpAutoRec=rec.on; }
+    const c=$("tpCount"); c.style.display="flex";
+    for(let i=3;i>0;i--){c.textContent=i;await new Promise(r=>setTimeout(r,800));}
+    c.style.display="none";
+  }
+  tpRun=true;tpLast=performance.now();$("tpPause").disabled=false;clearInterval(tpRaf);tpRaf=setInterval(tpStep,33);
+};
+$("tpPause").onclick=()=>tpStop(false);
+$("tpReset").onclick=()=>{tpStop(false);$("tpStart").textContent="▶ Bắt đầu";tpResetPos();};
+$("tpFull").onclick=()=>{$("tpBox").classList.add("full");try{$("tpBox").requestFullscreen&&$("tpBox").requestFullscreen();}catch(e){}};
+$("tpExit").onclick=()=>{$("tpBox").classList.remove("full");try{document.fullscreenElement&&document.exitFullscreen();}catch(e){}};
+document.addEventListener("fullscreenchange",()=>{if(!document.fullscreenElement)$("tpBox").classList.remove("full");});
+$("tpBox").onclick=e=>{if(e.target.id==="tpExit")return; if($("tpBox").classList.contains("full")){tpRun?tpStop(false):$("tpStart").onclick();}};
+$("tpPick").onchange=()=>tpLoad($("tpPick").value);
+$("tpWpm").oninput=tpInfo;
+$("tpSize").oninput=()=>$("tpText").style.fontSize=$("tpSize").value+"px";
+$("tpMirror").onchange=()=>$("tpBox").classList.toggle("mirror",$("tpMirror").checked);
+$("tpEditBtn").onclick=()=>{$("tpEdit").style.display=$("tpEdit").style.display==="none"?"block":"none";$("tpArea").value=tpRaw;};
+$("tpSave").onclick=()=>{S.custom=$("tpArea").value;save();$("tpPick").value="custom";tpSetText(S.custom,"Bài của Uyên");$("tpEdit").style.display="none";};
+
+/* ============ GHI ÂM ============ */
+const rec={on:false,mr:null,chunks:[],stream:null,t0:0,timer:null,name:"",ac:null,an:null,raf:null};
+let memRecs=[]; // fallback
+const DB={db:null,
+  open(){return new Promise(r=>{try{const q=indexedDB.open("lgmc",1);q.onupgradeneeded=()=>q.result.createObjectStore("recs",{keyPath:"id"});q.onsuccess=()=>{this.db=q.result;r();};q.onerror=()=>r();}catch(e){r();}});},
+  put(o){if(!this.db){memRecs.unshift(o);return Promise.resolve();}return new Promise(r=>{try{const tx=this.db.transaction("recs","readwrite");tx.objectStore("recs").put(o);tx.oncomplete=()=>r();tx.onerror=()=>r();}catch(e){memRecs.unshift(o);r();}});},
+  all(){if(!this.db)return Promise.resolve(memRecs);return new Promise(r=>{try{const q=this.db.transaction("recs").objectStore("recs").getAll();q.onsuccess=()=>r(q.result.sort((a,b)=>b.id-a.id));q.onerror=()=>r(memRecs);}catch(e){r(memRecs);}});},
+  del(id){memRecs=memRecs.filter(x=>x.id!==id);if(!this.db)return Promise.resolve();return new Promise(r=>{try{const tx=this.db.transaction("recs","readwrite");tx.objectStore("recs").delete(id);tx.oncomplete=()=>r();}catch(e){r();}});}
+};
+async function getMic(){return navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:true}});}
+function startMeter(stream,el){
+  try{const ac=new (window.AudioContext||window.webkitAudioContext)();const an=ac.createAnalyser();an.fftSize=1024;ac.createMediaStreamSource(stream).connect(an);
+    const buf=new Uint8Array(an.fftSize);let raf;const loop=()=>{an.getByteTimeDomainData(buf);let m=0;for(const v of buf)m=Math.max(m,Math.abs(v-128));el.style.width=Math.min(100,m/128*160)+"%";raf=requestAnimationFrame(loop);};loop();
+    return()=>{cancelAnimationFrame(raf);el.style.width="0";ac.close();};}catch(e){return()=>{};}
+}
+let recMeterStop=()=>{};
+async function recStart(name){
+  try{rec.stream=await getMic();}catch(e){$("recMsg").textContent="Trang này không ghi âm được ở đây. Dùng app Ghi âm của điện thoại song song, hoặc mở file trên máy tính.";return;}
+  rec.chunks=[];rec.name=name||"Ghi âm tự do";
+  rec.mr=new MediaRecorder(rec.stream);rec.mr.ondataavailable=e=>e.data.size&&rec.chunks.push(e.data);
+  rec.mr.onstop=async()=>{
+    const blob=new Blob(rec.chunks,{type:rec.mr.mimeType||"audio/webm"});const dur=(Date.now()-rec.t0)/1000;
+    await DB.put({id:Date.now(),name:rec.name,date:new Date().toLocaleString("vi-VN"),day:S.cur,dur,blob});
+    $("recMsg").textContent="Đã lưu: "+rec.name+" ("+fmt(dur)+") · xem ở tab Bản ghi";
+  };
+  rec.mr.start();rec.on=true;rec.t0=Date.now();
+  $("recBtn").textContent="■ Dừng";$("recMsg").textContent="Đang ghi: "+rec.name;
+  rec.timer=setInterval(()=>$("recTime").textContent=fmt((Date.now()-rec.t0)/1000),250);
+  recMeterStop=startMeter(rec.stream,$("recVol"));
+}
+function recStop(){
+  if(!rec.on)return; rec.on=false; rec.mr.stop(); rec.stream.getTracks().forEach(t=>t.stop());
+  clearInterval(rec.timer);recMeterStop();$("recBtn").textContent="● Ghi âm";$("recTime").textContent="0:00";
+}
+$("recBtn").onclick=()=>{
+  if(rec.on){recStop();return;}
+  const t=document.querySelector("section.tab.on").id;
+  const name=t==="t-pron"?"Phát âm: "+PRON[pg].items[pi_].t : t==="t-tp"?tpName : "Ghi âm tự do";
+  recStart(name);
+};
+const CRIT=["Rõ chữ","Hơi","Nhịp, ngắt nghỉ","Ngữ điệu","Cảm xúc"];
+async function renderRecs(){
+  const all=await DB.all(); const box=$("recList");
+  if(!all.length){box.innerHTML='<p class="muted">Chưa có bản ghi. Bấm nút ● Ghi âm ở dưới cùng.</p>';return;}
+  box.innerHTML="";
+  all.forEach(r=>{
+    const url=URL.createObjectURL(r.blob); const sc=S.scores[r.id]||{};
+    const d=document.createElement("div");d.className="recItem";
+    d.innerHTML=`<div class="row" style="justify-content:space-between"><b>${r.name}</b><span class="small muted">Ngày ${r.day} · ${r.date} · ${fmt(r.dur)}</span></div>
+    <audio controls src="${url}"></audio>
+    <div class="score">${CRIT.map((c,i)=>`<label>${c} <select data-c="${i}"><option value="">–</option>${[1,2,3,4,5].map(v=>`<option ${sc[i]==v?"selected":""}>${v}</option>`).join("")}</select></label>`).join("")}</div>
+    <div class="row" style="margin-top:6px"><a class="b small" style="text-decoration:none;padding:4px 12px" download="${r.name.replace(/[\\/:*?"<>|]/g,"")} - ${r.id}.webm" href="${url}">Tải về</a><button class="b small" style="padding:4px 12px" data-del>Xóa</button></div>`;
+    d.querySelectorAll("select").forEach(s=>s.onchange=()=>{S.scores[r.id]=S.scores[r.id]||{};S.scores[r.id][s.dataset.c]=s.value?+s.value:undefined;save();});
+    const del=d.querySelector("[data-del]");
+    del.onclick=async()=>{if(del.dataset.sure){await DB.del(r.id);delete S.scores[r.id];save();renderRecs();}else{del.dataset.sure=1;del.textContent="Bấm lần nữa để xóa";}};
+    box.appendChild(d);
+  });
+}
+
+/* ============ TỐC ĐỘ NÓI ============ */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const RANGES={mc:[140,170],video:[160,190],train:[150,180]};
+let DICT=null, CUR=null; // CUR: phiên đọc-chấm-điểm đang nghe
+let sp={r:null,on:false,t0:0,events:[],finalText:"",interim:"",timer:null,meter:()=>{},stream:null};
+function srSupportText(){
+  const ok=DICT||SR;
+  $("srSupport").textContent=ok?"Bấm bắt đầu rồi nói tự nhiên. Máy nghe và đếm số tiếng Uyên nói mỗi phút (cần mạng).":"Chỗ này chưa nghe giọng được (thường gặp trên iPhone, Safari hoặc app Claude). Dùng cách đo thủ công bên dưới, hoặc mở trên máy tính bằng Chrome hay Edge.";
+  $("spStart").disabled=!ok;
+}
+srSupportText();
+if(window.claude&&window.claude.use){window.claude.use("dictation").then(d=>{if(!d)return;DICT=d;
+  d.onFinal(e=>{const o=CUR||sp;o.finalText+=e.text;o.tLast=Date.now();});
+  d.onPartial(e=>{const o=CUR||sp;o.interim=e.text;if(e.text)o.tLast=Date.now();});
+  d.onState(e=>{if(e.state==="idle"&&CUR&&CUR.done)CUR.done();if(e.state==="idle"&&sp.on&&sp.r==="dict"){if(e.reason&&e.reason!=="stopped"&&e.reason!=="viewer_stopped")$("spAdvice").textContent="Máy ngừng nghe ("+e.reason+").";spStop();}});
+  srSupportText();}).catch(()=>{});}
+function spUpdate(){
+  const now=Date.now(),el=(now-sp.t0)/1000;
+  const finalN=words(sp.finalText), interN=words(sp.interim), total=finalN+interN;
+  sp.events.push([now,total]); while(sp.events.length&&now-sp.events[0][0]>15000) sp.events.shift();
+  const [lo,hi]=RANGES[$("spMode").value];
+  let cur=null; if(sp.events.length>1&&el>4){const a=sp.events[0],b=sp.events[sp.events.length-1];const dt=(b[0]-a[0])/1000;if(dt>3)cur=Math.round((b[1]-a[1])/dt*60);}
+  $("spNow").textContent=cur??"–"; $("spAvg").textContent=el>5?Math.round(total/el*60):"–";
+  $("spTime").textContent=fmt(el); $("spWords").textContent=total;
+  $("spRange").textContent="mục tiêu "+lo+"–"+hi;
+  if(cur!=null){const pct=Math.max(0,Math.min(100,30+(cur-lo)/(hi-lo)*40));$("spNeedle").style.left="calc("+pct+"% - 2px)";
+    $("spAdvice").textContent=cur<lo-10?"Hơi chậm. Nói liền mạch hơn, bớt ậm ừ.":cur>hi+10?"Quá nhanh! Thả chậm, thêm khoảng lặng sau mỗi ý.":"Tốc độ đẹp, giữ nhịp này.";}
+  $("spText").textContent=(sp.finalText+" "+sp.interim).trim().slice(-500);
+}
+$("spStart").onclick=async()=>{
+  sp={...sp,on:true,t0:Date.now(),events:[],finalText:"",interim:"",stream:null,meter:()=>{}};
+  if(DICT){ // phải gọi start() ngay trong cú bấm
+    sp.r="dict";
+    DICT.start({language:"vi"}).catch(e=>{$("spAdvice").textContent=e&&e.code==="not_granted"?"Chưa được cho phép nghe giọng.":"Không bắt đầu nghe được ("+(e&&e.code)+").";spStop();});
+    sp.timer=setInterval(spUpdate,500);$("spStart").disabled=true;$("spStop").disabled=false;
+    return;
+  }
+  try{sp.stream=await getMic();sp.meter=startMeter(sp.stream,$("spVol"));}catch(e){}
+  const r=new SR();r.lang="vi-VN";r.continuous=true;r.interimResults=true;
+  r.onresult=e=>{let it="";for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)sp.finalText+=" "+e.results[i][0].transcript;else it+=e.results[i][0].transcript;}sp.interim=it;};
+  r.onend=()=>{if(sp.on){try{r.start();}catch(e){}}};
+  r.onerror=e=>{if(e.error==="not-allowed"){$("spAdvice").textContent="Chưa được cấp quyền micro.";spStop();}};
+  sp.r=r;r.start();sp.timer=setInterval(spUpdate,500);
+  $("spStart").disabled=true;$("spStop").disabled=false;
+};
+function spStop(){
+  if(!sp.on)return; sp.on=false; try{if(sp.r==="dict")DICT.stop().catch(()=>{});else sp.r.stop();}catch(e){} clearInterval(sp.timer); sp.meter(); if(sp.stream)sp.stream.getTracks().forEach(t=>t.stop());
+  const el=(Date.now()-sp.t0)/1000,total=words(sp.finalText)+words(sp.interim);
+  if(el>10){S.speeds.unshift({d:todayStr(),k:$("spMode").selectedOptions[0].text.split(" (")[0],w:Math.round(total/el*60),s:Math.round(el)});S.speeds=S.speeds.slice(0,60);save();}
+  $("spStart").disabled=false;$("spStop").disabled=true;
+}
+$("spStop").onclick=spStop;
+let manT0=0;
+$("manBtn").onclick=()=>{
+  if(!manT0){manT0=Date.now();$("manBtn").textContent="Đọc xong – Dừng";$("manOut").textContent="Đang đọc…";}
+  else{const s=(Date.now()-manT0)/1000;manT0=0;$("manBtn").textContent="Bắt đầu đọc";
+    const id=$("manPick").value;const tx=id==="custom"?S.custom:TEXTS.find(x=>x.id===id).tx;const w=Math.round(words(tx)/s*60);
+    $("manOut").innerHTML=`<b>${w} tiếng/phút</b> trong ${fmt(s)}`;
+    S.speeds.unshift({d:todayStr(),k:"Đọc bài (thủ công)",w,s:Math.round(s)});save();}
+};
+
+/* ============ NHẬT KÝ ============ */
+function renderLog(){
+  $("lgStreak").textContent=streak()+" ngày";
+  $("lgDays").textContent=Object.keys(S.done).length+"/35";
+  $("lgHiss").textContent=S.hissBest?S.hissBest.toFixed(1).replace(".",",")+" giây":"–";
+  const vals=Object.values(S.scores).flatMap(o=>Object.values(o).filter(v=>v));
+  $("lgScore").textContent=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1).replace(".",",")+" / 5":"–";
+  $("lgSpeed").innerHTML=S.speeds.length?S.speeds.map(x=>`<tr><td>${x.d}</td><td>${x.k}</td><td><b>${x.w}</b></td><td>${fmt(x.s)}</td></tr>`).join(""):'<tr><td colspan="4" class="muted">Chưa có lượt đo.</td></tr>';
+}
+$("lgExport").onclick=async()=>{
+  const name="luyen-giong-mc-"+todayStr()+".json", data=JSON.stringify(S,null,1);
+  const dl=window.claude&&window.claude.use?await window.claude.use("downloads").catch(()=>null):null;
+  if(dl){try{await dl.save({filename:name,data});$("lgMsg").textContent="Đã lưu file sao lưu.";}catch(e){$("lgMsg").textContent=e&&e.code==="declined"?"Đã hủy sao lưu.":"Không tải file được ở đây.";}return;}
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type:"application/json"}));a.download=name;a.click();};
+$("lgImport").onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{S=Object.assign(S,JSON.parse(t));save();renderToday();renderLog();$("lgMsg").textContent="Đã khôi phục dữ liệu.";}catch(err){$("lgMsg").textContent="File không hợp lệ, hãy chọn đúng file sao lưu .json.";}});};
+
+/* ============ KHỞI TẠO ============ */
+/* ============ BÀI HỌC: ĐỌC THEO, CHẤM ĐIỂM, LUYỆN LẠI ============ */
+const ONES=["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"];
+function read3(n,lead){const h=Math.floor(n/100),t=Math.floor(n%100/10),u=n%10,w=[];
+  if(h||lead)w.push(ONES[h],"trăm");
+  if(t>1){w.push(ONES[t],"mươi");if(u===1)w.push("mốt");else if(u===4)w.push("tư");else if(u===5)w.push("lăm");else if(u)w.push(ONES[u]);}
+  else if(t===1){w.push("mười");if(u===5)w.push("lăm");else if(u)w.push(ONES[u]);}
+  else if(u){if(h||lead)w.push("lẻ");w.push(ONES[u]);}
+  return w;}
+function intWords(s){let n=parseInt(s,10);if(!n)return["không"];const U=["","nghìn","triệu","tỷ"],out=[];let g=0;const parts=[];
+  while(n>0&&g<4){parts.push(n%1000);n=Math.floor(n/1000);g++;}
+  for(let i=parts.length-1;i>=0;i--){if(!parts[i])continue;out.push(...read3(parts[i],i<parts.length-1));if(U[i])out.push(U[i]);}
+  return out;}
+function expandTok(core){ // chữ hoặc số → mảng tiếng đã chuẩn hóa
+  const m=core.match(/^(\d+)(?:[.,](\d+))?(%)?$/);
+  if(m){const w=intWords(m[1]);if(m[2])w.push("phẩy",...intWords(m[2]));if(m[3])w.push("phần","trăm");return w;}
+  const c=core.normalize("NFC").toLowerCase().replace(/[^\p{L}\p{N}]/gu,"");
+  return c?[c]:[];
+}
+const SOUTH=()=>!S.profile||S.profile.target!=="bac";
+function noTone(w){return w.normalize("NFD").replace(/[̣̀́̃̉]/g,"").normalize("NFC");}
+function sameW(a,b){if(a===b)return 1; if(SOUTH()){const f=x=>x.normalize("NFD").replace(/̃/g,"̉").normalize("NFC");if(f(a)===f(b))return 1;} return noTone(a)===noTone(b)?0.5:0;}
+function tokenize(text){ // tách bài đọc thành chữ hiển thị
+  const toks=[];let sent=0;
+  text.split(/(\s+)/).forEach(part=>{
+    if(!part)return; if(/^\s+$/.test(part)){if(/\n/.test(part))sent++;toks.push({sp:part,s:sent});return;}
+    const core=part.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}%]+$/gu,"");
+    const t={d:part,w:expandTok(core),s:sent}; toks.push(t);
+    if(/[.!?:;]["”»)]*$/.test(part))sent++;
+  });
+  return toks;
+}
+function heardWords(txt){return txt.split(/\s+/).flatMap(p=>expandTok(p.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}%]+$/gu,"")));}
+function align(tw,hw){ // so khớp từng tiếng: trả về trạng thái từng tiếng của bài
+  const n=tw.length,m=hw.length,D=Array.from({length:n+1},()=>new Float32Array(m+1));
+  for(let i=1;i<=n;i++)D[i][0]=i; for(let j=1;j<=m;j++)D[0][j]=j*0.6;
+  for(let i=1;i<=n;i++)for(let j=1;j<=m;j++){const s=sameW(tw[i-1],hw[j-1]);
+    D[i][j]=Math.min(D[i-1][j-1]+(s===1?0:s===0.5?0.5:1),D[i-1][j]+1,D[i][j-1]+0.6);}
+  const st=new Array(n);let i=n,j=m;
+  while(i>0){const s=j>0?sameW(tw[i-1],hw[j-1]):0;
+    if(j>0&&D[i][j]===D[i-1][j-1]+(s===1?0:s===0.5?0.5:1)){st[i-1]=s===1?{k:"ok"}:s===0.5?{k:"tone",h:hw[j-1]}:{k:"bad",h:hw[j-1]};i--;j--;}
+    else if(D[i][j]===D[i-1][j]+1){st[i-1]={k:"miss"};i--;}
+    else j--;}
+  return st;
+}
+function scoreToks(toks,heard){ // gắn trạng thái cho từng chữ hiển thị
+  const words=[],own=[];toks.forEach((t,ti)=>{if(t.w)t.w.forEach(w=>{words.push(w);own.push(ti);});});
+  const st=align(words,heardWords(heard));
+  toks.forEach(t=>{if(t.w)t.res=[];});
+  st.forEach((r,k)=>toks[own[k]].res.push(r));
+  let lastRead=-1; st.forEach((r,k)=>{if(r.k!=="miss")lastRead=k;});
+  toks.forEach(t=>{if(!t.w||!t.w.length){t.k=null;return;}const ks=t.res.map(r=>r.k);
+    t.k=ks.every(k=>k==="ok")?"ok":ks.every(k=>k==="ok"||k==="tone")?"tone":ks.every(k=>k==="miss")?"miss":"bad";
+    t.h=t.res.filter(r=>r.h).map(r=>r.h).join(" ");});
+  return {words:words.length,read:lastRead+1};
+}
+function renderToks(el,toks,onBad){
+  el.innerHTML="";toks.forEach((t,i)=>{if(t.sp!==undefined){el.appendChild(document.createTextNode(t.sp));return;}
+    const s=document.createElement("span");s.className="tk"+(t.k&&t.k!=="ok"?" "+t.k:t.k==="ok"?" ok":"");s.textContent=t.d;s.dataset.i=i;
+    if(t.k&&t.k!=="ok"){s.title=t.k==="miss"?"Bỏ sót":(t.k==="tone"?"Sai dấu":"Chưa rõ")+(t.h?` · máy nghe: ${t.h}`:"");if(onBad)s.onclick=()=>onBad(t);}
+    el.appendChild(s);});
+}
+/* --- nghe giọng: dùng chung cho đọc bài và luyện lại --- */
+function canListen(){return !GAS_NATIVE&&!!(DICT||SR);} // khung Apps Script chặn micro
+function startListen(R){ // gọi trực tiếp trong cú bấm
+  Object.assign(R,{finalText:"",interim:"",base:"",t0:Date.now(),tLast:0,on:true});
+  if(DICT){R.r="dict";CUR=R;DICT.start({language:"vi"}).catch(e=>{R.on=false;CUR=null;R.err&&R.err(e&&e.code==="not_granted"?"Chưa được cho phép nghe giọng.":"Không bắt đầu nghe được ("+(e&&e.code)+").");});return;}
+  const go=()=>{const r=new SR();R.r=r;r.lang="vi-VN";r.continuous=true;r.interimResults=true;
+    r.onresult=e=>{let f="",it="";for(let i=0;i<e.results.length;i++){if(e.results[i].isFinal)f+=" "+e.results[i][0].transcript;else it+=" "+e.results[i][0].transcript;}
+      R.finalText=R.base+f;R.interim=it;R.tLast=Date.now();};
+    r.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed"){R.on=false;R.err&&R.err("Trình duyệt chặn micro ở trang này. Dùng nút Tự chấm, hoặc mở web bằng Chrome.");}};
+    r.onend=()=>{if(R.on){R.base=R.finalText;try{go();}catch(e){}}else if(R.done)R.done();};
+    r.start();};
+  try{go();}catch(e){R.on=false;R.err&&R.err("Không bật được micro.");}
+}
+function stopListen(R){return new Promise(res=>{
+  if(!R.on){res();return;} R.on=false; const fin=()=>{R.done=null;res();};
+  R.done=fin; setTimeout(()=>{if(R.done)fin();},2500);
+  if(R.r==="dict"){DICT.stop().then(()=>{CUR=null;fin();}).catch(()=>{CUR=null;fin();});}
+  else{try{R.r.stop();}catch(e){fin();}}
+});}
+/* --- máy đọc mẫu (nếu máy có giọng tiếng Việt) --- */
+let VI_VOICE=null;
+function findVoice(){try{VI_VOICE=speechSynthesis.getVoices().find(v=>/^vi/i.test(v.lang))||null;}catch(e){} $("rdListen").hidden=$("drListen").hidden=!VI_VOICE;}
+try{findVoice();speechSynthesis.onvoiceschanged=findVoice;}catch(e){}
+function speak(txt){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);u.voice=VI_VOICE;u.lang="vi-VN";u.rate=0.9;speechSynthesis.speak(u);}catch(e){}}
+
+let LMOD="pa",LLV=0,LCUR=null,LTOKS=[],RD={},DR=null;
+function lessonScore(id){return (S.lessons||{})[id];}
+function renderLessonList(){
+  $("modChips").innerHTML=MODULES.map(m=>`<button class="chip ${m.id===LMOD?"on":""}" data-m="${m.id}">${m.n} (${LESSONS.filter(l=>l.m===m.id).length})</button>`).join("");
+  $("lvChips").innerHTML=[[0,"Mọi cấp độ"],[1,LEVELS[1]],[2,LEVELS[2]],[3,LEVELS[3]]].map(([v,n])=>`<button class="chip ${v===LLV?"on":""}" data-l="${v}">${n}</button>`).join("");
+  $("modChips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{LMOD=b.dataset.m;renderLessonList();});
+  $("lvChips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{LLV=+b.dataset.l;renderLessonList();});
+  const mod=MODULES.find(m=>m.id===LMOD);
+  $("lessonCards").innerHTML=`<p class="muted small" style="grid-column:1/-1;margin:0">${mod.d}</p>`+LESSONS.filter(l=>l.m===LMOD&&(!LLV||l.lv===LLV)).map(l=>{const sc=lessonScore(l.id);
+    return `<div class="card lcard" data-id="${l.id}"><span class="pill">${LEVELS[l.lv]}</span> ${sc?`<span class="pill ${sc.best>=80?"ok":""}">Cao nhất ${sc.best} điểm</span>`:""}<h3>${esc(l.t)}</h3><p class="small muted" style="margin:0">${esc(l.goal)}</p></div>`;}).join("");
+  $("lessonCards").querySelectorAll(".lcard").forEach(c=>c.onclick=()=>openLesson(c.dataset.id));
+}
+function openLesson(id){
+  const L=LESSONS.find(x=>x.id===id); if(!L) return; LCUR=L; LMOD=L.m;
+  $("lnList").hidden=true;$("lnView").hidden=false;$("rsCard").hidden=true;$("drCard").hidden=true;
+  $("lnTitle").textContent=L.t; $("lnGoal").innerHTML="<b>Mục tiêu:</b> "+esc(L.goal);
+  $("lnTips").innerHTML=L.tips.map(t=>`<li>${esc(t)}</li>`).join("")+`<li>Tốc độ gợi ý: ${L.sp[0]}–${L.sp[1]} tiếng/phút (tham khảo).</li>`;
+  const sc=lessonScore(id); $("lnMeta").textContent=MODULES.find(m=>m.id===L.m).n+" · "+LEVELS[L.lv]+(sc?` · cao nhất ${sc.best} điểm`:"");
+  LTOKS=tokenize(L.tx); renderToks($("lnText"),LTOKS);
+  $("lnCount").textContent=LTOKS.filter(t=>t.w&&t.w.length).length+" chữ";
+  $("lnText").classList.remove("selfmode"); $("rdSelf").textContent="Tự chấm";
+  $("rdStart").disabled=!canListen(); $("rdStop").disabled=true; $("rdLive").textContent="";
+  $("rdStatus").textContent=!canListen()?"Chỗ này máy chưa nghe giọng được (thường gặp trên iPhone hoặc khi trình duyệt chặn micro). Dùng nút Tự chấm: đọc to, rồi chạm vào chữ mình đọc chưa rõ để tô đỏ."
+    :L.self?"Bài âm rời: máy thường nghe sai, nên dùng Tự chấm.":"Bấm Đọc và chấm điểm, đọc to rõ toàn bài, xong bấm Đọc xong.";
+  window.scrollTo(0,0);
+}
+$("lnBack").onclick=()=>{$("lnView").hidden=true;$("lnList").hidden=false;renderLessonList();};
+$("rdTp").onclick=()=>{tpSetText(LCUR.tx,LCUR.t);$("tpWpm").value=Math.round((LCUR.sp[0]+LCUR.sp[1])/2);tpInfo();go("tp");};
+$("rdListen").onclick=()=>speak(LCUR.tx);
+$("rdStart").onclick=()=>{
+  RD={err:m=>{$("rdStatus").textContent=m;$("rdStart").disabled=false;$("rdStop").disabled=true;}};
+  startListen(RD);
+  $("rdStart").disabled=true;$("rdStop").disabled=false;$("rsCard").hidden=true;$("drCard").hidden=true;
+  $("rdStatus").textContent="Đang nghe… đọc to, rõ. Xong bấm Đọc xong.";
+  LTOKS.forEach(t=>t.k=null);renderToks($("lnText"),LTOKS);
+  clearInterval(RD.ui);RD.ui=setInterval(()=>{ // tô xanh dần chỗ đã đọc
+    const h=(RD.finalText+" "+RD.interim).trim();$("rdLive").textContent=h.slice(-160);
+    if(!h)return; const r=scoreToks(LTOKS,h); let seen=0;
+    LTOKS.forEach(t=>{if(t.w&&t.w.length){seen+=t.w.length; if(t.k!=="ok"||seen>r.read)t.k=null;}});
+    renderToks($("lnText"),LTOKS);},900);
+};
+$("rdStop").onclick=async()=>{
+  $("rdStop").disabled=true;$("rdStatus").textContent="Đang chấm điểm…";
+  await stopListen(RD);clearInterval(RD.ui);$("rdStart").disabled=false;
+  const heard=(RD.finalText+" "+RD.interim).trim();
+  if(!heard){$("rdStatus").textContent="Máy chưa nghe được gì. Kiểm tra micro, đọc to hơn rồi thử lại, hoặc dùng Tự chấm.";return;}
+  const r=scoreToks(LTOKS,heard), secs=Math.max(1,((RD.tLast||Date.now())-RD.t0)/1000-0.5);
+  showResult({secs,readWords:r.read,heard});
+};
+$("rdSelf").onclick=()=>{
+  const el=$("lnText");
+  if(!el.classList.contains("selfmode")){
+    el.classList.add("selfmode");$("rdSelf").textContent="Xong, tính điểm";
+    LTOKS.forEach(t=>t.k=t.w&&t.w.length?"ok":null);renderToks(el,LTOKS);
+    el.querySelectorAll(".tk").forEach(s=>s.onclick=()=>{const t=LTOKS[s.dataset.i];t.k=t.k==="bad"?"ok":"bad";s.className="tk "+t.k;});
+    $("rdStatus").textContent="Đọc to cả bài (có thể ghi âm bằng điện thoại để nghe lại), rồi chạm vào chữ đọc chưa rõ để tô đỏ. Chạm lần nữa để bỏ.";
+  } else { el.classList.remove("selfmode");$("rdSelf").textContent="Tự chấm"; showResult({self:true}); }
+};
+function showResult(o){
+  const sc=LTOKS.filter(t=>t.w&&t.w.length), n=sc.length;
+  const ok=sc.filter(t=>t.k==="ok").length, tone=sc.filter(t=>t.k==="tone").length, bad=sc.filter(t=>t.k==="bad").length, miss=sc.filter(t=>t.k==="miss").length;
+  const acc=Math.round((ok+tone*0.5)/n*100);
+  let spd=null,spdScore=100;
+  if(!o.self){spd=Math.round(o.readWords/o.secs*60);const [lo,hi]=LCUR.sp;const off=spd<lo?lo-spd:spd>hi?spd-hi:0;spdScore=Math.max(0,100-off*1.5);}
+  const total=o.self?acc:Math.round(acc*0.8+spdScore*0.2);
+  const grade=total>=90?"Xuất sắc":total>=80?"Tốt – đạt":total>=65?"Khá – nên luyện lại":"Cần luyện lại";
+  $("rsCard").hidden=false; $("rsTotal").textContent=total; $("rsGrade").textContent=grade; $("rsGrade").className="pill"+(total>=80?" ok":"");
+  $("rsAcc").textContent=acc+"%"; $("rsSpd").textContent=spd??"–"; $("rsTime").textContent=o.secs?fmt(o.secs):"–";
+  $("rsSpdT").textContent=spd==null?"Tự chấm không đo tốc độ":spd<LCUR.sp[0]?`Hơi chậm (gợi ý ${LCUR.sp[0]}–${LCUR.sp[1]})`:spd>LCUR.sp[1]?`Hơi nhanh (gợi ý ${LCUR.sp[0]}–${LCUR.sp[1]})`:"Tốc độ đẹp";
+  $("rsRows").innerHTML=[["Đọc đúng",ok],["Sai dấu (cam)",tone],["Đọc sai hoặc chưa rõ (đỏ)",bad],["Bỏ sót (gạch)",miss],["Tổng số chữ",n]].map(([a,b])=>`<tr><td>${a}</td><td><b>${b}</b></td></tr>`).join("");
+  renderToks($("lnText"),LTOKS,t=>startDrill(t.s));
+  const errs=LTOKS.filter(t=>t.k&&t.k!=="ok");
+  $("rsErr").innerHTML=errs.length?errs.slice(0,40).map(t=>`<div class="row" style="padding:4px 0;border-top:1px solid var(--line)"><span class="tk ${t.k}">${esc(t.d)}</span><span class="muted">${t.k==="miss"?"bỏ sót":t.k==="tone"?"sai dấu":"chưa rõ"}${t.h?` · máy nghe: “${esc(t.h)}”`:""}</span><button class="b small" style="padding:2px 10px" data-s="${t.s}">Luyện câu này</button></div>`).join("")+(errs.length>40?`<p class="muted">… và ${errs.length-40} chữ khác</p>`:"")
+    :'<p style="color:var(--ok)"><b>Không có chữ đỏ. Tuyệt vời!</b></p>';
+  $("rsErr").querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>startDrill(+b.dataset.s));
+  $("drStart").hidden=!errs.length;
+  $("rdStatus").textContent=o.self?"Đã tính điểm theo chữ bạn tô đỏ.":"Chạm vào chữ đỏ để luyện lại đúng câu có chữ đó.";
+  const L=LCUR.id; S.lessons=S.lessons||{}; const old=S.lessons[L]||{best:0,n:0};
+  S.lessons[L]={best:Math.max(old.best,total),last:total,n:old.n+1,at:todayStr()}; save();
+  $("lnMeta").textContent=MODULES.find(m=>m.id===LCUR.m).n+" · "+LEVELS[LCUR.lv]+` · cao nhất ${S.lessons[L].best} điểm`;
+  $("rsCard").scrollIntoView({behavior:"smooth",block:"start"});
+}
+/* --- luyện lại từng câu --- */
+function errSentences(){return [...new Set(LTOKS.filter(t=>t.k&&t.k!=="ok").map(t=>t.s))];}
+function startDrill(first){
+  const q=errSentences(); if(first!=null&&!q.includes(first))q.unshift(first);
+  if(first!=null){q.splice(q.indexOf(first),1);q.unshift(first);}
+  if(!q.length)return; DR={q,i:0,fixed:0,R:{}}; $("drCard").hidden=false; showDrill(); $("drCard").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function drTokens(){return LTOKS.filter(t=>t.s===DR.q[DR.i]);}
+function drText(){return drTokens().map(t=>t.sp!==undefined?t.sp:t.d).join("").trim();}
+function showDrill(){
+  if(DR.i>=DR.q.length){$("drText").innerHTML="";$("drProg").textContent="Xong";$("drMsg").innerHTML=`<b style="color:var(--ok)">Đã luyện xong ${DR.q.length} câu (${DR.fixed} câu đạt).</b> Bấm “Đọc lại cả bài” để nâng điểm.`;["drRec","drStop","drSkip"].forEach(x=>$(x).disabled=true);return;}
+  $("drProg").textContent=`Câu ${DR.i+1}/${DR.q.length}`;
+  renderToks($("drText"),drTokens().map(t=>({...t})));
+  ["drRec","drSkip"].forEach(x=>$(x).disabled=false);$("drStop").disabled=true;
+  $("drRec").disabled=!canListen();
+  $("drMsg").textContent=canListen()?"Chữ đỏ là chỗ lần trước chưa rõ. Đọc chậm, mở khẩu hình, rồi bấm Xong.":"Máy chưa nghe được ở đây: đọc to câu này 3 lần, tự nghe lại, rồi bấm Bỏ qua để sang câu tiếp.";
+}
+$("drRec").onclick=()=>{DR.R={err:m=>{$("drMsg").textContent=m;$("drRec").disabled=false;$("drStop").disabled=true;}};startListen(DR.R);$("drRec").disabled=true;$("drStop").disabled=false;$("drMsg").textContent="Đang nghe…";};
+$("drStop").onclick=async()=>{
+  $("drStop").disabled=true; await stopListen(DR.R); $("drRec").disabled=false;
+  const heard=(DR.R.finalText+" "+DR.R.interim).trim(); const toks=drTokens().map(t=>({...t}));
+  if(!heard){$("drMsg").textContent="Máy chưa nghe được, đọc to hơn rồi thử lại.";return;}
+  scoreToks(toks,heard); renderToks($("drText"),toks);
+  const left=toks.filter(t=>t.k==="bad"||t.k==="miss").length;
+  if(!left){DR.fixed++;drTokens().forEach(t=>{if(t.k&&t.k!=="ok")t.k="ok";});renderToks($("lnText"),LTOKS,t=>startDrill(t.s));
+    $("drMsg").innerHTML='<b style="color:var(--ok)">Đạt! Câu này đã đúng.</b>';setTimeout(()=>{DR.i++;showDrill();},1300);}
+  else $("drMsg").textContent=`Còn ${left} chữ đỏ. Nghe lại chỗ đỏ, đọc chậm hơn rồi thử lần nữa.`;
+};
+$("drSkip").onclick=()=>{DR.i++;showDrill();};
+$("drListen").onclick=()=>speak(drText());
+$("drStart").onclick=()=>startDrill(null);
+$("rdAgain").onclick=()=>{$("rsCard").hidden=true;$("drCard").hidden=true;LTOKS.forEach(t=>t.k=null);renderToks($("lnText"),LTOKS);window.scrollTo(0,0);};
+
+/* ============ KHẢO SÁT ============ */
+let IN={};
+function renderIntake(){
+  const p=S.profile||{}; IN={goal:p.goal,origin:p.origin,target:p.target,issues:[...(p.issues||[])],minutes:p.minutes,level:p.level};
+  $("qName").value=p.name||"";
+  document.querySelectorAll("#intakeForm [data-q]").forEach(box=>{
+    const k=box.dataset.q, single=box.hasAttribute("data-single");
+    box.innerHTML=Object.entries(Q[k]).map(([v,l])=>`<button type="button" class="chip" data-v="${v}">${l}</button>`).join("");
+    const paint=()=>box.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",single?IN[k]===c.dataset.v:IN[k].includes(c.dataset.v)));
+    box.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{const v=c.dataset.v; if(single)IN[k]=v; else IN[k]=IN[k].includes(v)?IN[k].filter(x=>x!==v):[...IN[k],v]; paint();});
+    paint();
+  });
+  $("intakeCancel").hidden=!S.profile; $("intakeErr").textContent="";
+  if(GAS&&ST.name&&!$("qName").value) $("qName").value=ST.name;
+  $("intakePrivacy").textContent=ST.mode==="db"&&!(ST.user&&ST.user.isOwner())?"Câu trả lời và tiến độ của bạn được lưu để người tạo trang (Bảo Uyên) theo dõi và hỗ trợ bạn.":"";
+}
+$("intakeForm").onsubmit=e=>{
+  e.preventDefault();
+  const name=$("qName").value.trim();
+  const miss=[!name&&"tên",!IN.goal&&"mục đích",!IN.origin&&"giọng gốc",!IN.target&&"giọng hướng tới",!IN.minutes&&"thời gian",!IN.level&&"kinh nghiệm"].filter(Boolean);
+  if(miss.length){$("intakeErr").textContent="Bạn chưa chọn: "+miss.join(", ")+".";return;}
+  const changed=!S.profile; S.profile={name,...IN,at:todayStr()}; if(changed){S.cur=1;}
+  PLAN=buildPlan(S.profile); save(); renderToday(); go("today");
+};
+/* --- cổng vào: đăng ký bằng họ tên → chờ duyệt → học --- */
+function showGate(){
+  document.body.classList.add("locked"); go("gate");
+  const has=!!ST.code;
+  $("gReg").hidden=has; $("gLogin").hidden=has; $("gWait").hidden=!has;
+  if(has){
+    $("gWaitCode").textContent=ST.code;
+    const no=ST.status==="Từ chối";
+    if(ST.loading){$("gWaitTitle").textContent="Đang tải…";$("gWaitMsg").textContent="Đang kiểm tra mã học viên của bạn.";return;}
+    $("gWaitTitle").textContent=ST.netErr?"Chưa kết nối được":no?"Đăng ký chưa được chấp nhận":"Đang chờ duyệt";
+    $("gWaitMsg").textContent=ST.netErr?"Kiểm tra mạng rồi bấm Kiểm tra lại.":no?"Bạn vui lòng liên hệ người tạo trang để được hỗ trợ.":
+      `Chào ${ST.name||"bạn"}! Hãy ghi lại mã này. Khi được duyệt, mở lại link và bấm Kiểm tra lại để bắt đầu học.`;
+  }
+}
+$("gRegBtn").onclick=async()=>{
+  const name=$("gName").value.trim().replace(/\s+/g," ");
+  if(name.length<2||name.split(" ").length<2){$("gRegMsg").textContent="Vui lòng nhập đầy đủ họ và tên.";return;}
+  $("gRegBtn").disabled=true; $("gRegMsg").textContent="Đang gửi…";
+  try{const r=await gas("api_register",name); S=BLANK(); setCode(r.code); ST.status=r.status; ST.name=r.name; ST.netErr=false; save(); $("gRegMsg").textContent=""; showGate();}
+  catch(e){$("gRegMsg").textContent=(e&&e.message)||"Không gửi được, thử lại sau ít phút.";}
+  $("gRegBtn").disabled=false;
+};
+$("loginBtn").onclick=async()=>{
+  const c=$("loginCode").value.trim().toUpperCase().replace(/\s/g,""); $("loginMsg").textContent="Đang kiểm tra…";
+  try{ const r=await gasLogin(c); if(r){ $("loginMsg").textContent=""; ST.netErr=false; start(); } else $("loginMsg").textContent="Không tìm thấy mã này. Mã có dạng HV2601."; }
+  catch(e){ $("loginMsg").textContent="Không kết nối được, thử lại sau ít phút."; }
+};
+$("gCheck").onclick=async()=>{
+  $("gCheck").disabled=true; $("gWaitMsg").textContent="Đang kiểm tra…";
+  try{ ST.netErr=false; const r=await gasLogin(ST.code); if(!r){setCode("");ST.status="";} }catch(e){ ST.netErr=true; }
+  $("gCheck").disabled=false; start();
+};
+$("gOther").onclick=()=>{setCode("");ST.status="";ST.netErr=false;S=BLANK();try{localStorage.removeItem(KEY);}catch(e){}showGate();};
+$("lgLogout").onclick=()=>{
+  if(!$("lgLogout").dataset.sure){$("lgLogout").dataset.sure=1;$("lgLogout").textContent="Bấm lần nữa để đăng xuất";return;}
+  setCode(""); ST.status=""; try{localStorage.removeItem(KEY);}catch(e){} S=BLANK(); ST.mode="local";
+  $("lgLogout").dataset.sure=""; $("lgLogout").textContent="Đăng xuất"; start();
+};
+$("intakeCancel").onclick=()=>go("today");
+$("lgRedo").onclick=()=>{renderIntake();go("intake");};
+function renderTarget(){
+  const p=PLAN.p;
+  $("tgTitle").textContent="Lộ trình của "+(p.name||"bạn");
+  $("tgBody").innerHTML=`Mục đích: <b>${esc(Q.goal[p.goal])}</b> · Hướng tới: <b>${esc(Q.target[p.target])}</b> · ${esc(Q.minutes[p.minutes])}/ngày.<br>`+
+   ((p.issues||[]).length?`Lộ trình ưu tiên sửa: ${p.issues.map(i=>esc(Q.issues[i])).join(", ")}. `:"")+
+   `Tốc độ mục tiêu khi nói thật: <b>${PLAN.lo}–${PLAN.hi} tiếng/phút</b>.`;
+  $("hdrStreak").textContent=[S.profile&&S.profile.name, streak()?"🔥 "+streak()+" ngày liên tục":""].filter(Boolean).join(" · ");
+  if(ST.code){$("codeBanner").hidden=false;$("codeBanner").innerHTML=`Mã học viên của bạn: <b style="font-size:1.2em;letter-spacing:2px">${esc(ST.code)}</b>. Ghi lại mã này để đăng nhập khi đổi máy.`;}
+  else $("codeBanner").hidden=true;
+  $("lgLogout").hidden=!(GAS&&ST.code);
+}
+
+/* ============ KHỞI TẠO ============ */
+function start(){
+  if(GAS&&ST.status!==APPROVED){ showGate(); return; }
+  document.body.classList.remove("locked"); if($("t-gate").classList.contains("on")) go("today");
+  PLAN=buildPlan(S.profile);
+  RANGES.mine=[PLAN.lo,PLAN.hi]; const sp=$("spMode"); let o=sp.querySelector('[value="mine"]');
+  if(!o){o=document.createElement("option");o.value="mine";sp.prepend(o);} o.textContent=`Mục tiêu của tôi (${PLAN.lo}–${PLAN.hi})`; sp.value="mine";
+  renderToday(); storeNote();
+  const onIntake=$("t-intake").classList.contains("on");
+  if(!S.profile){ if(!onIntake){renderIntake();go("intake");} else $("intakePrivacy").textContent=ST.mode==="db"&&!(ST.user&&ST.user.isOwner())?"Câu trả lời và tiến độ của bạn được lưu để người tạo trang (Bảo Uyên) theo dõi và hỗ trợ bạn.":""; }
+  else if(onIntake && $("intakeCancel").hidden) go("today"); // hồ sơ vừa tải về từ tài khoản
+}
+if(GAS_NATIVE){ // trang mở trong Apps Script: Google chặn micro → ẩn nút ghi âm, tắt đo giọng tự động
+  $("recBar").hidden=true; document.body.style.paddingBottom="16px"; $("tpRec").checked=false;
+  $("spStart").disabled=true;
+  $("srSupport").textContent="Trang này mở qua Google Apps Script nên Google chặn micro. Dùng cách đo thủ công bên dưới.";
+}
+tpFill(); tpLoad("c"); $("tpText").style.fontSize="34px"; renderPron(); DB.open(); start();
+initStore().then(()=>{start(); if(document.querySelector("#t-log.on"))renderLog();});
+</script>
+</body>
+</html>
